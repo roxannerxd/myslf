@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MYSLF — Mon histoire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7EFE8;
+    --cream-2:#F1E4DA;
+    --clay:#C98A73;
+    --clay-dark:#B06E56;
+    --ink:#3B302C;
+    --ink-soft:#6B5B54;
+    --line:rgba(59,48,44,0.12);
+    --white:#FFFDFB;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Jost',sans-serif;
+    color:var(--ink);
+    background:var(--cream);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,.serif{font-family:'Cormorant Garamond',serif;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:680px;margin:0 auto;padding:0 32px;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  textarea, select, input{font-family:inherit;}
+  a:focus-visible, button:focus-visible, textarea:focus-visible, select:focus-visible, input:focus-visible{outline:2px solid var(--clay-dark);outline-offset:2px;}
+
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(247,239,232,0.9); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 32px; max-width:1180px; margin:0 auto;
+  }
+  .logo{font-family:'Cormorant Garamond',serif; font-size:22px; letter-spacing:0.08em; font-weight:600;}
+  .nav-links{display:flex; align-items:center; gap:28px; font-size:14px; color:var(--ink-soft);}
+  .nav-links a{transition:color .2s;}
+  .nav-links a:hover, .nav-links a.active{color:var(--ink);}
+  .nav-links a.active{border-bottom:1.5px solid var(--clay-dark); padding-bottom:2px;}
+
+  main{padding:56px 0 100px;}
+  .eyebrow{font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:var(--clay-dark); margin-bottom:10px;}
+  h1.title{font-size:clamp(28px,4.5vw,38px); font-weight:500; margin-bottom:10px;}
+  .subtitle{font-size:14.5px; color:var(--ink-soft); font-weight:300; max-width:480px; margin-bottom:40px;}
+
+  /* résumé */
+  .summary-card{
+    background:var(--white); border:1px solid var(--line); border-radius:22px;
+    padding:30px 32px; margin-bottom:36px; display:none;
+  }
+  .summary-card.show{display:block;}
+  .summary-card .serif{font-size:19px; font-style:italic; color:var(--clay-dark); margin-bottom:18px; display:block;}
+  .summary-row{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
+    padding:12px 0; border-top:1px solid var(--line); font-size:14px;
+  }
+  .summary-row:first-of-type{border-top:none;}
+  .summary-row .label{color:var(--ink-soft); font-weight:300; flex-shrink:0;}
+  .summary-row .value{font-weight:500; text-align:right;}
+  .summary-edit{
+    margin-top:20px; font-size:13px; color:var(--clay-dark); text-decoration:underline; text-underline-offset:2px;
+  }
+
+  .card{
+    background:var(--white); border:1px solid var(--line); border-radius:22px; padding:32px;
+  }
+  .card.hidden{display:none;}
+
+  .field{margin-bottom:22px;}
+  .field label{display:block; font-size:13.5px; font-weight:500; margin-bottom:10px;}
+  .field .hint{font-size:12px; color:var(--ink-soft); font-weight:300; margin-top:6px;}
+
+  .option-row{display:flex; flex-wrap:wrap; gap:10px;}
+  .option-btn{
+    padding:10px 16px; border-radius:100px; background:var(--cream-2); border:1.5px solid transparent;
+    font-size:13.5px; color:var(--ink-soft); transition:background .2s, border-color .2s, color .2s;
+  }
+  .option-btn:hover{background:#EBD8CC;}
+  .option-btn.selected{background:var(--clay); border-color:var(--clay); color:var(--white);}
+
+  .toggle-row{display:flex; align-items:center; gap:12px;}
+  .toggle{
+    width:44px; height:26px; border-radius:100px; background:var(--cream-2); position:relative;
+    transition:background .2s; flex-shrink:0;
+  }
+  .toggle::after{
+    content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%;
+    background:var(--white); transition:transform .2s; box-shadow:0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle.on{background:var(--clay);}
+  .toggle.on::after{transform:translateX(18px);}
+  .toggle-label{font-size:13.5px; color:var(--ink-soft); font-weight:300;}
+
+  .entry-textarea{
+    width:100%; min-height:100px; border:1px solid var(--line); border-radius:14px;
+    background:var(--cream); padding:16px; font-size:14.5px; color:var(--ink); resize:vertical;
+  }
+
+  .save-btn{
+    padding:14px 30px; border-radius:100px; background:var(--clay); color:var(--white);
+    font-size:14.5px; transition:background .2s, transform .2s; margin-top:8px;
+  }
+  .save-btn:hover{background:var(--clay-dark); transform:translateY(-1px);}
+
+  .privacy-note{
+    font-size:12.5px; color:var(--ink-soft); opacity:.7; text-align:center; margin-top:18px;
+  }
+
+  footer{padding:40px 0; text-align:center; color:var(--ink-soft); font-size:13.5px; border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="index.html" class="logo">MYSLF</a>
+    <div class="nav-links">
+      <a href="journal.html">Journal</a>
+      <a href="histoire.html" class="active">Mon histoire</a>
+      <a href="index.html#ia-demo">Mon IA</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="eyebrow">Ton histoire</div>
+    <h1 class="title">Pour que ton IA se souvienne de toi</h1>
+    <p class="subtitle">Tu n'as pas à tout réexpliquer à chaque fois. Raconte une fois, ton IA s'en souviendra dans vos conversations.</p>
+
+    <div class="summary-card" id="summaryCard">
+      <span class="serif" id="summaryIntro"></span>
+      <div class="summary-row"><span class="label">Durée de la relation</span><span class="value" id="sumDuration">—</span></div>
+      <div class="summary-row"><span class="label">Ruptures répétées</span><span class="value" id="sumRepeated">—</span></div>
+      <div class="summary-row"><span class="label">Déclencheur principal</span><span class="value" id="sumTrigger">—</span></div>
+      <div class="summary-row"><span class="label">Ta plus grande difficulté</span><span class="value" id="sumDifficulty">—</span></div>
+      <div class="summary-row"><span class="label">Ton objectif</span><span class="value" id="sumGoal">—</span></div>
+      <a href="#" class="summary-edit" id="editLink">Modifier mon histoire</a>
+    </div>
+
+    <div class="card" id="formCard">
+      <form id="storyForm">
+        <div class="field">
+          <label>Depuis combien de temps étiez-vous ensemble ?</label>
+          <div class="option-row" data-field="duration">
+            <button type="button" class="option-btn" data-value="Moins de 6 mois">Moins de 6 mois</button>
+            <button type="button" class="option-btn" data-value="6 mois à 1 an">6 mois à 1 an</button>
+            <button type="button" class="option-btn" data-value="1 à 3 ans">1 à 3 ans</button>
+            <button type="button" class="option-btn" data-value="3 à 5 ans">3 à 5 ans</button>
+            <button type="button" class="option-btn" data-value="Plus de 5 ans">Plus de 5 ans</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Vous vous êtes déjà quittés et remis ensemble plusieurs fois</label>
+          <div class="toggle-row">
+            <div class="toggle" id="repeatedToggle"></div>
+            <span class="toggle-label">Oui, c'était un cycle récurrent</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Qu'est-ce qui déclenche le plus souvent tes moments difficiles ?</label>
+          <div class="option-row" data-field="trigger">
+            <button type="button" class="option-btn" data-value="peur de l'abandon">Peur de l'abandon</button>
+            <button type="button" class="option-btn" data-value="peur du rejet">Peur du rejet</button>
+            <button type="button" class="option-btn" data-value="la solitude">La solitude</button>
+            <button type="button" class="option-btn" data-value="la comparaison">La comparaison</button>
+            <button type="button" class="option-btn" data-value="les réseaux sociaux">Les réseaux sociaux</button>
+            <button type="button" class="option-btn" data-value="la jalousie">La jalousie</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Qu'est-ce qui est le plus dur pour toi, aujourd'hui ?</label>
+          <div class="option-row" data-field="difficulty">
+            <button type="button" class="option-btn" data-value="rester seule">Rester seule</button>
+            <button type="button" class="option-btn" data-value="lâcher prise">Lâcher prise</button>
+            <button type="button" class="option-btn" data-value="faire confiance à nouveau">Faire confiance à nouveau</button>
+            <button type="button" class="option-btn" data-value="me sentir suffisante">Me sentir suffisante</button>
+            <button type="button" class="option-btn" data-value="ne pas le/la recontacter">Ne pas le/la recontacter</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Vers quoi tu avances ?</label>
+          <div class="option-row" data-field="goal">
+            <button type="button" class="option-btn" data-value="retrouver mon indépendance">Retrouver mon indépendance</button>
+            <button type="button" class="option-btn" data-value="me reconstruire">Me reconstruire</button>
+            <button type="button" class="option-btn" data-value="apprendre à m'aimer">Apprendre à m'aimer</button>
+            <button type="button" class="option-btn" data-value="avancer sans lui/elle">Avancer sans lui/elle</button>
+            <button type="button" class="option-btn" data-value="retrouver confiance en moi">Retrouver confiance en moi</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Si tu veux en dire plus (facultatif)</label>
+          <textarea class="entry-textarea" id="storyNotes" placeholder="Ce que tu veux que ton IA sache, avec tes mots à toi…" maxlength="2000"></textarea>
+        </div>
+
+        <button type="submit" class="save-btn">Enregistrer mon histoire</button>
+        <div class="privacy-note">Ça reste sur cet appareil. Rien n'est partagé.</div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div>© 2026 MYSLF. Un espace pour te retrouver.</div>
+</footer>
+
+<script>
+(function(){
+  var STORAGE_KEY = 'myslf_story';
+  var form = document.getElementById('storyForm');
+  var formCard = document.getElementById('formCard');
+  var summaryCard = document.getElementById('summaryCard');
+  var repeatedToggle = document.getElementById('repeatedToggle');
+  var notes = document.getElementById('storyNotes');
+  var state = { duration: null, repeated: false, trigger: null, difficulty: null, goal: null, notes: '' };
+
+  function loadStory(){
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+
+  function saveStory(story){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(story)); } catch (e) {}
+  }
+
+  document.querySelectorAll('.option-row').forEach(function(row){
+    var field = row.dataset.field;
+    row.addEventListener('click', function(e){
+      var btn = e.target.closest('.option-btn');
+      if (!btn) return;
+      row.querySelectorAll('.option-btn').forEach(function(b){ b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      state[field] = btn.dataset.value;
+    });
+  });
+
+  repeatedToggle.addEventListener('click', function(){
+    state.repeated = !state.repeated;
+    repeatedToggle.classList.toggle('on', state.repeated);
+  });
+
+  function fillForm(story){
+    state = {
+      duration: story.duration || null,
+      repeated: !!story.repeated,
+      trigger: story.trigger || null,
+      difficulty: story.difficulty || null,
+      goal: story.goal || null,
+      notes: story.notes || ''
+    };
+    document.querySelectorAll('.option-row').forEach(function(row){
+      var field = row.dataset.field;
+      row.querySelectorAll('.option-btn').forEach(function(b){
+        b.classList.toggle('selected', b.dataset.value === state[field]);
+      });
+    });
+    repeatedToggle.classList.toggle('on', state.repeated);
+    notes.value = state.notes;
+  }
+
+  function renderSummary(story){
+    document.getElementById('summaryIntro').textContent =
+      '"Je me souviens de ton histoire, et je suis là pour la suite."';
+    document.getElementById('sumDuration').textContent = story.duration || '—';
+    document.getElementById('sumRepeated').textContent = story.repeated ? 'Oui' : 'Non';
+    document.getElementById('sumTrigger').textContent = story.trigger || '—';
+    document.getElementById('sumDifficulty').textContent = story.difficulty || '—';
+    document.getElementById('sumGoal').textContent = story.goal || '—';
+  }
+
+  function showSummaryView(){
+    var story = loadStory();
+    if (story){
+      renderSummary(story);
+      summaryCard.classList.add('show');
+      formCard.classList.add('hidden');
+    }
+  }
+
+  function showFormView(){
+    var story = loadStory();
+    if (story) fillForm(story);
+    summaryCard.classList.remove('show');
+    formCard.classList.remove('hidden');
+  }
+
+  document.getElementById('editLink').addEventListener('click', function(e){
+    e.preventDefault();
+    showFormView();
+  });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    state.notes = notes.value.trim();
+    saveStory(state);
+    showSummaryView();
+  });
+
+  var existing = loadStory();
+  if (existing){
+    showSummaryView();
+  }
+})();
+</script>
+
+</body>
+</html>

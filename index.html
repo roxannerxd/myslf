@@ -469,6 +469,23 @@
   var input = document.getElementById('chatInput');
   var sendBtn = document.getElementById('chatSend');
 
+  var story = null;
+  try {
+    var rawStory = localStorage.getItem('myslf_story');
+    story = rawStory ? JSON.parse(rawStory) : null;
+  } catch (e) { story = null; }
+
+  if (story){
+    var firstMsg = messages.querySelector('.msg.ai');
+    if (firstMsg){
+      if (story.difficulty){
+        firstMsg.textContent = "Je me souviens que " + story.difficulty + " est particulièrement dur pour toi en ce moment. Comment tu te sens aujourd'hui ?";
+      } else {
+        firstMsg.textContent = "Je suis là pour toi. Comment tu te sens aujourd'hui ?";
+      }
+    }
+  }
+
   var keywordReplies = [
     { test: /triste|pleur|larme/i, replies: [
       "C'est normal de ressentir cette tristesse. Prends le temps qu'il te faut, je reste avec toi.",
@@ -520,6 +537,13 @@
   }
 
   function fakeAIReply(text){
+    if (story && /seul|abandon/i.test(text) && story.trigger){
+      return "Je remarque que ça revient souvent chez toi : " + story.trigger + ". Ce que tu ressens là, maintenant, ça vient peut-être de ce même endroit.";
+    }
+    if (story && /ex[- ]|lui|il m'a|copain|copine|couple/i.test(text) && story.goal){
+      return "Je sais que tu avances vers ça : " + story.goal + ". Chaque fois que tu reparles de lui, tu peux te demander si ça t'en rapproche ou t'en éloigne.";
+    }
+
     for (var k = 0; k < keywordReplies.length; k++){
       if (keywordReplies[k].test.test(text)){
         var replies = keywordReplies[k].replies;
