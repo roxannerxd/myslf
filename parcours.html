@@ -689,6 +689,198 @@
     }
   ];
 
+  var STEP3_DAYS = [
+    {
+      num: 1, title: 'Couper le bruit', sub: 'Jour 1 sur 7',
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Mets ses notifications en sourdine.</div>' +
+          '<div class="hint">Pas besoin de le/la bloquer. Juste faire taire ce qui te sollicite sans que tu l\'aies choisi.</div>' +
+          '<div class="toggle-row">' +
+            '<div class="toggle" id="s3d1_toggle"></div>' +
+            '<span class="toggle-label">Je l\'ai fait</span>' +
+          '</div>' +
+          '<textarea class="entry-textarea" id="s3d1_text" placeholder="Comment tu te sens en y pensant ? (facultatif)"></textarea>' +
+          '<button type="button" class="save-btn" id="s3d1_save" disabled>Terminer ce jour</button>';
+        var done = false;
+        var toggle = document.getElementById('s3d1_toggle');
+        var btn = document.getElementById('s3d1_save');
+        toggle.addEventListener('click', function(){
+          done = !done;
+          toggle.classList.toggle('on', done);
+          btn.disabled = !done;
+        });
+        btn.addEventListener('click', function(){
+          var text = document.getElementById('s3d1_text').value.trim();
+          completeDay(key, 1, { done: true, text: text },
+            'C\'est un premier pas.',
+            'Tu n\'as pas besoin de couper cette personne de ta vie d\'un coup. Juste de reprendre le contrôle sur ce qui te sollicite sans ton accord.');
+        });
+      },
+      victory: function(d){ return d && d.done ? 'Tu as coupé le bruit autour de son nom.' : null; }
+    },
+    {
+      num: 2, title: 'Ne pas vérifier', sub: 'Jour 2 sur 7',
+      render: function(c, key){
+        var opts = ['Oui, j\'ai tenu', 'J\'ai craqué, et c\'est ok'];
+        c.innerHTML =
+          '<div class="prompt">Aujourd\'hui, je ne vais pas consulter son profil.</div>' +
+          '<div class="hint">Pas pour toujours. Juste aujourd\'hui.</div>' +
+          '<div class="option-row" id="s3d2_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<textarea class="entry-textarea" id="s3d2_text" placeholder="Si tu as craqué, qu\'est-ce qui a été le plus dur ? (facultatif)"></textarea>' +
+          '<button type="button" class="save-btn" id="s3d2_save" disabled>Terminer ce jour</button>';
+        var row = document.getElementById('s3d2_opts');
+        var btn = document.getElementById('s3d2_save');
+        var chosen = null;
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          Array.prototype.forEach.call(row.querySelectorAll('.option-btn'), function(b){ b.classList.remove('selected'); });
+          el.classList.add('selected');
+          chosen = el.dataset.value;
+          btn.disabled = false;
+        });
+        btn.addEventListener('click', function(){
+          var text = document.getElementById('s3d2_text').value.trim();
+          completeDay(key, 2, { status: chosen, text: text },
+            chosen === 'Oui, j\'ai tenu' ? 'Bien joué.' : 'Ce n\'est pas grave.',
+            chosen === 'Oui, j\'ai tenu' ? 'Une journée entière sans vérifier, c\'est une vraie victoire sur l\'habitude.' : 'Craquer une fois ne défait pas tes efforts. Demain, tu réessaies, sans te juger.');
+        });
+      },
+      victory: function(d){ return d && d.status ? (d.status === 'Oui, j\'ai tenu' ? 'Tu as tenu une journée entière sans aller vérifier.' : 'Tu as essayé de ne pas vérifier, et c\'est déjà un pas.') : null; }
+    },
+    {
+      num: 3, title: 'Le message que je n\'envoie pas', sub: 'Jour 3 sur 7',
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Écris ici le message que tu voudrais lui envoyer.</div>' +
+          '<div class="hint">Dis tout ce que tu as sur le cœur. Il ne partira jamais — c\'est justement le but.</div>' +
+          '<textarea class="entry-textarea" id="s3d3_text" placeholder="Écris-le, en entier…" style="min-height:160px;"></textarea>' +
+          '<button type="button" class="save-btn" id="s3d3_save" disabled>Terminer ce jour</button>';
+        var ta = document.getElementById('s3d3_text');
+        var btn = document.getElementById('s3d3_save');
+        ta.addEventListener('input', function(){ btn.disabled = ta.value.trim().length === 0; });
+        btn.addEventListener('click', function(){
+          completeDay(key, 3, { message: ta.value.trim() },
+            'Il est sorti de toi, sans blesser personne.',
+            'Ce que tu viens d\'écrire avait besoin d\'exister quelque part. Ici, c\'est un espace sûr pour ça — pas sa boîte de réception.');
+        });
+      },
+      victory: function(d){ return d && d.message ? 'Tu as écrit ce que tu avais sur le cœur, sans l\'envoyer.' : null; }
+    },
+    {
+      num: 4, title: 'Les 10 minutes', sub: 'Jour 4 sur 7',
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Qu\'est-ce que tu espères obtenir, généralement, quand l\'envie de le/la contacter apparaît ?</div>' +
+          '<div class="hint">La prochaine fois que cette envie arrive, pose-toi cette question, puis attends 10 minutes avant d\'agir.</div>' +
+          '<textarea class="entry-textarea" id="s3d4_text" placeholder="Écris librement…"></textarea>' +
+          '<button type="button" class="save-btn" id="s3d4_save" disabled>Terminer ce jour</button>';
+        var ta = document.getElementById('s3d4_text');
+        var btn = document.getElementById('s3d4_save');
+        ta.addEventListener('input', function(){ btn.disabled = ta.value.trim().length === 0; });
+        btn.addEventListener('click', function(){
+          completeDay(key, 4, { hope: ta.value.trim() },
+            'Garde cette question avec toi.',
+            'Elle ne va pas faire disparaître l\'envie. Mais elle te laisse dix minutes pour choisir, au lieu de réagir.');
+        });
+      },
+      victory: function(d){ return d && d.hope ? 'Tu as compris ce que tu espères vraiment quand l\'envie de le/la contacter monte.' : null; }
+    },
+    {
+      num: 5, title: 'Ce qui me contrôle encore', sub: 'Jour 5 sur 7',
+      render: function(c, key){
+        var opts = ['Mon humeur quand je vois ses stories','Mon envie de vérifier s\'il/elle m\'a vue','Ce que je porte ou comment je me présente','Les endroits que j\'évite à cause de lui/elle','Rien de spécifique en ce moment'];
+        c.innerHTML =
+          '<div class="prompt">Sur quoi cette personne a-t-elle encore du pouvoir, dans ton quotidien ?</div>' +
+          '<div class="option-row" id="s3d5_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<textarea class="entry-textarea" id="s3d5_text" placeholder="Un exemple précis ? (facultatif)"></textarea>' +
+          '<button type="button" class="save-btn" id="s3d5_save" disabled>Terminer ce jour</button>';
+        var row = document.getElementById('s3d5_opts');
+        var btn = document.getElementById('s3d5_save');
+        var selected = [];
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          var val = el.dataset.value;
+          var idx = selected.indexOf(val);
+          if (idx !== -1){ selected.splice(idx, 1); el.classList.remove('selected'); }
+          else { selected.push(val); el.classList.add('selected'); }
+          btn.disabled = selected.length === 0;
+        });
+        btn.addEventListener('click', function(){
+          var text = document.getElementById('s3d5_text').value.trim();
+          completeDay(key, 5, { controls: selected, text: text },
+            'Nommer ça, c\'est déjà commencer à le reprendre.',
+            'Tant que ce pouvoir reste invisible, il agit sans que tu puisses rien y faire. Maintenant que tu le vois, tu peux choisir d\'y répondre autrement.');
+        });
+      },
+      victory: function(d){ return d && d.controls && d.controls.length && d.controls[0] !== 'Rien de spécifique en ce moment' ? 'Tu as identifié ce qui a encore du pouvoir sur toi : ' + d.controls.join(', ').toLowerCase() + '.' : (d && d.controls && d.controls.length ? 'Tu as fait le point sur ce qui te contrôle encore.' : null); }
+    },
+    {
+      num: 6, title: 'Reprendre le contrôle', sub: 'Jour 6 sur 7',
+      render: function(c, key){
+        var opts = ['Couper une notification précise','Ne plus consulter ses réseaux pendant quelques jours','Supprimer une conversation qui me fait mal','Éviter un lieu qui me rappelle trop de souvenirs','Autre chose'];
+        c.innerHTML =
+          '<div class="prompt">Choisis une limite concrète à tenir cette semaine.</div>' +
+          '<div class="hint">Une seule. Petite, mais réelle.</div>' +
+          '<div class="option-row" id="s3d6_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<div class="toggle-row">' +
+            '<div class="toggle" id="s3d6_toggle"></div>' +
+            '<span class="toggle-label">Je m\'engage à le faire</span>' +
+          '</div>' +
+          '<button type="button" class="save-btn" id="s3d6_save" disabled>Terminer ce jour</button>';
+        var row = document.getElementById('s3d6_opts');
+        var toggle = document.getElementById('s3d6_toggle');
+        var btn = document.getElementById('s3d6_save');
+        var chosen = null;
+        var committed = false;
+        function updateBtn(){ btn.disabled = !(chosen && committed); }
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          Array.prototype.forEach.call(row.querySelectorAll('.option-btn'), function(b){ b.classList.remove('selected'); });
+          el.classList.add('selected');
+          chosen = el.dataset.value;
+          updateBtn();
+        });
+        toggle.addEventListener('click', function(){
+          committed = !committed;
+          toggle.classList.toggle('on', committed);
+          updateBtn();
+        });
+        btn.addEventListener('click', function(){
+          completeDay(key, 6, { boundary: chosen },
+            'C\'est noté, et c\'est à toi maintenant.',
+            'Une limite tenue, même petite, t\'apprend que tu peux te faire confiance. C\'est ça, reprendre le contrôle.');
+        });
+      },
+      victory: function(d){ return d && d.boundary ? 'Tu t\'es engagée à : ' + d.boundary.toLowerCase() + '.' : null; }
+    },
+    {
+      num: 7, title: 'Ma distance', sub: 'Jour 7 sur 7', isFinal: true,
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Cette semaine, la distance que j\'ai prise, c\'est ______.</div>' +
+          '<input type="text" class="short-input" id="s3d7_distance" placeholder="Complète la phrase…" maxlength="200" style="margin-bottom:18px;">' +
+          '<button type="button" class="save-btn" id="s3d7_save" disabled>Voir mon bilan</button>';
+        var input = document.getElementById('s3d7_distance');
+        var btn = document.getElementById('s3d7_save');
+        input.addEventListener('input', function(){ btn.disabled = input.value.trim().length === 0; });
+        btn.addEventListener('click', function(){
+          completeDay(key, 7, { distance: input.value.trim() }, null, null, true);
+        });
+      },
+      victory: function(d){ return d && d.distance ? 'Cette semaine, tu as pris de la distance : ' + d.distance.toLowerCase() + '.' : null; }
+    }
+  ];
+
   var STEPS = [
     {
       key: 'step1', icon: '🤍', name: 'Stop & Breathe', sub: 'Je me stabilise',
@@ -704,7 +896,13 @@
       days: STEP2_DAYS,
       isPatternReveal: true
     },
-    { key: 'step3', icon: '🚪', name: 'Detach', sub: 'Je reprends de la distance', days: null },
+    {
+      key: 'step3', icon: '🚪', name: 'Detach', sub: 'Je reprends de la distance',
+      weekTitle: 'Detach', weekSub: 'Semaine 3 — "Je reprends de la distance"',
+      weekIntro: 'Le but n\'est pas de te dire d\'oublier cette personne. C\'est d\'apprendre, petit à petit, à ne plus la laisser contrôler ton état émotionnel.',
+      days: STEP3_DAYS,
+      recapText: 'Tu n\'as rien oublié, et ce n\'était pas le but. Tu as juste repris un peu de pouvoir sur ce qui te contrôlait. L\'étape 4 est débloquée.'
+    },
     { key: 'step4', icon: '🪞', name: 'Remember Me', sub: 'Qui suis-je sans cette relation ?', days: null },
     { key: 'step5', icon: '🌸', name: 'Build Me', sub: 'Je recommence à construire ma vie', days: null },
     { key: 'step6', icon: '👑', name: 'Self-Worth', sub: 'Je recommence à croire en moi', days: null },
