@@ -1241,6 +1241,51 @@
     }
   ];
 
+  var CONFIDENCE_CATEGORIES = [
+    'Une promesse que je me suis tenue',
+    'Une situation difficile que j\'ai traversée',
+    'Quelque chose de nouveau que j\'ai essayé'
+  ];
+
+  function makeConfidenceDay(num){
+    return {
+      num: num, title: 'Ma fierté du jour', sub: 'Jour ' + num + ' sur 7', isFinal: num === 7,
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Aujourd\'hui, j\'ai été fière de moi quand…</div>' +
+          '<div class="hint">Même minuscule : "Je suis sortie alors que je n\'avais pas envie." "Je n\'ai pas envoyé ce message impulsif." "J\'ai dit non."</div>' +
+          '<textarea class="entry-textarea" id="s6d' + num + '_text" placeholder="Écris ce moment…"></textarea>' +
+          '<div class="hint" style="margin-top:-8px;">De quel type de fierté s\'agit-il ?</div>' +
+          '<div class="option-row" id="s6d' + num + '_opts">' +
+          CONFIDENCE_CATEGORIES.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<button type="button" class="save-btn" id="s6d' + num + '_save" disabled>' + (num === 7 ? 'Voir mes preuves' : 'Terminer ce jour') + '</button>';
+        var ta = document.getElementById('s6d' + num + '_text');
+        var row = document.getElementById('s6d' + num + '_opts');
+        var btn = document.getElementById('s6d' + num + '_save');
+        var chosen = null;
+        function updateBtn(){ btn.disabled = !(ta.value.trim().length > 0 && chosen); }
+        ta.addEventListener('input', updateBtn);
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          Array.prototype.forEach.call(row.querySelectorAll('.option-btn'), function(b){ b.classList.remove('selected'); });
+          el.classList.add('selected');
+          chosen = el.dataset.value;
+          updateBtn();
+        });
+        btn.addEventListener('click', function(){
+          completeDay(key, num, { moment: ta.value.trim(), category: chosen },
+            'C\'est noté, et ça compte.',
+            'Chaque petite preuve s\'ajoute aux autres. Tu es en train de construire quelque chose de solide.',
+            num === 7);
+        });
+      }
+    };
+  }
+
+  var STEP6_DAYS = [1, 2, 3, 4, 5, 6, 7].map(makeConfidenceDay);
+
   var STEPS = [
     {
       key: 'step1', icon: '🤍', name: 'Stop & Breathe', sub: 'Je me stabilise',
@@ -1277,7 +1322,13 @@
       days: STEP5_DAYS,
       recapText: 'Six jours à construire, un jour à te reposer. C\'est déjà une vie qui contient autre chose que le manque de quelqu\'un. L\'étape 6 est débloquée.'
     },
-    { key: 'step6', icon: '👑', name: 'Self-Worth', sub: 'Je recommence à croire en moi', days: null },
+    {
+      key: 'step6', icon: '👑', name: 'Self-Worth', sub: 'Je recommence à croire en moi',
+      weekTitle: 'Self-Worth', weekSub: 'Semaine 6 — "Je recommence à croire en moi"',
+      weekIntro: 'Pas de "je suis magnifique, je suis incroyable" — quand la confiance manque, ça sonne faux. On construit la confiance avec des preuves. Chaque soir, une seule question : de quoi as-tu été fière aujourd\'hui, même minuscule ?',
+      days: STEP6_DAYS,
+      revealType: 'confidence'
+    },
     { key: 'step7', icon: '🦋', name: 'My Standards', sub: 'Je décide de ce que j\'accepte', days: null },
     { key: 'step8', icon: '✨', name: 'Choose Me', sub: 'Je me choisis', days: null }
   ];
@@ -1370,6 +1421,7 @@
     if (isLastDay){
       if (step.revealType === 'pattern') renderPatternReveal(step);
       else if (step.revealType === 'identity') renderIdentityReveal(step);
+      else if (step.revealType === 'confidence') renderConfidenceReveal(step);
       else renderRecap(step);
       showView('viewConfirm');
       return;
@@ -1445,6 +1497,32 @@
     if (future) html += '<p style="margin-top:10px;"><strong>Ce que je veux, dans un an</strong> — ' + escapeHtml(future) + '</p>';
     html += '</div>';
     html += '<p class="pattern-note">Ce n\'est pas une case dans laquelle t\'enfermer — juste un rappel de qui tu es, en dehors de cette relation. L\'étape 5 est débloquée.</p>';
+
+    text.innerHTML = html;
+    document.getElementById('confirmContinue').onclick = function(){
+      renderSteps();
+      showView('viewHome');
+    };
+  }
+
+  function renderConfidenceReveal(step){
+    var sd = stepData(step.key);
+    var counts = {};
+    CONFIDENCE_CATEGORIES.forEach(function(cat){ counts[cat] = 0; });
+    for (var i = 1; i <= 7; i++){
+      var d = sd['day' + i];
+      if (d && d.category && counts.hasOwnProperty(d.category)) counts[d.category]++;
+    }
+
+    document.getElementById('confirmTitle').textContent = 'Look what you\'ve done.';
+    var text = document.getElementById('confirmText');
+
+    var html = '<div class="pattern-card"><div class="pattern-label">Tes preuves de cette semaine</div>' +
+      '<p><strong>' + counts[CONFIDENCE_CATEGORIES[0]] + '</strong> promesse(s) que tu t\'es tenue(s).</p>' +
+      '<p style="margin-top:10px;"><strong>' + counts[CONFIDENCE_CATEGORIES[1]] + '</strong> situation(s) difficile(s) que tu as traversée(s).</p>' +
+      '<p style="margin-top:10px;"><strong>' + counts[CONFIDENCE_CATEGORIES[2]] + '</strong> nouvelle(s) chose(s) que tu as essayée(s).</p>' +
+      '</div>' +
+      '<p class="pattern-note">La confiance n\'est pas quelque chose que tu dois croire sur parole. C\'est quelque chose que tu peux déjà constater, là, en noir sur blanc. L\'étape 7 est débloquée.</p>';
 
     text.innerHTML = html;
     document.getElementById('confirmContinue').onclick = function(){
