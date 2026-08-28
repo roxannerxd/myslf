@@ -1064,6 +1064,183 @@
     }
   ];
 
+  var STEP5_DAYS = [
+    {
+      num: 1, title: 'Corps', sub: 'Lundi — Jour 1 sur 7',
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Fais 20 minutes de mouvement.</div>' +
+          '<div class="hint">Marche, danse, yoga, sport… ce que tu veux, du moment que ton corps bouge.</div>' +
+          '<div class="toggle-row">' +
+            '<div class="toggle" id="s5d1_toggle"></div>' +
+            '<span class="toggle-label">Je l\'ai fait</span>' +
+          '</div>' +
+          '<textarea class="entry-textarea" id="s5d1_text" placeholder="Comment tu te sens, après ? (facultatif)"></textarea>' +
+          '<button type="button" class="save-btn" id="s5d1_save" disabled>Terminer ce jour</button>';
+        var done = false;
+        var toggle = document.getElementById('s5d1_toggle');
+        var btn = document.getElementById('s5d1_save');
+        toggle.addEventListener('click', function(){
+          done = !done;
+          toggle.classList.toggle('on', done);
+          btn.disabled = !done;
+        });
+        btn.addEventListener('click', function(){
+          var text = document.getElementById('s5d1_text').value.trim();
+          completeDay(key, 1, { done: true, text: text },
+            'Ton corps t\'en remercie.',
+            'Bouger, même un peu, rappelle à ton corps qu\'il est vivant et capable — pas juste un endroit où loge la tristesse.');
+        });
+      },
+      victory: function(d){ return d && d.done ? 'Tu as bougé ton corps pendant 20 minutes.' : null; }
+    },
+    {
+      num: 2, title: 'Environnement', sub: 'Mardi — Jour 2 sur 7',
+      render: function(c, key){
+        var opts = ['Ma chambre','Mon bureau ou coin de travail','La cuisine','Un tiroir ou placard','Mes plantes','Autre chose'];
+        c.innerHTML =
+          '<div class="prompt">Améliore un petit endroit chez toi.</div>' +
+          '<div class="hint">Pas besoin de tout refaire. Juste un coin qui te fait du bien à regarder.</div>' +
+          '<div class="option-row" id="s5d2_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<button type="button" class="save-btn" id="s5d2_save" disabled>Terminer ce jour</button>';
+        var row = document.getElementById('s5d2_opts');
+        var btn = document.getElementById('s5d2_save');
+        var chosen = null;
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          Array.prototype.forEach.call(row.querySelectorAll('.option-btn'), function(b){ b.classList.remove('selected'); });
+          el.classList.add('selected');
+          chosen = el.dataset.value;
+          btn.disabled = false;
+        });
+        btn.addEventListener('click', function(){
+          completeDay(key, 2, { place: chosen },
+            'Un peu plus de calme autour de toi.',
+            'Ton environnement influence ton état d\'esprit plus qu\'on ne le pense. Ce petit geste compte.');
+        });
+      },
+      victory: function(d){ return d && d.place ? 'Tu as amélioré un coin de chez toi : ' + d.place.toLowerCase() + '.' : null; }
+    },
+    {
+      num: 3, title: 'Social', sub: 'Mercredi — Jour 3 sur 7',
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Envoie un message à quelqu\'un que tu aimes.</div>' +
+          '<div class="hint">Pas besoin d\'un long message. Juste une preuve que tu penses à elle ou lui.</div>' +
+          '<div class="toggle-row">' +
+            '<div class="toggle" id="s5d3_toggle"></div>' +
+            '<span class="toggle-label">Je l\'ai fait</span>' +
+          '</div>' +
+          '<textarea class="entry-textarea" id="s5d3_text" placeholder="À qui, et pourquoi cette personne ? (facultatif)"></textarea>' +
+          '<button type="button" class="save-btn" id="s5d3_save" disabled>Terminer ce jour</button>';
+        var done = false;
+        var toggle = document.getElementById('s5d3_toggle');
+        var btn = document.getElementById('s5d3_save');
+        toggle.addEventListener('click', function(){
+          done = !done;
+          toggle.classList.toggle('on', done);
+          btn.disabled = !done;
+        });
+        btn.addEventListener('click', function(){
+          var text = document.getElementById('s5d3_text').value.trim();
+          completeDay(key, 3, { done: true, text: text },
+            'Ce lien-là existe encore.',
+            'Tu n\'as pas besoin d\'une seule personne pour te sentir entourée. Ce message en est la preuve.');
+        });
+      },
+      victory: function(d){ return d && d.done ? 'Tu as tendu la main à quelqu\'un que tu aimes.' : null; }
+    },
+    {
+      num: 4, title: 'Apparence', sub: 'Jeudi — Jour 4 sur 7',
+      render: function(c, key){
+        var opts = ['Une nouvelle coiffure','Une tenue qui me plaît','Un soin du visage','Du parfum','Me maquiller pour moi','Autre chose'];
+        c.innerHTML =
+          '<div class="prompt">Fais quelque chose qui te fait te sentir belle.</div>' +
+          '<div class="hint">Pour toi, pas pour qu\'on te regarde.</div>' +
+          '<div class="option-row" id="s5d4_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<button type="button" class="save-btn" id="s5d4_save" disabled>Terminer ce jour</button>';
+        var row = document.getElementById('s5d4_opts');
+        var btn = document.getElementById('s5d4_save');
+        var chosen = null;
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          Array.prototype.forEach.call(row.querySelectorAll('.option-btn'), function(b){ b.classList.remove('selected'); });
+          el.classList.add('selected');
+          chosen = el.dataset.value;
+          btn.disabled = false;
+        });
+        btn.addEventListener('click', function(){
+          completeDay(key, 4, { choice: chosen },
+            'Tu mérites de te sentir belle, pour toi.',
+            'Ce n\'est pas superficiel de prendre soin de ton apparence. C\'est une autre façon de prendre soin de toi.');
+        });
+      },
+      victory: function(d){ return d && d.choice ? 'Tu as pris soin de toi : ' + d.choice.toLowerCase() + '.' : null; }
+    },
+    {
+      num: 5, title: 'Projet', sub: 'Vendredi — Jour 5 sur 7',
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Avance 20 minutes sur quelque chose que tu veux accomplir.</div>' +
+          '<div class="hint">Un projet, une envie, un truc que tu repousses depuis longtemps.</div>' +
+          '<textarea class="entry-textarea" id="s5d5_text" placeholder="Sur quoi as-tu avancé ?"></textarea>' +
+          '<button type="button" class="save-btn" id="s5d5_save" disabled>Terminer ce jour</button>';
+        var ta = document.getElementById('s5d5_text');
+        var btn = document.getElementById('s5d5_save');
+        ta.addEventListener('input', function(){ btn.disabled = ta.value.trim().length === 0; });
+        btn.addEventListener('click', function(){
+          completeDay(key, 5, { progress: ta.value.trim() },
+            'C\'est un pas vers toi.',
+            'Avoir un projet à toi, qui n\'a rien à voir avec cette relation, c\'est déjà te construire une vie qui t\'appartient.');
+        });
+      },
+      victory: function(d){ return d && d.progress ? 'Tu as avancé sur ton projet : ' + d.progress.toLowerCase() + '.' : null; }
+    },
+    {
+      num: 6, title: 'Plaisir', sub: 'Samedi — Jour 6 sur 7',
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Fais quelque chose uniquement parce que c\'est agréable.</div>' +
+          '<div class="hint">Pas parce que c\'est productif. Juste parce que ça te fait du bien.</div>' +
+          '<textarea class="entry-textarea" id="s5d6_text" placeholder="Qu\'est-ce que tu as choisi ?"></textarea>' +
+          '<button type="button" class="save-btn" id="s5d6_save" disabled>Terminer ce jour</button>';
+        var ta = document.getElementById('s5d6_text');
+        var btn = document.getElementById('s5d6_save');
+        ta.addEventListener('input', function(){ btn.disabled = ta.value.trim().length === 0; });
+        btn.addEventListener('click', function(){
+          completeDay(key, 6, { pleasure: ta.value.trim() },
+            'Le plaisir n\'a pas besoin d\'être justifié.',
+            'Tu as le droit de faire des choses juste parce qu\'elles te font du bien, sans autre raison.');
+        });
+      },
+      victory: function(d){ return d && d.pleasure ? 'Tu t\'es offert un moment de plaisir : ' + d.pleasure.toLowerCase() + '.' : null; }
+    },
+    {
+      num: 7, title: 'Repos et bilan', sub: 'Dimanche — Jour 7 sur 7', isFinal: true,
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Aujourd\'hui, repose-toi. Pas de mission.</div>' +
+          '<div class="hint">Avant de fermer la semaine, une dernière phrase :</div>' +
+          '<div class="prompt" style="font-size:16px; margin-top:-8px;">Cette semaine, la partie de ma vie que j\'ai le plus aimé reconstruire, c\'est ______.</div>' +
+          '<input type="text" class="short-input" id="s5d7_favorite" placeholder="Complète la phrase…" maxlength="200" style="margin-bottom:18px;">' +
+          '<button type="button" class="save-btn" id="s5d7_save" disabled>Voir mon bilan</button>';
+        var input = document.getElementById('s5d7_favorite');
+        var btn = document.getElementById('s5d7_save');
+        input.addEventListener('input', function(){ btn.disabled = input.value.trim().length === 0; });
+        btn.addEventListener('click', function(){
+          completeDay(key, 7, { favorite: input.value.trim() }, null, null, true);
+        });
+      },
+      victory: function(d){ return d && d.favorite ? 'Ce que tu as le plus aimé reconstruire cette semaine : ' + d.favorite.toLowerCase() + '.' : null; }
+    }
+  ];
+
   var STEPS = [
     {
       key: 'step1', icon: '🤍', name: 'Stop & Breathe', sub: 'Je me stabilise',
@@ -1093,7 +1270,13 @@
       days: STEP4_DAYS,
       revealType: 'identity'
     },
-    { key: 'step5', icon: '🌸', name: 'Build Me', sub: 'Je recommence à construire ma vie', days: null },
+    {
+      key: 'step5', icon: '🌸', name: 'Build Me', sub: 'Je recommence à construire ma vie',
+      weekTitle: 'Build Me', weekSub: 'Semaine 5 — "Je recommence à construire ma vie"',
+      weekIntro: 'Cette semaine, on sort progressivement du passé. Chaque jour touche une partie différente de ta vie — le corps, l\'espace, le lien aux autres, le plaisir. L\'objectif : reconstruire une vie qui contient plein de sources de satisfaction, au lieu que toute l\'attention reste concentrée sur une seule personne.',
+      days: STEP5_DAYS,
+      recapText: 'Six jours à construire, un jour à te reposer. C\'est déjà une vie qui contient autre chose que le manque de quelqu\'un. L\'étape 6 est débloquée.'
+    },
     { key: 'step6', icon: '👑', name: 'Self-Worth', sub: 'Je recommence à croire en moi', days: null },
     { key: 'step7', icon: '🦋', name: 'My Standards', sub: 'Je décide de ce que j\'accepte', days: null },
     { key: 'step8', icon: '✨', name: 'Choose Me', sub: 'Je me choisis', days: null }
