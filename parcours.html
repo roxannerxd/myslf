@@ -171,6 +171,15 @@
   .victory-list li:first-child{border-top:none;}
   .victory-list li::before{content:"✓"; color:var(--clay-dark); font-weight:600; flex-shrink:0;}
 
+  /* --- my pattern reveal --- */
+  .pattern-card{
+    background:linear-gradient(135deg,#EFDCCF,#E3B9A5);
+    border-radius:20px; padding:26px 28px; text-align:left; margin-bottom:22px;
+  }
+  .pattern-card .pattern-label{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--clay-dark); margin-bottom:10px;}
+  .pattern-card p{font-size:14.5px; color:var(--ink); font-weight:400; line-height:1.6; margin-bottom:0;}
+  .pattern-note{font-size:12.5px; color:var(--ink-soft); font-weight:300; text-align:left; margin-bottom:26px;}
+
   footer{padding:40px 0; text-align:center; color:var(--ink-soft); font-size:13.5px; border-top:1px solid var(--line);}
 </style>
 </head>
@@ -202,10 +211,10 @@
 
     <div class="view" id="viewWeek">
       <a href="#" class="back-link" id="backToHome">← Retour au parcours</a>
-      <div class="eyebrow">Étape 1</div>
-      <h1 class="title">Stop &amp; Breathe</h1>
-      <p class="subtitle">Semaine 1 — "Je me stabilise"</p>
-      <div class="week-intro">Quand on vient de se séparer, on ne commence pas par travailler sur sa confiance. On commence par arrêter de fonctionner en mode urgence émotionnelle. Cette semaine, chaque jour t'aide à reprendre un tout petit peu de terrain.</div>
+      <div class="eyebrow" id="weekEyebrow">Étape 1</div>
+      <h1 class="title" id="weekTitle">Stop &amp; Breathe</h1>
+      <p class="subtitle" id="weekSubtitle">Semaine 1 — "Je me stabilise"</p>
+      <div class="week-intro" id="weekIntro"></div>
       <div id="daysList"></div>
     </div>
 
@@ -254,12 +263,22 @@
     return div.innerHTML;
   }
 
-  var journey = loadJourney();
+  function deElide(word){
+    return /^[aeiouéèêàâh]/i.test(word) ? 'd\'' + word : 'de ' + word;
+  }
 
-  var DAYS = [
+  var journey = loadJourney();
+  var currentStepKey = null;
+
+  function stepData(key){ return journey[key] || {}; }
+  function isDayDone(key, n){ return !!(stepData(key)['day' + n]); }
+  function isDayUnlocked(key, n){ return n === 1 || isDayDone(key, n - 1); }
+  function isStepFullyDone(key, days){ return isDayDone(key, days.length); }
+
+  var STEP1_DAYS = [
     {
       num: 1, title: 'Ma vérité', sub: 'Jour 1 sur 7',
-      render: function(c){
+      render: function(c, key){
         c.innerHTML =
           '<div class="prompt">Pourquoi suis-je ici aujourd\'hui ?</div>' +
           '<div class="hint">Pas ce que tu penses devoir écrire. La vraie réponse, même si elle est simple ou désordonnée.</div>' +
@@ -269,14 +288,14 @@
         var btn = document.getElementById('d1_save');
         ta.addEventListener('input', function(){ btn.disabled = ta.value.trim().length === 0; });
         btn.addEventListener('click', function(){
-          completeDay(1, { verite: ta.value.trim() }, 'Merci de l\'avoir écrit.', 'Cette vérité-là, même inconfortable, c\'est le point de départ le plus honnête que tu pouvais choisir.');
+          completeDay(key, 1, { verite: ta.value.trim() }, 'Merci de l\'avoir écrit.', 'Cette vérité-là, même inconfortable, c\'est le point de départ le plus honnête que tu pouvais choisir.');
         });
       },
       victory: function(d){ return d && d.verite ? 'Tu as posé ta vérité en mots, sans te mentir.' : null; }
     },
     {
       num: 2, title: 'Ce que je ressens', sub: 'Jour 2 sur 7',
-      render: function(c){
+      render: function(c, key){
         var emotions = ['Tristesse','Colère','Peur','Honte','Soulagement','Confusion','Nostalgie','Épuisement','Espoir'];
         c.innerHTML =
           '<div class="prompt">Choisis 3 émotions que tu ressens en ce moment.</div>' +
@@ -310,7 +329,7 @@
         });
         ta.addEventListener('input', updateBtn);
         btn.addEventListener('click', function(){
-          completeDay(2, { emotions: selected, description: ta.value.trim() },
+          completeDay(key, 2, { emotions: selected, description: ta.value.trim() },
             'Tu as mis des mots dessus.',
             'Nommer ce qu\'on ressent — ' + selected.join(', ').toLowerCase() + ' — c\'est déjà une façon de reprendre un peu de pouvoir sur ce qui se passe en toi.');
         });
@@ -319,7 +338,7 @@
     },
     {
       num: 3, title: 'Mon espace', sub: 'Jour 3 sur 7',
-      render: function(c){
+      render: function(c, key){
         var actions = ['Ranger ma chambre','Changer les draps','Prendre une douche','Allumer une bougie','Ouvrir les fenêtres, aérer','Autre chose'];
         c.innerHTML =
           '<div class="prompt">Fais une seule chose pour rendre ton environnement plus agréable.</div>' +
@@ -340,7 +359,7 @@
           btn.disabled = false;
         });
         btn.addEventListener('click', function(){
-          completeDay(3, { action: chosen },
+          completeDay(key, 3, { action: chosen },
             'C\'est fait.',
             'Un petit geste sur ton espace, et déjà un peu plus de calme autour de toi. Ça compte plus que tu ne le penses.');
         });
@@ -349,7 +368,7 @@
     },
     {
       num: 4, title: '10 minutes dehors', sub: 'Jour 4 sur 7',
-      render: function(c){
+      render: function(c, key){
         c.innerHTML =
           '<div class="prompt">Sors marcher 10 minutes, sans téléphone.</div>' +
           '<div class="hint">Juste toi, dehors, sans écran. C\'est tout.</div>' +
@@ -369,7 +388,7 @@
           btn.disabled = !done;
         });
         btn.addEventListener('click', function(){
-          completeDay(4, { done: true, feeling: ta.value.trim() },
+          completeDay(key, 4, { done: true, feeling: ta.value.trim() },
             'Bien joué.',
             'Dix minutes dehors, sans écran — c\'est court, mais ton corps et ta tête en ont besoin après ce que tu traverses.');
         });
@@ -378,7 +397,7 @@
     },
     {
       num: 5, title: 'Ce qui me déclenche', sub: 'Jour 5 sur 7',
-      render: function(c){
+      render: function(c, key){
         var triggers = ['Ses réseaux sociaux','La solitude','Le soir','Une chanson','Un lieu qu\'on aimait','Les amis en commun','Une notification'];
         c.innerHTML =
           '<div class="prompt">Identifie ce qui provoque le plus souvent tes moments difficiles.</div>' +
@@ -402,7 +421,7 @@
         });
         btn.addEventListener('click', function(){
           var notes = document.getElementById('d5_notes').value.trim();
-          completeDay(5, { triggers: selected, notes: notes },
+          completeDay(key, 5, { triggers: selected, notes: notes },
             'C\'est noté.',
             'Savoir ce qui déclenche ces moments-là, c\'est déjà pouvoir s\'y préparer un peu, au lieu de les subir complètement.');
         });
@@ -411,7 +430,7 @@
     },
     {
       num: 6, title: 'Aujourd\'hui, je ne me juge pas', sub: 'Jour 6 sur 7',
-      render: function(c){
+      render: function(c, key){
         c.innerHTML =
           '<div class="prompt">Écris 3 choses que tu te pardonnes.</div>' +
           '<div class="hint">Même minuscules. "Je me pardonne d\'avoir…"</div>' +
@@ -428,7 +447,7 @@
         }
         [f1, f2, f3].forEach(function(f){ f.addEventListener('input', updateBtn); });
         btn.addEventListener('click', function(){
-          completeDay(6, { forgive: [f1.value.trim(), f2.value.trim(), f3.value.trim()] },
+          completeDay(key, 6, { forgive: [f1.value.trim(), f2.value.trim(), f3.value.trim()] },
             'Tu te dois cette douceur.',
             'Se pardonner, ce n\'est pas excuser — c\'est arrêter de se punir pour avoir été humaine.');
         });
@@ -436,8 +455,8 @@
       victory: function(d){ return d && d.forgive && d.forgive.length ? 'Tu t\'es pardonné ' + d.forgive.length + ' choses.' : null; }
     },
     {
-      num: 7, title: 'Mon premier bilan', sub: 'Jour 7 sur 7',
-      render: function(c){
+      num: 7, title: 'Mon premier bilan', sub: 'Jour 7 sur 7', isFinal: true,
+      render: function(c, key){
         c.innerHTML =
           '<div class="prompt">Cette semaine, j\'ai survécu à ______.</div>' +
           '<input type="text" class="short-input" id="d7_survived" placeholder="Complète la phrase…" maxlength="200" style="margin-bottom:18px;">' +
@@ -446,55 +465,307 @@
         var btn = document.getElementById('d7_save');
         input.addEventListener('input', function(){ btn.disabled = input.value.trim().length === 0; });
         btn.addEventListener('click', function(){
-          completeDay(7, { survived: input.value.trim() }, null, null, true);
+          completeDay(key, 7, { survived: input.value.trim() }, null, null, true);
         });
       },
       victory: function(d){ return d && d.survived ? 'Tu as survécu à ' + d.survived.toLowerCase() + '.' : null; }
     }
   ];
 
-  var STEPS = [
-    { key: 'step1', icon: '🤍', name: 'Stop & Breathe', sub: 'Je me stabilise', view: 'viewWeek' },
-    { key: 'step2', icon: '🪞', name: 'Understand Me', sub: 'Je comprends pourquoi je m\'attache', view: null },
-    { key: 'step3', icon: '🚪', name: 'Detach', sub: 'Je reprends de la distance', view: null },
-    { key: 'step4', icon: '🪞', name: 'Remember Me', sub: 'Qui suis-je sans cette relation ?', view: null },
-    { key: 'step5', icon: '🌸', name: 'Build Me', sub: 'Je recommence à construire ma vie', view: null },
-    { key: 'step6', icon: '👑', name: 'Self-Worth', sub: 'Je recommence à croire en moi', view: null },
-    { key: 'step7', icon: '🦋', name: 'My Standards', sub: 'Je décide de ce que j\'accepte', view: null },
-    { key: 'step8', icon: '✨', name: 'Choose Me', sub: 'Je me choisis', view: null }
+  var STEP2_DAYS = [
+    {
+      num: 1, title: 'Ce qu\'il représentait', sub: 'Jour 1 sur 7',
+      render: function(c, key){
+        var opts = ['De la sécurité','De la validation','Ne plus être seule','Un projet de vie','Une habitude','Je ne sais pas encore'];
+        c.innerHTML =
+          '<div class="prompt">Qu\'est-ce que cette personne représentait pour moi ?</div>' +
+          '<div class="hint">Écris ce qui te vient, sans trop réfléchir.</div>' +
+          '<textarea class="entry-textarea" id="s2d1_text" placeholder="Écris librement…"></textarea>' +
+          '<div class="hint" style="margin-top:-8px;">Si tu devais résumer ça en un mot :</div>' +
+          '<div class="option-row" id="s2d1_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<button type="button" class="save-btn" id="s2d1_save" disabled>Terminer ce jour</button>';
+        var ta = document.getElementById('s2d1_text');
+        var row = document.getElementById('s2d1_opts');
+        var btn = document.getElementById('s2d1_save');
+        var chosen = null;
+        function updateBtn(){ btn.disabled = !(ta.value.trim().length > 0 && chosen); }
+        ta.addEventListener('input', updateBtn);
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          Array.prototype.forEach.call(row.querySelectorAll('.option-btn'), function(b){ b.classList.remove('selected'); });
+          el.classList.add('selected');
+          chosen = el.dataset.value;
+          updateBtn();
+        });
+        btn.addEventListener('click', function(){
+          completeDay(key, 1, { text: ta.value.trim(), represents: chosen },
+            'C\'est un bon début.',
+            'Comprendre ce que cette relation représentait, c\'est déjà commencer à voir ce que tu cherches vraiment à combler.');
+        });
+      },
+      pattern: function(d){ return d && d.represents ? d.represents.toLowerCase() : null; }
+    },
+    {
+      num: 2, title: 'Ce que j\'avais peur de perdre', sub: 'Jour 2 sur 7',
+      render: function(c, key){
+        var opts = ['Oui, souvent', 'Parfois, ailleurs aussi', 'Non, c\'est nouveau', 'Je ne sais pas'];
+        c.innerHTML =
+          '<div class="prompt">Qu\'est-ce que j\'avais peur de perdre, en perdant cette relation ?</div>' +
+          '<textarea class="entry-textarea" id="s2d2_text" placeholder="Écris librement…"></textarea>' +
+          '<div class="hint" style="margin-top:-8px;">Est-ce que tu ressens cette peur ailleurs dans ta vie aussi ?</div>' +
+          '<div class="option-row" id="s2d2_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<button type="button" class="save-btn" id="s2d2_save" disabled>Terminer ce jour</button>';
+        var ta = document.getElementById('s2d2_text');
+        var row = document.getElementById('s2d2_opts');
+        var btn = document.getElementById('s2d2_save');
+        var chosen = null;
+        function updateBtn(){ btn.disabled = !(ta.value.trim().length > 0 && chosen); }
+        ta.addEventListener('input', updateBtn);
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          Array.prototype.forEach.call(row.querySelectorAll('.option-btn'), function(b){ b.classList.remove('selected'); });
+          el.classList.add('selected');
+          chosen = el.dataset.value;
+          updateBtn();
+        });
+        btn.addEventListener('click', function(){
+          completeDay(key, 2, { text: ta.value.trim(), elsewhere: chosen },
+            'Merci de l\'avoir regardé en face.',
+            'Cette peur-là parle souvent plus fort que la relation elle-même. La reconnaître, c\'est déjà une forme de courage.');
+        });
+      },
+      pattern: function(d){ return d && d.elsewhere === 'Oui, souvent' ? 'une peur qui dépasse cette seule relation' : null; }
+    },
+    {
+      num: 3, title: 'Quand je me sentais le plus aimée', sub: 'Jour 3 sur 7',
+      render: function(c, key){
+        var opts = ['Il/elle me rassurait','On passait du temps ensemble','Il/elle me complimentait','On se réconciliait après une dispute','Il/elle me choisissait devant les autres'];
+        c.innerHTML =
+          '<div class="prompt">Quand est-ce que je me sentais le plus aimée, dans cette relation ?</div>' +
+          '<textarea class="entry-textarea" id="s2d3_text" placeholder="Écris librement…"></textarea>' +
+          '<div class="hint" style="margin-top:-8px;">Ces moments avaient un point commun. Sélectionne ce qui résonne (autant que tu veux) :</div>' +
+          '<div class="option-row" id="s2d3_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<button type="button" class="save-btn" id="s2d3_save" disabled>Terminer ce jour</button>';
+        var ta = document.getElementById('s2d3_text');
+        var row = document.getElementById('s2d3_opts');
+        var btn = document.getElementById('s2d3_save');
+        var selected = [];
+        function updateBtn(){ btn.disabled = !(ta.value.trim().length > 0 && selected.length > 0); }
+        ta.addEventListener('input', updateBtn);
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          var val = el.dataset.value;
+          var idx = selected.indexOf(val);
+          if (idx !== -1){ selected.splice(idx, 1); el.classList.remove('selected'); }
+          else { selected.push(val); el.classList.add('selected'); }
+          updateBtn();
+        });
+        btn.addEventListener('click', function(){
+          completeDay(key, 3, { text: ta.value.trim(), moments: selected },
+            'C\'est précieux, ça.',
+            'Ces instants-là t\'ont montré ce dont tu as besoin pour te sentir aimée. Garde-les en tête, ils te seront utiles pour la suite.');
+        });
+      },
+      pattern: function(d){ return d && d.moments && d.moments.indexOf('Il/elle me rassurait') !== -1 ? 'un fort besoin de réassurance' : null; }
+    },
+    {
+      num: 4, title: 'Amour ou réassurance ?', sub: 'Jour 4 sur 7',
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Est-ce que je confondais amour et réassurance ?</div>' +
+          '<div class="hint">Il n\'y a pas de bonne réponse. Juste la tienne, honnêtement.</div>' +
+          '<div class="toggle-row">' +
+            '<div class="toggle" id="s2d4_toggle"></div>' +
+            '<span class="toggle-label">Oui, je pense que oui, en partie</span>' +
+          '</div>' +
+          '<textarea class="entry-textarea" id="s2d4_text" placeholder="Pourquoi ? (facultatif)"></textarea>' +
+          '<button type="button" class="save-btn" id="s2d4_save">Terminer ce jour</button>';
+        var toggle = document.getElementById('s2d4_toggle');
+        var confused = false;
+        toggle.addEventListener('click', function(){
+          confused = !confused;
+          toggle.classList.toggle('on', confused);
+        });
+        document.getElementById('s2d4_save').addEventListener('click', function(){
+          var text = document.getElementById('s2d4_text').value.trim();
+          completeDay(key, 4, { confused: confused, text: text },
+            'C\'est une prise de conscience importante.',
+            confused ? 'Confondre amour et réassurance, c\'est très courant — et une fois qu\'on le voit, on peut commencer à les distinguer.' : 'Continuer à observer cette différence t\'aidera à choisir plus consciemment la prochaine fois.');
+        });
+      },
+      pattern: function(d){ return d && d.confused ? 'une tendance à confondre amour et réassurance' : null; }
+    },
+    {
+      num: 5, title: 'Ce qui se répète', sub: 'Jour 5 sur 7',
+      render: function(c, key){
+        var opts = ['Je donne plus que je ne reçois','J\'ai peur d\'être abandonnée','Je m\'efface pour être aimée','Je choisis des personnes indisponibles','Rien de particulier'];
+        c.innerHTML =
+          '<div class="prompt">Est-ce que cette relation ressemblait à d\'autres liens importants de ta vie ?</div>' +
+          '<div class="hint">Famille, amitiés, ex précédents…</div>' +
+          '<textarea class="entry-textarea" id="s2d5_text" placeholder="Écris librement…"></textarea>' +
+          '<div class="hint" style="margin-top:-8px;">Si oui, qu\'est-ce qui se répète ?</div>' +
+          '<div class="option-row" id="s2d5_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<button type="button" class="save-btn" id="s2d5_save" disabled>Terminer ce jour</button>';
+        var ta = document.getElementById('s2d5_text');
+        var row = document.getElementById('s2d5_opts');
+        var btn = document.getElementById('s2d5_save');
+        var chosen = null;
+        function updateBtn(){ btn.disabled = !(ta.value.trim().length > 0 && chosen); }
+        ta.addEventListener('input', updateBtn);
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          Array.prototype.forEach.call(row.querySelectorAll('.option-btn'), function(b){ b.classList.remove('selected'); });
+          el.classList.add('selected');
+          chosen = el.dataset.value;
+          updateBtn();
+        });
+        btn.addEventListener('click', function(){
+          completeDay(key, 5, { text: ta.value.trim(), repeats: chosen },
+            'Voir le fil, c\'est déjà commencer à le couper.',
+            'Un schéma qui se répète n\'est pas une fatalité — c\'est juste une habitude que tu peux, petit à petit, changer.');
+        });
+      },
+      pattern: function(d){ return d && d.repeats && d.repeats !== 'Rien de particulier' ? d.repeats.toLowerCase() : null; }
+    },
+    {
+      num: 6, title: 'Ce dont j\'ai besoin, moi', sub: 'Jour 6 sur 7',
+      render: function(c, key){
+        var opts = ['Être rassurée','Être respectée','Avoir de l\'espace','Être choisie','Être entendue','Autre'];
+        c.innerHTML =
+          '<div class="prompt">Si tu devais nommer un besoin que tu n\'as pas assez écouté dans cette relation, lequel serait-ce ?</div>' +
+          '<div class="option-row" id="s2d6_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<textarea class="entry-textarea" id="s2d6_text" placeholder="Un peu plus de détails ? (facultatif)"></textarea>' +
+          '<button type="button" class="save-btn" id="s2d6_save" disabled>Terminer ce jour</button>';
+        var row = document.getElementById('s2d6_opts');
+        var btn = document.getElementById('s2d6_save');
+        var chosen = null;
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          Array.prototype.forEach.call(row.querySelectorAll('.option-btn'), function(b){ b.classList.remove('selected'); });
+          el.classList.add('selected');
+          chosen = el.dataset.value;
+          btn.disabled = false;
+        });
+        btn.addEventListener('click', function(){
+          var text = document.getElementById('s2d6_text').value.trim();
+          completeDay(key, 6, { need: chosen, text: text },
+            'Retiens celui-là.',
+            'Ce besoin-là ne disparaît pas — il attend juste d\'être écouté, par quelqu\'un d\'autre, ou d\'abord par toi-même.');
+        });
+      },
+      pattern: function(d){ return d && d.need ? 'un besoin ' + deElide(d.need.toLowerCase()) + ' pas assez écouté' : null; }
+    },
+    {
+      num: 7, title: 'My Pattern', sub: 'Jour 7 sur 7', isFinal: true,
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Une dernière question avant ton pattern.</div>' +
+          '<div class="hint">En un mot, comment tu te sens après cette semaine de compréhension ?</div>' +
+          '<input type="text" class="short-input" id="s2d7_feeling" placeholder="Un mot, ou une phrase courte…" maxlength="200" style="margin-bottom:18px;">' +
+          '<button type="button" class="save-btn" id="s2d7_save" disabled>Voir mon pattern</button>';
+        var input = document.getElementById('s2d7_feeling');
+        var btn = document.getElementById('s2d7_save');
+        input.addEventListener('input', function(){ btn.disabled = input.value.trim().length === 0; });
+        btn.addEventListener('click', function(){
+          completeDay(key, 7, { feeling: input.value.trim() }, null, null, true);
+        });
+      },
+      pattern: function(){ return null; }
+    }
   ];
 
-  function isDayDone(n){ return !!(journey['day' + n]); }
-  function isDayUnlocked(n){ return n === 1 || isDayDone(n - 1); }
-  function isStep1Done(){ return isDayDone(7); }
+  var STEPS = [
+    {
+      key: 'step1', icon: '🤍', name: 'Stop & Breathe', sub: 'Je me stabilise',
+      weekTitle: 'Stop & Breathe', weekSub: 'Semaine 1 — "Je me stabilise"',
+      weekIntro: 'Quand on vient de se séparer, on ne commence pas par travailler sur sa confiance. On commence par arrêter de fonctionner en mode urgence émotionnelle. Cette semaine, chaque jour t\'aide à reprendre un tout petit peu de terrain.',
+      days: STEP1_DAYS,
+      recapText: 'Sept jours, sept petits pas. Ce n\'est pas rien — c\'est le début. L\'étape 2 est débloquée.'
+    },
+    {
+      key: 'step2', icon: '🪞', name: 'Understand Me', sub: 'Je comprends pourquoi je m\'attache',
+      weekTitle: 'Understand Me', weekSub: 'Semaine 2 — "Je comprends pourquoi je m\'attache"',
+      weekIntro: 'Cette semaine, on ne cherche pas à te diagnostiquer. On regarde ensemble, un jour à la fois, comment tu t\'attaches, ce que tu attends d\'une relation, et ce qui se répète. À la fin, tu auras une première image de tes habitudes émotionnelles.',
+      days: STEP2_DAYS,
+      isPatternReveal: true
+    },
+    { key: 'step3', icon: '🚪', name: 'Detach', sub: 'Je reprends de la distance', days: null },
+    { key: 'step4', icon: '🪞', name: 'Remember Me', sub: 'Qui suis-je sans cette relation ?', days: null },
+    { key: 'step5', icon: '🌸', name: 'Build Me', sub: 'Je recommence à construire ma vie', days: null },
+    { key: 'step6', icon: '👑', name: 'Self-Worth', sub: 'Je recommence à croire en moi', days: null },
+    { key: 'step7', icon: '🦋', name: 'My Standards', sub: 'Je décide de ce que j\'accepte', days: null },
+    { key: 'step8', icon: '✨', name: 'Choose Me', sub: 'Je me choisis', days: null }
+  ];
+
+  function stepByKey(key){
+    for (var i = 0; i < STEPS.length; i++){ if (STEPS[i].key === key) return STEPS[i]; }
+    return null;
+  }
+  function stepIndex(key){
+    for (var i = 0; i < STEPS.length; i++){ if (STEPS[i].key === key) return i; }
+    return -1;
+  }
+  function isStepUnlocked(index){
+    if (index === 0) return true;
+    var prev = STEPS[index - 1];
+    return !!prev.days && isStepFullyDone(prev.key, prev.days);
+  }
 
   function renderSteps(){
     var list = document.getElementById('stepsList');
     list.innerHTML = STEPS.map(function(s, i){
-      var num = i + 1;
-      var done = num === 1 && isStep1Done();
-      var clickable = num === 1;
-      var statusText = done ? 'Terminé' : (clickable ? (isDayDone(1) || isDayDone(2) || isDayDone(3) || isDayDone(4) || isDayDone(5) || isDayDone(6) ? 'En cours' : 'Commencer') : 'Bientôt');
-      return '<div class="step-card ' + (clickable ? 'clickable' : 'locked') + (done ? ' done' : '') + '" data-step="' + num + '">' +
+      var implemented = !!s.days;
+      var done = implemented && isStepFullyDone(s.key, s.days);
+      var unlocked = isStepUnlocked(i);
+      var clickable = implemented && unlocked;
+      var inProgress = implemented && !done && s.days.some(function(d){ return isDayDone(s.key, d.num); });
+      var statusText = done ? 'Terminé' : (clickable ? (inProgress ? 'En cours' : 'Commencer') : (unlocked ? 'Bientôt' : 'Verrouillé'));
+      return '<div class="step-card ' + (clickable ? 'clickable' : 'locked') + (done ? ' done' : '') + '" data-step-key="' + s.key + '">' +
         '<div class="step-icon">' + (done ? '✓' : s.icon) + '</div>' +
-        '<div class="step-body"><div class="step-name">Étape ' + num + ' — ' + s.name + '</div><div class="step-sub">' + s.sub + '</div></div>' +
+        '<div class="step-body"><div class="step-name">Étape ' + (i + 1) + ' — ' + s.name + '</div><div class="step-sub">' + s.sub + '</div></div>' +
         '<div class="step-status' + (done ? ' done' : '') + '">' + statusText + '</div>' +
       '</div>';
     }).join('');
 
     Array.prototype.forEach.call(list.querySelectorAll('.step-card.clickable'), function(card){
       card.addEventListener('click', function(){
-        showView('viewWeek');
-        renderDays();
+        openWeek(card.dataset.stepKey);
       });
     });
   }
 
+  function openWeek(key){
+    var step = stepByKey(key);
+    currentStepKey = key;
+    document.getElementById('weekEyebrow').textContent = 'Étape ' + (stepIndex(key) + 1);
+    document.getElementById('weekTitle').textContent = step.weekTitle;
+    document.getElementById('weekSubtitle').textContent = step.weekSub;
+    document.getElementById('weekIntro').textContent = step.weekIntro;
+    renderDays();
+    showView('viewWeek');
+  }
+
   function renderDays(){
+    var step = stepByKey(currentStepKey);
     var list = document.getElementById('daysList');
-    list.innerHTML = DAYS.map(function(d){
-      var done = isDayDone(d.num);
-      var unlocked = isDayUnlocked(d.num);
+    list.innerHTML = step.days.map(function(d){
+      var done = isDayDone(step.key, d.num);
+      var unlocked = isDayUnlocked(step.key, d.num);
       return '<div class="day-row ' + (unlocked ? 'clickable' : 'locked') + (done ? ' done' : '') + '" data-day="' + d.num + '">' +
         '<div class="day-num">' + (done ? '✓' : d.num) + '</div>' +
         '<div class="day-info"><div class="day-title">' + escapeHtml(d.title) + '</div><div class="day-sub">' + (unlocked ? (done ? 'Terminé' : 'Disponible') : 'Verrouillé') + '</div></div>' +
@@ -509,21 +780,26 @@
   }
 
   function openDay(num){
-    var day = DAYS[num - 1];
+    var step = stepByKey(currentStepKey);
+    var day = step.days[num - 1];
     document.getElementById('dayEyebrow').textContent = day.sub;
     document.getElementById('dayTitle').textContent = day.title;
     document.getElementById('daySubtitle').textContent = '';
     var content = document.getElementById('dayContent');
-    day.render(content);
+    day.render(content, step.key);
     showView('viewDay');
   }
 
-  function completeDay(num, data, confirmTitle, confirmText, isLastDay){
-    journey['day' + num] = Object.assign({ completedAt: Date.now() }, data);
+  function completeDay(stepKey, num, data, confirmTitle, confirmText, isLastDay){
+    if (!journey[stepKey]) journey[stepKey] = {};
+    journey[stepKey]['day' + num] = Object.assign({ completedAt: Date.now() }, data);
     saveJourney(journey);
 
+    var step = stepByKey(stepKey);
+
     if (isLastDay){
-      renderRecap();
+      if (step.isPatternReveal) renderPatternReveal(step);
+      else renderRecap(step);
       showView('viewConfirm');
       return;
     }
@@ -537,17 +813,44 @@
     showView('viewConfirm');
   }
 
-  function renderRecap(){
+  function renderRecap(step){
     var victories = [];
-    DAYS.forEach(function(d){
-      var data = journey['day' + d.num];
-      var v = d.victory(data);
+    step.days.forEach(function(d){
+      var data = stepData(step.key)['day' + d.num];
+      var v = d.victory ? d.victory(data) : null;
       if (v) victories.push(v);
     });
     document.getElementById('confirmTitle').textContent = 'Regarde ce que tu as fait.';
     var text = document.getElementById('confirmText');
     text.innerHTML = '<ul class="victory-list">' + victories.map(function(v){ return '<li>' + escapeHtml(v) + '</li>'; }).join('') +
-      '</ul><p style="font-size:14px; color:var(--ink-soft); font-weight:300;">Sept jours, sept petits pas. Ce n\'est pas rien — c\'est le début. L\'étape 2 arrive bientôt.</p>';
+      '</ul><p style="font-size:14px; color:var(--ink-soft); font-weight:300;">' + escapeHtml(step.recapText || '') + '</p>';
+    document.getElementById('confirmContinue').onclick = function(){
+      renderSteps();
+      showView('viewHome');
+    };
+  }
+
+  function renderPatternReveal(step){
+    var sd = stepData(step.key);
+    var fragments = [];
+    step.days.forEach(function(d){
+      var frag = d.pattern ? d.pattern(sd['day' + d.num]) : null;
+      if (frag) fragments.push(frag);
+    });
+
+    document.getElementById('confirmTitle').textContent = 'Voici ce que nous avons découvert sur toi.';
+    var text = document.getElementById('confirmText');
+
+    var sentence;
+    if (fragments.length){
+      sentence = 'Cette semaine, tu as montré ' + fragments.join(', ') + '. Ce n\'est pas un diagnostic — juste une première photographie de tes habitudes émotionnelles, telle que tu les as décrites toi-même.';
+    } else {
+      sentence = 'Tu as pris le temps de te regarder de près cette semaine, et c\'est déjà beaucoup. Continue à observer ces schémas, ils deviendront plus clairs avec le temps.';
+    }
+
+    text.innerHTML =
+      '<div class="pattern-card"><div class="pattern-label">My pattern</div><p>' + escapeHtml(sentence) + '</p></div>' +
+      '<p class="pattern-note">Retrouve toujours cette lecture depuis "Mes patterns" dans le menu. L\'étape 3 est débloquée.</p>';
     document.getElementById('confirmContinue').onclick = function(){
       renderSteps();
       showView('viewHome');
