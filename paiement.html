@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MYSLF — Paiement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7EFE8;
+    --cream-2:#F1E4DA;
+    --clay:#C98A73;
+    --clay-dark:#B06E56;
+    --ink:#3B302C;
+    --ink-soft:#6B5B54;
+    --line:rgba(59,48,44,0.12);
+    --white:#FFFDFB;
+    --error:#B0453E;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Jost',sans-serif;
+    color:var(--ink);
+    background:var(--cream);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,.serif{font-family:'Cormorant Garamond',serif;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:920px;margin:0 auto;padding:0 32px;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  a:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--clay-dark);outline-offset:2px;}
+
+  header{border-bottom:1px solid var(--line);}
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 32px; max-width:1180px; margin:0 auto;
+  }
+  .logo{font-family:'Cormorant Garamond',serif; font-size:24px; letter-spacing:0.08em; font-weight:600;}
+  .nav-back{font-size:14px; color:var(--ink-soft); transition:color .2s;}
+  .nav-back:hover{color:var(--ink);}
+
+  main{padding:64px 0 100px;}
+  .eyebrow{
+    font-size:13px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--clay-dark); margin-bottom:10px; text-align:center;
+  }
+  h1.title{font-size:clamp(28px,4vw,38px); font-weight:500; text-align:center; margin-bottom:48px;}
+
+  .checkout-grid{display:grid; grid-template-columns:1fr; gap:28px;}
+  @media(min-width:800px){.checkout-grid{grid-template-columns:1fr 340px;}}
+
+  .card{
+    background:var(--white); border:1px solid var(--line); border-radius:22px; padding:32px;
+  }
+
+  .field{margin-bottom:20px;}
+  .field label{
+    display:block; font-size:13px; color:var(--ink-soft); margin-bottom:8px; letter-spacing:.02em;
+  }
+  .field input{
+    width:100%; padding:13px 16px; border-radius:12px; border:1px solid var(--line);
+    background:var(--cream); font-family:inherit; font-size:14.5px; color:var(--ink);
+    transition:border-color .2s;
+  }
+  .field input:focus{outline:none; border-color:var(--clay);}
+  .field input.invalid{border-color:var(--error);}
+  .field-error{font-size:12px; color:var(--error); margin-top:6px; display:none;}
+  .field-error.show{display:block;}
+  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+
+  .pay-btn{
+    width:100%; padding:16px; border-radius:100px; background:var(--clay); color:var(--white);
+    font-size:15px; letter-spacing:.02em; margin-top:8px; transition:background .2s, transform .2s;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .pay-btn:hover{background:var(--clay-dark); transform:translateY(-1px);}
+  .pay-btn:disabled{opacity:.7; cursor:default; transform:none;}
+  .spinner{
+    width:16px; height:16px; border-radius:50%; border:2px solid rgba(255,255,255,0.4);
+    border-top-color:white; animation:spin .7s linear infinite; display:none;
+  }
+  .pay-btn.loading .spinner{display:inline-block;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .secure-note{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    font-size:12px; color:var(--ink-soft); margin-top:16px;
+  }
+  .demo-note{
+    text-align:center; font-size:11.5px; color:var(--ink-soft); opacity:.65; margin-top:10px;
+  }
+
+  .summary-card{align-self:start;}
+  .summary-plan{font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--clay-dark); margin-bottom:6px;}
+  .summary-price{font-family:'Cormorant Garamond',serif; font-size:38px; font-weight:600; margin-bottom:2px;}
+  .summary-price span{font-family:'Jost'; font-size:14px; color:var(--ink-soft); font-weight:300;}
+  .summary-sub{font-size:13px; color:var(--ink-soft); margin-bottom:24px;}
+  .summary-list{list-style:none; margin-bottom:8px;}
+  .summary-list li{
+    display:flex; align-items:center; gap:10px; font-size:13.5px; padding:8px 0;
+    color:var(--ink-soft); font-weight:300; border-top:1px solid var(--line);
+  }
+  .summary-list li::before{content:"✓"; color:var(--clay-dark); font-weight:600;}
+  .summary-total{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:16px; padding-top:16px; border-top:1px solid var(--line); font-size:15px; font-weight:500;
+  }
+
+  footer{padding:40px 0; text-align:center; color:var(--ink-soft); font-size:13.5px; border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="index.html" class="logo">MYSLF</a>
+    <a href="index.html#tarifs" class="nav-back">← Retour aux tarifs</a>
+  </nav>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="eyebrow">Dernière étape</div>
+    <h1 class="title">Finalise ton inscription</h1>
+
+    <div class="checkout-grid">
+      <div class="card">
+        <form id="payForm" novalidate>
+          <div class="field">
+            <label for="cardName">Nom sur la carte</label>
+            <input type="text" id="cardName" placeholder="Ex. Roxanne Dupont" autocomplete="cc-name" required>
+            <div class="field-error" id="err-cardName">Merci d'indiquer le nom sur la carte.</div>
+          </div>
+          <div class="field">
+            <label for="cardNumber">Numéro de carte</label>
+            <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" inputmode="numeric" maxlength="19" autocomplete="cc-number" required>
+            <div class="field-error" id="err-cardNumber">Numéro de carte invalide.</div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="cardExpiry">Expiration</label>
+              <input type="text" id="cardExpiry" placeholder="MM / AA" inputmode="numeric" maxlength="7" autocomplete="cc-exp" required>
+              <div class="field-error" id="err-cardExpiry">Date invalide.</div>
+            </div>
+            <div class="field">
+              <label for="cardCvc">CVC</label>
+              <input type="text" id="cardCvc" placeholder="123" inputmode="numeric" maxlength="4" autocomplete="cc-csc" required>
+              <div class="field-error" id="err-cardCvc">CVC invalide.</div>
+            </div>
+          </div>
+
+          <button type="submit" class="pay-btn" id="payBtn">
+            <span class="spinner"></span>
+            <span id="payBtnLabel">Payer et s'abonner</span>
+          </button>
+          <div class="secure-note">🔒 Paiement sécurisé</div>
+          <div class="demo-note">Démo — aucune donnée de carte n'est transmise ni enregistrée.</div>
+        </form>
+      </div>
+
+      <div class="card summary-card">
+        <div class="summary-plan" id="sumPlanLabel">Formule mensuelle</div>
+        <div class="summary-price" id="sumPrice">9,99€ <span>/mois</span></div>
+        <div class="summary-sub" id="sumSub">Sans engagement</div>
+        <ul class="summary-list">
+          <li>Accès à toutes les fonctionnalités</li>
+          <li>Ton IA personnelle</li>
+          <li>Journal &amp; exercices</li>
+          <li>Soutien communautaire</li>
+        </ul>
+        <div class="summary-total">
+          <span>Total aujourd'hui</span>
+          <span id="sumTotal">9,99€</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div>© 2026 MYSLF. Un espace pour te retrouver.</div>
+</footer>
+
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var plan = params.get('plan') === 'annuel' ? 'annuel' : 'mensuel';
+
+  var plans = {
+    mensuel: { label: 'Formule mensuelle', price: '9,99€', cycle: '/mois', sub: 'Sans engagement', total: '9,99€' },
+    annuel: { label: 'Formule annuelle', price: '59,99€', cycle: '/an', sub: 'Soit 5€ / mois', total: '59,99€' }
+  };
+  var p = plans[plan];
+  document.getElementById('sumPlanLabel').textContent = p.label;
+  document.getElementById('sumPrice').innerHTML = p.price + ' <span>' + p.cycle + '</span>';
+  document.getElementById('sumSub').textContent = p.sub;
+  document.getElementById('sumTotal').textContent = p.total;
+
+  var cardNumber = document.getElementById('cardNumber');
+  cardNumber.addEventListener('input', function(){
+    var digits = cardNumber.value.replace(/\D/g, '').slice(0, 16);
+    cardNumber.value = digits.replace(/(.{4})/g, '$1 ').trim();
+  });
+
+  var cardExpiry = document.getElementById('cardExpiry');
+  cardExpiry.addEventListener('input', function(){
+    var digits = cardExpiry.value.replace(/\D/g, '').slice(0, 4);
+    if (digits.length > 2) digits = digits.slice(0, 2) + ' / ' + digits.slice(2);
+    cardExpiry.value = digits;
+  });
+
+  var cardCvc = document.getElementById('cardCvc');
+  cardCvc.addEventListener('input', function(){
+    cardCvc.value = cardCvc.value.replace(/\D/g, '').slice(0, 4);
+  });
+
+  function setError(id, show){
+    document.getElementById(id).classList.toggle('invalid', show);
+    document.getElementById('err-' + id).classList.toggle('show', show);
+  }
+
+  function validate(){
+    var ok = true;
+    var name = document.getElementById('cardName').value.trim();
+    if (name.length < 2){ setError('cardName', true); ok = false; } else setError('cardName', false);
+
+    var digits = cardNumber.value.replace(/\D/g, '');
+    if (digits.length < 15 || digits.length > 16){ setError('cardNumber', true); ok = false; } else setError('cardNumber', false);
+
+    var expDigits = cardExpiry.value.replace(/\D/g, '');
+    var validExpiry = false;
+    if (expDigits.length === 4){
+      var mm = parseInt(expDigits.slice(0, 2), 10);
+      if (mm >= 1 && mm <= 12) validExpiry = true;
+    }
+    if (!validExpiry){ setError('cardExpiry', true); ok = false; } else setError('cardExpiry', false);
+
+    if (cardCvc.value.length < 3){ setError('cardCvc', true); ok = false; } else setError('cardCvc', false);
+
+    return ok;
+  }
+
+  var form = document.getElementById('payForm');
+  var payBtn = document.getElementById('payBtn');
+  var payBtnLabel = document.getElementById('payBtnLabel');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if (!validate()) return;
+
+    payBtn.disabled = true;
+    payBtn.classList.add('loading');
+    payBtnLabel.textContent = 'Paiement en cours…';
+
+    setTimeout(function(){
+      window.location.href = 'bienvenue.html?plan=' + plan;
+    }, 1400);
+  });
+})();
+</script>
+
+</body>
+</html>
