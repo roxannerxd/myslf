@@ -881,6 +881,189 @@
     }
   ];
 
+  var STEP4_DAYS = [
+    {
+      num: 1, title: 'Ce que j\'aimais avant', sub: 'Jour 1 sur 7',
+      render: function(c, key){
+        var opts = ['Lire','Faire du sport','Dessiner ou peindre','Écouter ou jouer de la musique','Cuisiner','Voyager','Regarder des films ou séries','Écrire','Danser','Passer du temps dans la nature','Jouer à des jeux vidéo','Prendre soin de mon style'];
+        c.innerHTML =
+          '<div class="prompt">Qu\'est-ce que j\'aimais faire avant cette relation ?</div>' +
+          '<div class="hint">Sélectionne ce qui te parle, même si ça fait longtemps.</div>' +
+          '<div class="option-row" id="s4d1_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<textarea class="entry-textarea" id="s4d1_text" placeholder="Envie d\'en dire plus ? (facultatif)"></textarea>' +
+          '<button type="button" class="save-btn" id="s4d1_save" disabled>Terminer ce jour</button>';
+        var row = document.getElementById('s4d1_opts');
+        var btn = document.getElementById('s4d1_save');
+        var selected = [];
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          var val = el.dataset.value;
+          var idx = selected.indexOf(val);
+          if (idx !== -1){ selected.splice(idx, 1); el.classList.remove('selected'); }
+          else { selected.push(val); el.classList.add('selected'); }
+          btn.disabled = selected.length === 0;
+        });
+        btn.addEventListener('click', function(){
+          var text = document.getElementById('s4d1_text').value.trim();
+          completeDay(key, 1, { likes: selected, text: text },
+            'Ça, c\'était toi, avant.',
+            'Ces goûts-là n\'ont pas disparu, même s\'ils se sont mis en pause. Ils t\'attendent, exactement où tu les as laissés.');
+        });
+      }
+    },
+    {
+      num: 2, title: 'Ce que j\'ai arrêté de faire', sub: 'Jour 2 sur 7',
+      render: function(c, key){
+        var opts = ['Un café seule','Une séance de sport','Une nouvelle tenue','Un livre','Une promenade','Un cours','Une activité que j\'avais abandonnée'];
+        c.innerHTML =
+          '<div class="prompt">Qu\'est-ce que j\'ai arrêté de faire à cause de cette relation ?</div>' +
+          '<textarea class="entry-textarea" id="s4d2_text" placeholder="Écris librement…"></textarea>' +
+          '<div class="hint" style="margin-top:-8px;">Choisis une chose qui t\'appartient à toi, à faire cette semaine.</div>' +
+          '<div class="option-row" id="s4d2_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<button type="button" class="save-btn" id="s4d2_save" disabled>Terminer ce jour</button>';
+        var ta = document.getElementById('s4d2_text');
+        var row = document.getElementById('s4d2_opts');
+        var btn = document.getElementById('s4d2_save');
+        var chosen = null;
+        function updateBtn(){ btn.disabled = !(ta.value.trim().length > 0 && chosen); }
+        ta.addEventListener('input', updateBtn);
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          Array.prototype.forEach.call(row.querySelectorAll('.option-btn'), function(b){ b.classList.remove('selected'); });
+          el.classList.add('selected');
+          chosen = el.dataset.value;
+          updateBtn();
+        });
+        btn.addEventListener('click', function(){
+          completeDay(key, 2, { stopped: ta.value.trim(), mission: chosen },
+            'Cette semaine, ce moment t\'appartient.',
+            'Pas pour lui, pas pour personne d\'autre. Juste pour toi — c\'est déjà une façon de te souvenir de qui tu es.');
+        });
+      }
+    },
+    {
+      num: 3, title: 'Mes qualités', sub: 'Jour 3 sur 7',
+      render: function(c, key){
+        var opts = ['Loyale','Drôle','Sensible','Forte','Généreuse','Créative','Déterminée','Empathique','Curieuse','Résiliente','Patiente','Spontanée'];
+        c.innerHTML =
+          '<div class="prompt">Quelles sont mes qualités ?</div>' +
+          '<div class="hint">Choisis-en autant que tu veux — sois généreuse avec toi-même.</div>' +
+          '<div class="option-row" id="s4d3_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<textarea class="entry-textarea" id="s4d3_text" placeholder="Une autre qualité à ajouter ? (facultatif)"></textarea>' +
+          '<button type="button" class="save-btn" id="s4d3_save" disabled>Terminer ce jour</button>';
+        var row = document.getElementById('s4d3_opts');
+        var btn = document.getElementById('s4d3_save');
+        var selected = [];
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          var val = el.dataset.value;
+          var idx = selected.indexOf(val);
+          if (idx !== -1){ selected.splice(idx, 1); el.classList.remove('selected'); }
+          else { selected.push(val); el.classList.add('selected'); }
+          btn.disabled = selected.length === 0;
+        });
+        btn.addEventListener('click', function(){
+          var text = document.getElementById('s4d3_text').value.trim();
+          completeDay(key, 3, { qualities: selected, text: text },
+            'Toutes ces qualités-là, c\'est toi.',
+            'Pas la version idéalisée, pas la version que quelqu\'un attendait. Toi, telle que tu es vraiment.');
+        });
+      }
+    },
+    {
+      num: 4, title: 'Ce que mes proches aiment chez moi', sub: 'Jour 4 sur 7',
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Qu\'est-ce que mes proches aiment chez moi ?</div>' +
+          '<div class="hint">Si tu ne sais pas, c\'est aussi ok d\'imaginer, ou de leur demander un jour.</div>' +
+          '<textarea class="entry-textarea" id="s4d4_text" placeholder="Écris librement…"></textarea>' +
+          '<button type="button" class="save-btn" id="s4d4_save" disabled>Terminer ce jour</button>';
+        var ta = document.getElementById('s4d4_text');
+        var btn = document.getElementById('s4d4_save');
+        ta.addEventListener('input', function(){ btn.disabled = ta.value.trim().length === 0; });
+        btn.addEventListener('click', function(){
+          completeDay(key, 4, { lovedByOthers: ta.value.trim() },
+            'Le regard des autres ne ment pas.',
+            'Les gens qui t\'aiment ne t\'aiment pas malgré toi — ils t\'aiment pour tout ça, exactement.');
+        });
+      }
+    },
+    {
+      num: 5, title: 'Mes valeurs', sub: 'Jour 5 sur 7',
+      render: function(c, key){
+        var opts = ['Honnêteté','Liberté','Famille','Créativité','Aventure','Stabilité','Justice','Plaisir','Apprentissage','Authenticité','Respect','Indépendance'];
+        c.innerHTML =
+          '<div class="prompt">Qu\'est-ce qui compte vraiment pour moi, dans la vie ?</div>' +
+          '<div class="hint">Tes valeurs — celles qui ne changent pas selon qui tu fréquentes.</div>' +
+          '<div class="option-row" id="s4d5_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<textarea class="entry-textarea" id="s4d5_text" placeholder="Envie d\'en dire plus ? (facultatif)"></textarea>' +
+          '<button type="button" class="save-btn" id="s4d5_save" disabled>Terminer ce jour</button>';
+        var row = document.getElementById('s4d5_opts');
+        var btn = document.getElementById('s4d5_save');
+        var selected = [];
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          var val = el.dataset.value;
+          var idx = selected.indexOf(val);
+          if (idx !== -1){ selected.splice(idx, 1); el.classList.remove('selected'); }
+          else { selected.push(val); el.classList.add('selected'); }
+          btn.disabled = selected.length === 0;
+        });
+        btn.addEventListener('click', function(){
+          var text = document.getElementById('s4d5_text').value.trim();
+          completeDay(key, 5, { values: selected, text: text },
+            'Ce sont elles, ta boussole.',
+            'Une relation qui les respecte te fait du bien. Une relation qui les ignore, même avec de l\'amour, finit par te coûter cher.');
+        });
+      }
+    },
+    {
+      num: 6, title: 'Dans un an', sub: 'Jour 6 sur 7',
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Qu\'est-ce que je veux que ma vie ressemble, dans un an ?</div>' +
+          '<textarea class="entry-textarea" id="s4d6_text" placeholder="Écris librement, sans te censurer…" style="min-height:140px;"></textarea>' +
+          '<button type="button" class="save-btn" id="s4d6_save" disabled>Terminer ce jour</button>';
+        var ta = document.getElementById('s4d6_text');
+        var btn = document.getElementById('s4d6_save');
+        ta.addEventListener('input', function(){ btn.disabled = ta.value.trim().length === 0; });
+        btn.addEventListener('click', function(){
+          completeDay(key, 6, { future: ta.value.trim() },
+            'Garde cette image quelque part.',
+            'Tu viens de te donner une direction. Tu n\'as pas besoin de savoir comment y arriver aujourd\'hui — juste de savoir qu\'elle existe.');
+        });
+      }
+    },
+    {
+      num: 7, title: 'My Identity', sub: 'Jour 7 sur 7', isFinal: true,
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Une dernière chose avant ton identité.</div>' +
+          '<div class="hint">En un mot, comment tu te sens en repensant à qui tu es, en dehors de cette relation ?</div>' +
+          '<input type="text" class="short-input" id="s4d7_feeling" placeholder="Un mot, ou une phrase courte…" maxlength="200" style="margin-bottom:18px;">' +
+          '<button type="button" class="save-btn" id="s4d7_save" disabled>Voir mon identité</button>';
+        var input = document.getElementById('s4d7_feeling');
+        var btn = document.getElementById('s4d7_save');
+        input.addEventListener('input', function(){ btn.disabled = input.value.trim().length === 0; });
+        btn.addEventListener('click', function(){
+          completeDay(key, 7, { feeling: input.value.trim() }, null, null, true);
+        });
+      }
+    }
+  ];
+
   var STEPS = [
     {
       key: 'step1', icon: '🤍', name: 'Stop & Breathe', sub: 'Je me stabilise',
@@ -894,7 +1077,7 @@
       weekTitle: 'Understand Me', weekSub: 'Semaine 2 — "Je comprends pourquoi je m\'attache"',
       weekIntro: 'Cette semaine, on ne cherche pas à te diagnostiquer. On regarde ensemble, un jour à la fois, comment tu t\'attaches, ce que tu attends d\'une relation, et ce qui se répète. À la fin, tu auras une première image de tes habitudes émotionnelles.',
       days: STEP2_DAYS,
-      isPatternReveal: true
+      revealType: 'pattern'
     },
     {
       key: 'step3', icon: '🚪', name: 'Detach', sub: 'Je reprends de la distance',
@@ -903,7 +1086,13 @@
       days: STEP3_DAYS,
       recapText: 'Tu n\'as rien oublié, et ce n\'était pas le but. Tu as juste repris un peu de pouvoir sur ce qui te contrôlait. L\'étape 4 est débloquée.'
     },
-    { key: 'step4', icon: '🪞', name: 'Remember Me', sub: 'Qui suis-je sans cette relation ?', days: null },
+    {
+      key: 'step4', icon: '🪞', name: 'Remember Me', sub: 'Qui suis-je sans cette relation ?',
+      weekTitle: 'Remember Me', weekSub: 'Semaine 4 — "Qui suis-je sans cette relation ?"',
+      weekIntro: 'Cette semaine, on ne parle presque plus de cette relation. On revient à toi : ce que tu aimais, ce que tu as arrêté, tes qualités, tes valeurs, et où tu veux aller. À la fin, tu auras une première version de ton identité, en dehors de cette histoire.',
+      days: STEP4_DAYS,
+      revealType: 'identity'
+    },
     { key: 'step5', icon: '🌸', name: 'Build Me', sub: 'Je recommence à construire ma vie', days: null },
     { key: 'step6', icon: '👑', name: 'Self-Worth', sub: 'Je recommence à croire en moi', days: null },
     { key: 'step7', icon: '🦋', name: 'My Standards', sub: 'Je décide de ce que j\'accepte', days: null },
@@ -996,7 +1185,8 @@
     var step = stepByKey(stepKey);
 
     if (isLastDay){
-      if (step.isPatternReveal) renderPatternReveal(step);
+      if (step.revealType === 'pattern') renderPatternReveal(step);
+      else if (step.revealType === 'identity') renderIdentityReveal(step);
       else renderRecap(step);
       showView('viewConfirm');
       return;
@@ -1048,7 +1238,32 @@
 
     text.innerHTML =
       '<div class="pattern-card"><div class="pattern-label">My pattern</div><p>' + escapeHtml(sentence) + '</p></div>' +
-      '<p class="pattern-note">Retrouve toujours cette lecture depuis "Mes patterns" dans le menu. L\'étape 3 est débloquée.</p>';
+      '<p class="pattern-note">Tu pourras toujours revenir relire ça depuis cette étape. L\'étape 3 est débloquée.</p>';
+    document.getElementById('confirmContinue').onclick = function(){
+      renderSteps();
+      showView('viewHome');
+    };
+  }
+
+  function renderIdentityReveal(step){
+    var sd = stepData(step.key);
+    var likes = (sd.day1 && sd.day1.likes) || [];
+    var qualities = (sd.day3 && sd.day3.qualities) || [];
+    var values = (sd.day5 && sd.day5.values) || [];
+    var future = sd.day6 && sd.day6.future;
+
+    document.getElementById('confirmTitle').textContent = 'Voici ce qu\'on a retrouvé de toi, cette semaine.';
+    var text = document.getElementById('confirmText');
+
+    var html = '<div class="pattern-card"><div class="pattern-label">My identity</div>';
+    if (likes.length) html += '<p><strong>Mes goûts</strong> — ' + escapeHtml(likes.join(', ').toLowerCase()) + '</p>';
+    if (qualities.length) html += '<p style="margin-top:10px;"><strong>Mes qualités</strong> — ' + escapeHtml(qualities.join(', ').toLowerCase()) + '</p>';
+    if (values.length) html += '<p style="margin-top:10px;"><strong>Mes valeurs</strong> — ' + escapeHtml(values.join(', ').toLowerCase()) + '</p>';
+    if (future) html += '<p style="margin-top:10px;"><strong>Ce que je veux, dans un an</strong> — ' + escapeHtml(future) + '</p>';
+    html += '</div>';
+    html += '<p class="pattern-note">Ce n\'est pas une case dans laquelle t\'enfermer — juste un rappel de qui tu es, en dehors de cette relation. L\'étape 5 est débloquée.</p>';
+
+    text.innerHTML = html;
     document.getElementById('confirmContinue').onclick = function(){
       renderSteps();
       showView('viewHome');
