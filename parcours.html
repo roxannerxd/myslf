@@ -1420,6 +1420,58 @@
     }
   ];
 
+  function makeReflectionDay(opts){
+    var num = opts.num, id = 's8d' + num;
+    return {
+      num: num, title: opts.title, sub: 'Jour ' + num + ' sur 7',
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">' + opts.prompt + '</div>' +
+          '<textarea class="entry-textarea" id="' + id + '_text" placeholder="Écris librement…" style="min-height:130px;"></textarea>' +
+          '<button type="button" class="save-btn" id="' + id + '_save" disabled>Terminer ce jour</button>';
+        var ta = document.getElementById(id + '_text');
+        var btn = document.getElementById(id + '_save');
+        ta.addEventListener('input', function(){ btn.disabled = ta.value.trim().length === 0; });
+        btn.addEventListener('click', function(){
+          var data = {};
+          data[opts.field] = ta.value.trim();
+          completeDay(key, num, data, opts.confirmTitle, opts.confirmText);
+        });
+      }
+    };
+  }
+
+  var STEP8_DAYS = [
+    makeReflectionDay({ num: 1, title: 'Qui j\'étais au début', prompt: 'Qui étais-je, au début de ce parcours ?', field: 'whoIWas', confirmTitle: 'Regarde le chemin.', confirmText: 'Tu n\'as pas idée à quel point cette version de toi a déjà changé.' }),
+    makeReflectionDay({ num: 2, title: 'Ce qui a changé', prompt: 'Qu\'est-ce qui a changé, en huit semaines ?', field: 'whatChanged', confirmTitle: 'Ça, c\'est du concret.', confirmText: 'Ce n\'est pas rien. C\'est le résultat de chaque petit pas que tu as fait, jour après jour.' }),
+    makeReflectionDay({ num: 3, title: 'Ce que j\'ai découvert', prompt: 'Qu\'est-ce que j\'ai découvert sur moi ?', field: 'discovered', confirmTitle: 'Garde ça précieusement.', confirmText: 'Ce que tu viens de nommer, personne ne pourra te l\'enlever.' }),
+    makeReflectionDay({ num: 4, title: 'De quoi je suis fière', prompt: 'De quoi suis-je fière ?', field: 'proudOf', confirmTitle: 'Tu as le droit d\'en être fière.', confirmText: 'Vraiment. Sans minimiser, sans "oui mais".' }),
+    makeReflectionDay({ num: 5, title: 'Ce que je veux maintenant', prompt: 'Qu\'est-ce que je veux, maintenant ?', field: 'wantNow', confirmTitle: 'C\'est ta direction.', confirmText: 'Tu n\'as pas besoin de tout savoir aujourd\'hui. Juste de garder ça en tête.' }),
+    makeReflectionDay({ num: 6, title: 'La femme que je deviens', prompt: 'Quelle femme suis-je en train de devenir ?', field: 'becoming', confirmTitle: 'Elle, c\'est toi.', confirmText: 'Et elle continue de se construire, un jour à la fois.' }),
+    {
+      num: 7, title: 'Deux lettres', sub: 'Jour 7 sur 7', isFinal: true,
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Écris une lettre à la femme que tu étais.</div>' +
+          '<div class="hint">To the woman I was.</div>' +
+          '<textarea class="entry-textarea" id="s8d7_was" placeholder="Chère moi, il y a huit semaines…" style="min-height:130px;"></textarea>' +
+          '<div class="prompt" style="margin-top:8px;">Écris une lettre à la femme que tu es en train de devenir.</div>' +
+          '<div class="hint">To the woman I\'m becoming.</div>' +
+          '<textarea class="entry-textarea" id="s8d7_becoming" placeholder="Chère moi, dans le futur…" style="min-height:130px;"></textarea>' +
+          '<button type="button" class="save-btn" id="s8d7_save" disabled>Voir ma lettre</button>';
+        var w = document.getElementById('s8d7_was');
+        var b = document.getElementById('s8d7_becoming');
+        var btn = document.getElementById('s8d7_save');
+        function updateBtn(){ btn.disabled = !(w.value.trim().length > 0 && b.value.trim().length > 0); }
+        w.addEventListener('input', updateBtn);
+        b.addEventListener('input', updateBtn);
+        btn.addEventListener('click', function(){
+          completeDay(key, 7, { letterWas: w.value.trim(), letterBecoming: b.value.trim() }, null, null, true);
+        });
+      }
+    }
+  ];
+
   var STEPS = [
     {
       key: 'step1', icon: '🤍', name: 'Stop & Breathe', sub: 'Je me stabilise',
@@ -1470,7 +1522,13 @@
       days: STEP7_DAYS,
       revealType: 'standards'
     },
-    { key: 'step8', icon: '✨', name: 'Choose Me', sub: 'Je me choisis', days: null }
+    {
+      key: 'step8', icon: '✨', name: 'Choose Me', sub: 'Je me choisis',
+      weekTitle: 'Choose Me', weekSub: 'Semaine 8 — "Je me choisis"',
+      weekIntro: 'Dernière semaine. On regarde le chemin parcouru — pas pour juger, juste pour constater. Et on termine par deux lettres : à celle que tu étais, et à celle que tu es en train de devenir.',
+      days: STEP8_DAYS,
+      revealType: 'life'
+    }
   ];
 
   function stepByKey(key){
@@ -1563,6 +1621,7 @@
       else if (step.revealType === 'identity') renderIdentityReveal(step);
       else if (step.revealType === 'confidence') renderConfidenceReveal(step);
       else if (step.revealType === 'standards') renderStandardsReveal(step);
+      else if (step.revealType === 'life') renderLifeReveal(step);
       else renderRecap(step);
       showView('viewConfirm');
       return;
@@ -1691,6 +1750,37 @@
     html += '</div>';
     if (vow) html += '<div class="pattern-card" style="background:var(--white); border:1px solid var(--line);"><div class="pattern-label">Ta promesse</div><p style="font-style:italic;">"' + escapeHtml(vow) + '"</p></div>';
     html += '<p class="pattern-note">Ce n\'est pas une liste de conditions. C\'est ce que tu sais, maintenant, que tu mérites. L\'étape 8 est débloquée.</p>';
+
+    text.innerHTML = html;
+    document.getElementById('confirmContinue').onclick = function(){
+      renderSteps();
+      showView('viewHome');
+    };
+  }
+
+  function renderLifeReveal(step){
+    var sd = stepData(step.key);
+    var d7 = sd.day7 || {};
+
+    document.getElementById('confirmTitle').textContent = 'Ce n\'est pas la fin. C\'est ta vie, maintenant.';
+    var text = document.getElementById('confirmText');
+
+    var html = '';
+    if (d7.letterWas){
+      html += '<div class="pattern-card" style="background:var(--white); border:1px solid var(--line); text-align:left;"><div class="pattern-label">To the woman I was</div><p style="font-style:italic; white-space:pre-wrap;">' + escapeHtml(d7.letterWas) + '</p></div>';
+    }
+    if (d7.letterBecoming){
+      html += '<div class="pattern-card" style="text-align:left;"><div class="pattern-label">To the woman I\'m becoming</div><p style="font-style:italic; white-space:pre-wrap;">' + escapeHtml(d7.letterBecoming) + '</p></div>';
+    }
+    html += '<p class="pattern-note">Ce parcours n\'était pas un examen à réussir. C\'est un chemin que tu continues, à ton rythme.</p>';
+    html += '<div class="pattern-card" style="background:var(--white); border:1px solid var(--line); text-align:left;">' +
+      '<div class="pattern-label">Bienvenue dans My Life</div>' +
+      '<p style="margin-bottom:16px;">Ton IA, ton journal, tes patterns et tes progrès restent là, disponibles quand tu en as besoin. Et si une période difficile revient, tu n\'as qu\'à venir dire : "Je suis en difficulté aujourd\'hui." On adaptera l\'accompagnement à ce que tu vis, ce jour-là.</p>' +
+      '<div style="display:flex; gap:10px; flex-wrap:wrap;">' +
+        '<a href="journal.html" class="save-btn" style="display:inline-block; text-decoration:none;">Mon journal</a>' +
+        '<a href="parler.html" class="save-btn" style="display:inline-block; text-decoration:none; background:var(--white); color:var(--clay-dark); border:1px solid var(--line);">J\'ai besoin de parler</a>' +
+      '</div>' +
+    '</div>';
 
     text.innerHTML = html;
     document.getElementById('confirmContinue').onclick = function(){
