@@ -117,6 +117,30 @@
   }
 
   footer{padding:40px 0; text-align:center; color:var(--ink-soft); font-size:13.5px; border-top:1px solid var(--line);}
+
+  /* écran rassurant après enregistrement */
+  .reassure-overlay{
+    position:fixed; inset:0; z-index:300; background:rgba(59,48,44,0.45);
+    backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .reassure-overlay.open{display:flex;}
+  .reassure-modal{
+    width:100%; max-width:480px; max-height:90vh; overflow-y:auto;
+    background:var(--white); border-radius:26px; padding:44px 38px;
+    box-shadow:0 40px 80px -20px rgba(59,48,44,0.5);
+    text-align:center;
+  }
+  .reassure-orb{
+    width:64px; height:64px; border-radius:50%; margin:0 auto 24px;
+    background:radial-gradient(circle at 35% 30%, #FFFFFF, #E9C4B4 60%, #C98A73 100%);
+    box-shadow:0 0 40px rgba(201,138,115,0.5);
+  }
+  .reassure-eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--clay-dark); margin-bottom:14px;}
+  .reassure-modal h2{font-size:26px; font-weight:500; line-height:1.25; margin-bottom:20px;}
+  .reassure-modal p{font-size:14.5px; color:var(--ink-soft); font-weight:300; margin-bottom:16px;}
+  .reassure-modal p:last-of-type{margin-bottom:28px;}
+  .reassure-modal .save-btn{width:100%;}
 </style>
 </head>
 <body>
@@ -255,6 +279,17 @@
   </div>
 </main>
 
+<div class="reassure-overlay" id="reassureOverlay">
+  <div class="reassure-modal">
+    <div class="reassure-orb"></div>
+    <div class="reassure-eyebrow">C'est fait</div>
+    <h2>Cette histoire, elle est derrière toi maintenant.</h2>
+    <p>Merci de me l'avoir confiée. Tu n'as plus à la porter seule — elle fait partie de ton passé, pas de qui tu es en train de devenir.</p>
+    <p>Maintenant, on se concentre sur toi : ce que tu ressens, ce dont tu as besoin, la personne que tu veux redevenir. On va faire ce chemin ensemble, un pas à la fois.</p>
+    <button type="button" class="save-btn" id="reassureContinue">Continuer</button>
+  </div>
+</div>
+
 <footer>
   <div>© 2026 MYSLF. Un espace pour te retrouver.</div>
 </footer>
@@ -377,10 +412,17 @@
     showFormView();
   });
 
+  var reassureOverlay = document.getElementById('reassureOverlay');
+
   form.addEventListener('submit', function(e){
     e.preventDefault();
     state.notes = notes.value.trim();
     saveStory(state);
+    reassureOverlay.classList.add('open');
+  });
+
+  document.getElementById('reassureContinue').addEventListener('click', function(){
+    reassureOverlay.classList.remove('open');
     showSummaryView();
   });
 
