@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MYSLF — Bienvenue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7EFE8;
+    --cream-2:#F1E4DA;
+    --clay:#C98A73;
+    --clay-dark:#B06E56;
+    --ink:#3B302C;
+    --ink-soft:#6B5B54;
+    --line:rgba(59,48,44,0.12);
+    --white:#FFFDFB;
+    --sage:#8FA089;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Jost',sans-serif;
+    color:var(--ink);
+    background:var(--cream);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,.serif{font-family:'Cormorant Garamond',serif;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:720px;margin:0 auto;padding:0 32px;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--clay-dark);outline-offset:3px;}
+
+  header{
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 32px; max-width:1180px; margin:0 auto;
+  }
+  .logo{font-family:'Cormorant Garamond',serif; font-size:24px; letter-spacing:0.08em; font-weight:600;}
+  .nav-back{font-size:14px; color:var(--ink-soft); transition:color .2s;}
+  .nav-back:hover{color:var(--ink);}
+
+  main{padding:80px 0 100px;}
+
+  .check-badge{
+    width:64px; height:64px; border-radius:50%; margin:0 auto 28px;
+    background:linear-gradient(160deg,#E3B9A5,#C98A73);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 16px 34px -12px rgba(176,110,86,0.55);
+  }
+  .check-badge svg{width:26px; height:26px;}
+
+  .hero-confirm{text-align:center; margin-bottom:56px;}
+  .eyebrow{
+    font-size:13px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--clay-dark); margin-bottom:16px;
+  }
+  .hero-confirm h1{
+    font-size:clamp(36px,6vw,52px); font-weight:500; line-height:1.05; margin-bottom:18px;
+  }
+  .hero-confirm h1 em{font-style:italic; color:var(--clay-dark);}
+  .hero-confirm p{
+    font-size:16.5px; color:var(--ink-soft); font-weight:300; max-width:440px; margin:0 auto;
+  }
+
+  .summary-card{
+    background:var(--white); border:1px solid var(--line); border-radius:22px;
+    padding:32px; margin-bottom:40px;
+  }
+  .summary-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 0; border-bottom:1px solid var(--line); font-size:14.5px;
+  }
+  .summary-row:last-child{border-bottom:none;}
+  .summary-row .label{color:var(--ink-soft); font-weight:300;}
+  .summary-row .value{font-weight:500;}
+  .summary-row .value.plan-name{color:var(--clay-dark);}
+
+  .steps{margin-bottom:48px;}
+  .steps h2{
+    font-size:22px; font-weight:500; margin-bottom:24px; text-align:center;
+  }
+  .step{
+    display:flex; align-items:flex-start; gap:18px; padding:18px 0;
+    border-top:1px solid var(--line);
+  }
+  .step:last-child{padding-bottom:0;}
+  .step-num{
+    width:32px; height:32px; border-radius:50%; background:var(--cream-2); color:var(--clay-dark);
+    font-family:'Cormorant Garamond',serif; font-weight:600; font-size:16px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .step h3{font-size:15.5px; font-weight:500; margin-bottom:4px;}
+  .step p{font-size:14px; color:var(--ink-soft); font-weight:300;}
+
+  .cta-center{text-align:center;}
+  .btn{
+    display:inline-block; padding:16px 36px; border-radius:100px; font-size:15px; letter-spacing:.02em;
+  }
+  .btn-primary{background:var(--clay); color:var(--white); transition:background .2s, transform .2s;}
+  .btn-primary:hover{background:var(--clay-dark); transform:translateY(-1px);}
+  .cta-note{margin-top:18px; font-size:13px; color:var(--ink-soft); font-weight:300;}
+  .cta-note a{color:var(--clay-dark); text-decoration:underline; text-underline-offset:2px;}
+
+  footer{padding:40px 0; text-align:center; color:var(--ink-soft); font-size:13.5px; border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="index.html" class="logo">MYSLF</a>
+    <a href="index.html" class="nav-back">← Retour à l'accueil</a>
+  </nav>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="hero-confirm">
+      <div class="check-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="eyebrow">Abonnement confirmé</div>
+      <h1>Bienvenue chez toi,<br><em>tu es officiellement inscrite.</em></h1>
+      <p id="heroSub">Ton parcours MYSLF commence maintenant. On est heureuses de t'accompagner.</p>
+    </div>
+
+    <div class="summary-card" id="summaryCard">
+      <div class="summary-row">
+        <span class="label">Formule</span>
+        <span class="value plan-name" id="sumPlan">—</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Montant</span>
+        <span class="value" id="sumPrice">—</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Prochaine facturation</span>
+        <span class="value" id="sumDate">—</span>
+      </div>
+    </div>
+
+    <div class="steps">
+      <h2>Ce qui t'attend maintenant</h2>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Discute avec ton IA</h3>
+          <p>Elle est déjà là pour t'écouter, sans jugement, à ton rythme.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h3>Complète ton profil</h3>
+          <p>Quelques questions pour personnaliser ton accompagnement.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h3>Rejoins la communauté</h3>
+          <p>Des femmes qui avancent, comme toi, chacune à leur pas.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-center">
+      <a href="index.html#ia-demo" class="btn btn-primary">Commencer maintenant</a>
+      <div class="cta-note">Un reçu a été envoyé à ton adresse e-mail · Gère ton abonnement à tout moment</div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div>© 2026 MYSLF. Un espace pour te retrouver.</div>
+</footer>
+
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var plan = params.get('plan') === 'annuel' ? 'annuel' : 'mensuel';
+
+  var plans = {
+    mensuel: { name: 'Mensuel', price: '9,99€ / mois', months: 1 },
+    annuel: { name: 'Annuel', price: '59,99€ / an', months: 12 }
+  };
+  var p = plans[plan];
+
+  document.getElementById('sumPlan').textContent = p.name;
+  document.getElementById('sumPrice').textContent = p.price;
+
+  var next = new Date();
+  next.setMonth(next.getMonth() + p.months);
+  var formatted = next.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('sumDate').textContent = formatted;
+
+  document.getElementById('heroSub').textContent =
+    'Ton abonnement ' + p.name.toLowerCase() + ' est activé. On est heureuses de t\'accompagner dès aujourd\'hui.';
+})();
+</script>
+
+</body>
+</html>
