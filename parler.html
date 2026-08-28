@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MYSLF — J'ai besoin de parler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7EFE8;
+    --cream-2:#F1E4DA;
+    --clay:#C98A73;
+    --clay-dark:#B06E56;
+    --ink:#3B302C;
+    --ink-soft:#6B5B54;
+    --line:rgba(59,48,44,0.12);
+    --white:#FFFDFB;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html, body{height:100%;}
+  body{
+    font-family:'Jost',sans-serif;
+    color:var(--ink);
+    background:var(--cream);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    display:flex; flex-direction:column;
+  }
+  h1,.serif{font-family:'Cormorant Garamond',serif;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 32px; width:100%;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  a:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--clay-dark);outline-offset:2px;}
+
+  header{
+    border-bottom:1px solid var(--line); flex-shrink:0;
+    background:rgba(247,239,232,0.9); backdrop-filter:blur(10px);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 32px; max-width:1180px; margin:0 auto;
+  }
+  .logo{font-family:'Cormorant Garamond',serif; font-size:22px; letter-spacing:0.08em; font-weight:600;}
+  .nav-links{display:flex; align-items:center; gap:24px; font-size:14px; color:var(--ink-soft); flex-wrap:wrap;}
+  .nav-links a{transition:color .2s;}
+  .nav-links a:hover, .nav-links a.active{color:var(--ink);}
+  .nav-links a.active{border-bottom:1.5px solid var(--clay-dark); padding-bottom:2px;}
+
+  main{flex:1; display:flex; flex-direction:column; padding:36px 0 28px; min-height:0;}
+  .head-row{flex-shrink:0; margin-bottom:20px;}
+  .eyebrow{font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:var(--clay-dark); margin-bottom:8px;}
+  h1.title{font-size:clamp(24px,4vw,32px); font-weight:500;}
+
+  .chat-card{
+    flex:1; min-height:0; display:flex; flex-direction:column;
+    background:var(--white); border:1px solid var(--line); border-radius:26px;
+    padding:24px 24px 20px; box-shadow:0 20px 50px -30px rgba(59,48,44,0.35);
+  }
+
+  .chat-messages{
+    flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px;
+    padding-right:4px; margin-bottom:16px; scrollbar-width:thin;
+  }
+  .chat-messages::-webkit-scrollbar{width:4px;}
+  .chat-messages::-webkit-scrollbar-thumb{background:rgba(59,48,44,0.15); border-radius:10px;}
+  .msg{
+    max-width:78%; padding:12px 16px; border-radius:18px; font-size:14.5px; font-weight:300;
+    line-height:1.5; animation:msgIn .25s ease;
+  }
+  @keyframes msgIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+  .msg.ai{
+    align-self:flex-start; background:var(--cream); color:var(--ink);
+    border-bottom-left-radius:4px;
+  }
+  .msg.user{
+    align-self:flex-end; background:var(--clay); color:var(--white);
+    border-bottom-right-radius:4px;
+  }
+  .msg.typing{display:flex; align-items:center; gap:4px; padding:14px 18px;}
+  .msg.typing span{
+    width:6px; height:6px; border-radius:50%; background:var(--ink-soft); opacity:.5;
+    animation:typingBounce 1s infinite ease-in-out;
+  }
+  .msg.typing span:nth-child(2){animation-delay:.15s;}
+  .msg.typing span:nth-child(3){animation-delay:.3s;}
+  @keyframes typingBounce{0%,60%,100%{transform:translateY(0); opacity:.4;} 30%{transform:translateY(-3px); opacity:1;}}
+
+  .chat-input-row{
+    flex-shrink:0; display:flex; align-items:center; gap:10px;
+    background:var(--cream); border-radius:100px; padding:8px 8px 8px 20px;
+  }
+  .chat-input{
+    flex:1; border:none; background:transparent; font-family:inherit; font-size:14.5px;
+    color:var(--ink); outline:none;
+  }
+  .chat-input::placeholder{color:var(--ink-soft); opacity:.6;}
+  .chat-send{
+    width:42px; height:42px; border-radius:50%; background:var(--clay); color:var(--white);
+    display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;
+    transition:background .2s, transform .2s;
+  }
+  .chat-send:hover{background:var(--clay-dark); transform:translateY(-1px);}
+  .chat-send:disabled{opacity:.5; cursor:default; transform:none;}
+
+  .below-note{
+    flex-shrink:0; margin-top:16px; text-align:center;
+    font-size:12.5px; color:var(--ink-soft); font-weight:300;
+  }
+  .below-note a{color:var(--clay-dark); text-decoration:underline; text-underline-offset:2px;}
+  .demo-note{
+    flex-shrink:0; text-align:center; font-size:11px; color:var(--ink-soft); opacity:.6; margin-top:6px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="index.html" class="logo">MYSLF</a>
+    <div class="nav-links">
+      <a href="journal.html">Journal</a>
+      <a href="histoire.html">Mon histoire</a>
+      <a href="patterns.html">Mes patterns</a>
+      <a href="parler.html" class="active">J'ai besoin de parler</a>
+      <a href="index.html">Accueil</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="wrap" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+    <div class="head-row">
+      <div class="eyebrow">Ton espace d'écoute</div>
+      <h1 class="title">J'ai besoin de parler</h1>
+    </div>
+
+    <div class="chat-card">
+      <div class="chat-messages" id="chatMessages" aria-live="polite">
+        <div class="msg ai">Je suis là pour toi. Dis-moi ce que tu ressens, parle librement.</div>
+      </div>
+      <form class="chat-input-row" id="chatForm">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Écris ce que tu ressens…" autocomplete="off" maxlength="500">
+        <button type="submit" class="chat-send" id="chatSend" aria-label="Envoyer">➤</button>
+      </form>
+    </div>
+
+    <div class="below-note">Sur le point de lui écrire, à lui ? Utilise <a href="journal.html">le bouton "Je vais lui écrire"</a> dans ton journal.</div>
+    <div class="demo-note">Démo — réponses simulées, pas une vraie IA (pour l'instant)</div>
+  </div>
+</main>
+
+<script>
+(function(){
+  var messages = document.getElementById('chatMessages');
+  var form = document.getElementById('chatForm');
+  var input = document.getElementById('chatInput');
+  var sendBtn = document.getElementById('chatSend');
+
+  var story = null;
+  try {
+    var rawStory = localStorage.getItem('myslf_story');
+    story = rawStory ? JSON.parse(rawStory) : null;
+  } catch (e) { story = null; }
+
+  function firstOf(val){
+    if (Array.isArray(val)) return val.length ? val[0] : null;
+    return val || null;
+  }
+
+  if (story){
+    var firstMsg = messages.querySelector('.msg.ai');
+    var mainDifficulty = firstOf(story.difficulty);
+    if (firstMsg){
+      if (mainDifficulty){
+        firstMsg.textContent = "Je me souviens que " + mainDifficulty + " est particulièrement dur pour toi en ce moment. Comment tu te sens aujourd'hui ?";
+      } else {
+        firstMsg.textContent = "Je suis là pour toi. Comment tu te sens aujourd'hui ?";
+      }
+    }
+  }
+
+  var keywordReplies = [
+    { test: /triste|pleur|larme/i, replies: [
+      "C'est normal de ressentir cette tristesse. Prends le temps qu'il te faut, je reste avec toi.",
+      "Ta tristesse est légitime. Tu veux me raconter ce qui s'est passé ?"
+    ]},
+    { test: /seul|abandon/i, replies: [
+      "Tu n'es pas seule, même quand tu le ressens fort. Je suis là, à chaque étape.",
+      "Cette solitude que tu ressens ne définit pas ta valeur. Parlons-en."
+    ]},
+    { test: /col[eè]re|énerv|rage/i, replies: [
+      "Ta colère a le droit d'exister, elle te dit souvent qu'une limite a été franchie.",
+      "C'est ok d'être en colère. Qu'est-ce qui l'a déclenchée ?"
+    ]},
+    { test: /peur|angoiss|stress/i, replies: [
+      "La peur peut être écrasante. Respire avec moi un instant, on avance doucement.",
+      "Je t'écoute. Qu'est-ce qui te fait le plus peur en ce moment ?"
+    ]},
+    { test: /ex[- ]|lui|il m'a|copain|copine|couple/i, replies: [
+      "Les relations qui nous ont blessées laissent des traces, et te reconstruire prend du temps.",
+      "Ce que tu as vécu avec cette personne compte. Comment tu te sens par rapport à ça aujourd'hui ?"
+    ]},
+    { test: /confiance|honte|nul|nulle|incapable/i, replies: [
+      "Tu mérites d'être traitée avec douceur, y compris par toi-même.",
+      "Ce que tu ressens ne veut pas dire que c'est vrai. On peut regarder ça ensemble."
+    ]},
+    { test: /merci/i, replies: [
+      "Avec plaisir. Je suis là chaque fois que tu en as besoin.",
+      "C'est moi qui te remercie de me faire confiance."
+    ]},
+    { test: /bonjour|salut|coucou|hello/i, replies: [
+      "Bonjour, je suis contente de te retrouver. Comment tu te sens aujourd'hui ?",
+      "Salut. Prends ton temps, je suis là pour t'écouter."
+    ]}
+  ];
+
+  var fallbackReplies = [
+    "Je t'entends. Peux-tu m'en dire un peu plus ?",
+    "Merci de partager ça avec moi. Comment ça résonne en toi, là, maintenant ?",
+    "Prends ton temps. Je suis là, sans jugement.",
+    "C'est important, ce que tu viens de dire. On continue ensemble ?",
+    "Ça a l'air difficile à porter. Tu veux qu'on explore ça plus doucement ?"
+  ];
+  var lastFallback = -1;
+
+  function pick(arr, avoidIndex){
+    var i;
+    do { i = Math.floor(Math.random() * arr.length); } while (arr.length > 1 && i === avoidIndex);
+    return i;
+  }
+
+  function fakeAIReply(text){
+    var mainTrigger = firstOf(story && story.trigger);
+    var mainGoal = firstOf(story && story.goal);
+
+    if (story && /seul|abandon/i.test(text) && mainTrigger){
+      return "Je remarque que ça revient souvent chez toi : " + mainTrigger + ". Ce que tu ressens là, maintenant, ça vient peut-être de ce même endroit.";
+    }
+    if (story && /ex[- ]|lui|il m'a|copain|copine|couple/i.test(text) && mainGoal){
+      return "Je sais que tu avances vers ça : " + mainGoal + ". Chaque fois que tu reparles de lui, tu peux te demander si ça t'en rapproche ou t'en éloigne.";
+    }
+
+    for (var k = 0; k < keywordReplies.length; k++){
+      if (keywordReplies[k].test.test(text)){
+        var replies = keywordReplies[k].replies;
+        return replies[Math.floor(Math.random() * replies.length)];
+      }
+    }
+    lastFallback = pick(fallbackReplies, lastFallback);
+    return fallbackReplies[lastFallback];
+  }
+
+  function addMessage(text, who){
+    var el = document.createElement('div');
+    el.className = 'msg ' + who;
+    el.textContent = text;
+    messages.appendChild(el);
+    messages.scrollTop = messages.scrollHeight;
+    return el;
+  }
+
+  function showTyping(){
+    var el = document.createElement('div');
+    el.className = 'msg ai typing';
+    el.innerHTML = '<span></span><span></span><span></span>';
+    messages.appendChild(el);
+    messages.scrollTop = messages.scrollHeight;
+    return el;
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var text = input.value.trim();
+    if (!text) return;
+    addMessage(text, 'user');
+    input.value = '';
+    sendBtn.disabled = true;
+
+    var typingEl = showTyping();
+    var delay = 700 + Math.random() * 700;
+    setTimeout(function(){
+      typingEl.remove();
+      addMessage(fakeAIReply(text), 'ai');
+      sendBtn.disabled = false;
+      input.focus();
+    }, delay);
+  });
+})();
+</script>
+
+</body>
+</html>
