@@ -1286,6 +1286,140 @@
 
   var STEP6_DAYS = [1, 2, 3, 4, 5, 6, 7].map(makeConfidenceDay);
 
+  function makeStandardsListDay(opts){
+    var num = opts.num, id = 's7d' + num;
+    return {
+      num: num, title: opts.title, sub: 'Jour ' + num + ' sur 7',
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">' + opts.prompt + '</div>' +
+          '<div class="hint">' + opts.hint + '</div>' +
+          '<div class="option-row" id="' + id + '_opts">' +
+          opts.choices.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<textarea class="entry-textarea" id="' + id + '_text" placeholder="Envie d\'en dire plus ? (facultatif)"></textarea>' +
+          '<button type="button" class="save-btn" id="' + id + '_save" disabled>Terminer ce jour</button>';
+        var row = document.getElementById(id + '_opts');
+        var btn = document.getElementById(id + '_save');
+        var selected = [];
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          var val = el.dataset.value;
+          var idx = selected.indexOf(val);
+          if (idx !== -1){ selected.splice(idx, 1); el.classList.remove('selected'); }
+          else { selected.push(val); el.classList.add('selected'); }
+          btn.disabled = selected.length === 0;
+        });
+        btn.addEventListener('click', function(){
+          var text = document.getElementById(id + '_text').value.trim();
+          completeDay(key, num, { items: selected, text: text }, opts.confirmTitle, opts.confirmText);
+        });
+      }
+    };
+  }
+
+  var STEP7_DAYS = [
+    makeStandardsListDay({
+      num: 1, title: 'My Non-Negotiables',
+      prompt: 'Qu\'est-ce que je ne veux plus jamais accepter, dans une relation ?',
+      hint: 'Sélectionne ce qui résonne — autant que tu veux.',
+      choices: ['Le mensonge','Le mépris ou l\'humiliation','Être ignorée pendant des jours','La jalousie excessive','Le contrôle sur mes fréquentations','L\'infidélité','Ne jamais s\'excuser'],
+      confirmTitle: 'Ça, c\'est posé.',
+      confirmText: 'Une limite nommée est une limite plus facile à tenir la prochaine fois.'
+    }),
+    makeStandardsListDay({
+      num: 2, title: 'My Needs',
+      prompt: 'De quoi ai-je besoin, pour me sentir bien dans une relation ?',
+      hint: 'Pas ce que tu penses "devoir" accepter de vouloir. Ce dont tu as vraiment besoin.',
+      choices: ['Être rassurée régulièrement','De la constance','Du temps rien qu\'à nous','De l\'indépendance respectée','Une communication honnête','Me sentir choisie','De la tendresse au quotidien'],
+      confirmTitle: 'Ce sont de vrais besoins.',
+      confirmText: 'Pas des caprices, pas "trop demander". Les nommer, c\'est la première étape pour qu\'ils soient enfin entendus.'
+    }),
+    makeStandardsListDay({
+      num: 3, title: 'My Boundaries',
+      prompt: 'Quelles sont mes limites — ce que je ne négocie pas sur moi-même ?',
+      hint: 'Ça parle de toi, pas de l\'autre.',
+      choices: ['Mon temps seule est non négociable','Je ne me tais plus pour éviter un conflit','Mes ami(e)s restent dans ma vie','Je ne change pas qui je suis pour plaire','Mon téléphone reste à moi','Je peux dire non sans me justifier'],
+      confirmTitle: 'Ce sont tes limites, et elles comptent.',
+      confirmText: 'Une limite n\'est pas un mur. C\'est une façon de dire : voici où je commence.'
+    }),
+    makeStandardsListDay({
+      num: 4, title: 'My Green Flags',
+      prompt: 'Qu\'est-ce que je recherche chez quelqu\'un ?',
+      hint: 'Pas la perfection. Les signes que quelqu\'un est vraiment sûr pour toi.',
+      choices: ['Il/elle tient ses promesses','Il/elle me soutient devant les autres','Il/elle gère les désaccords calmement','Il/elle a une vie et des amis à lui/elle','Il/elle me rend meilleure, pas plus petite','Il/elle est fier/fière de moi'],
+      confirmTitle: 'Voilà ce que tu mérites de chercher.',
+      confirmText: 'Garde cette liste. Elle t\'aidera à reconnaître la bonne personne, plus vite que tu ne le penses.'
+    }),
+    {
+      num: 5, title: 'Ce qui aurait changé la donne', sub: 'Jour 5 sur 7',
+      render: function(c, key){
+        var opts = ['Mes non-négociables','Mes besoins','Mes limites','Mes green flags'];
+        c.innerHTML =
+          '<div class="prompt">En repensant à ta dernière relation, laquelle de ces listes aurait le plus changé les choses si tu l\'avais eue avant ?</div>' +
+          '<div class="option-row" id="s7d5_opts">' +
+          opts.map(function(o){ return '<button type="button" class="option-btn" data-value="' + o + '">' + o + '</button>'; }).join('') +
+          '</div>' +
+          '<textarea class="entry-textarea" id="s7d5_text" placeholder="Pourquoi celle-là ?"></textarea>' +
+          '<button type="button" class="save-btn" id="s7d5_save" disabled>Terminer ce jour</button>';
+        var row = document.getElementById('s7d5_opts');
+        var btn = document.getElementById('s7d5_save');
+        var chosen = null;
+        function updateBtn(){ btn.disabled = !(chosen && document.getElementById('s7d5_text').value.trim().length > 0); }
+        row.addEventListener('click', function(e){
+          var el = e.target.closest('.option-btn');
+          if (!el) return;
+          Array.prototype.forEach.call(row.querySelectorAll('.option-btn'), function(b){ b.classList.remove('selected'); });
+          el.classList.add('selected');
+          chosen = el.dataset.value;
+          updateBtn();
+        });
+        document.getElementById('s7d5_text').addEventListener('input', updateBtn);
+        btn.addEventListener('click', function(){
+          var text = document.getElementById('s7d5_text').value.trim();
+          completeDay(key, 5, { mostImpactful: chosen, why: text },
+            'C\'est une vraie prise de conscience.',
+            'Tu ne peux pas changer ce qui est arrivé. Mais tu viens de te donner un outil pour que la prochaine fois soit différente.');
+        });
+      }
+    },
+    {
+      num: 6, title: 'Ce que je ne ferai plus', sub: 'Jour 6 sur 7',
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Qu\'est-ce que je ne ferai plus jamais contre moi-même, pour être aimée ?</div>' +
+          '<div class="hint">C\'est la question la plus importante de cette semaine. Prends le temps qu\'il te faut.</div>' +
+          '<textarea class="entry-textarea" id="s7d6_text" placeholder="Écris-le, comme une promesse à toi-même…" style="min-height:140px;"></textarea>' +
+          '<button type="button" class="save-btn" id="s7d6_save" disabled>Terminer ce jour</button>';
+        var ta = document.getElementById('s7d6_text');
+        var btn = document.getElementById('s7d6_save');
+        ta.addEventListener('input', function(){ btn.disabled = ta.value.trim().length === 0; });
+        btn.addEventListener('click', function(){
+          completeDay(key, 6, { vow: ta.value.trim() },
+            'Retiens cette phrase. Elle est à toi, maintenant.',
+            'Ce n\'est pas une règle de plus à suivre. C\'est un engagement envers la personne que tu es en train de redevenir.');
+        });
+      }
+    },
+    {
+      num: 7, title: 'My Standards', sub: 'Jour 7 sur 7', isFinal: true,
+      render: function(c, key){
+        c.innerHTML =
+          '<div class="prompt">Une dernière chose avant tes standards.</div>' +
+          '<div class="hint">En un mot, comment tu te sens en ayant écrit tout ça ?</div>' +
+          '<input type="text" class="short-input" id="s7d7_feeling" placeholder="Un mot, ou une phrase courte…" maxlength="200" style="margin-bottom:18px;">' +
+          '<button type="button" class="save-btn" id="s7d7_save" disabled>Voir mes standards</button>';
+        var input = document.getElementById('s7d7_feeling');
+        var btn = document.getElementById('s7d7_save');
+        input.addEventListener('input', function(){ btn.disabled = input.value.trim().length === 0; });
+        btn.addEventListener('click', function(){
+          completeDay(key, 7, { feeling: input.value.trim() }, null, null, true);
+        });
+      }
+    }
+  ];
+
   var STEPS = [
     {
       key: 'step1', icon: '🤍', name: 'Stop & Breathe', sub: 'Je me stabilise',
@@ -1329,7 +1463,13 @@
       days: STEP6_DAYS,
       revealType: 'confidence'
     },
-    { key: 'step7', icon: '🦋', name: 'My Standards', sub: 'Je décide de ce que j\'accepte', days: null },
+    {
+      key: 'step7', icon: '🦋', name: 'My Standards', sub: 'Je décide de ce que j\'accepte',
+      weekTitle: 'My Standards', weekSub: 'Semaine 7 — "Je décide de ce que j\'accepte"',
+      weekIntro: 'On ne veut pas seulement que tu sortes d\'une relation. On veut que tu saches ce que tu veux pour la prochaine. Cette semaine, tu construis tes non-négociables, tes besoins, tes limites et tes green flags.',
+      days: STEP7_DAYS,
+      revealType: 'standards'
+    },
     { key: 'step8', icon: '✨', name: 'Choose Me', sub: 'Je me choisis', days: null }
   ];
 
@@ -1422,6 +1562,7 @@
       if (step.revealType === 'pattern') renderPatternReveal(step);
       else if (step.revealType === 'identity') renderIdentityReveal(step);
       else if (step.revealType === 'confidence') renderConfidenceReveal(step);
+      else if (step.revealType === 'standards') renderStandardsReveal(step);
       else renderRecap(step);
       showView('viewConfirm');
       return;
@@ -1523,6 +1664,33 @@
       '<p style="margin-top:10px;"><strong>' + counts[CONFIDENCE_CATEGORIES[2]] + '</strong> nouvelle(s) chose(s) que tu as essayée(s).</p>' +
       '</div>' +
       '<p class="pattern-note">La confiance n\'est pas quelque chose que tu dois croire sur parole. C\'est quelque chose que tu peux déjà constater, là, en noir sur blanc. L\'étape 7 est débloquée.</p>';
+
+    text.innerHTML = html;
+    document.getElementById('confirmContinue').onclick = function(){
+      renderSteps();
+      showView('viewHome');
+    };
+  }
+
+  function renderStandardsReveal(step){
+    var sd = stepData(step.key);
+    var nonNeg = (sd.day1 && sd.day1.items) || [];
+    var needs = (sd.day2 && sd.day2.items) || [];
+    var boundaries = (sd.day3 && sd.day3.items) || [];
+    var greenFlags = (sd.day4 && sd.day4.items) || [];
+    var vow = sd.day6 && sd.day6.vow;
+
+    document.getElementById('confirmTitle').textContent = 'Voici tes standards.';
+    var text = document.getElementById('confirmText');
+
+    var html = '<div class="pattern-card"><div class="pattern-label">My standards</div>';
+    if (nonNeg.length) html += '<p><strong>Non-négociables</strong> — ' + escapeHtml(nonNeg.join(', ').toLowerCase()) + '</p>';
+    if (needs.length) html += '<p style="margin-top:10px;"><strong>Mes besoins</strong> — ' + escapeHtml(needs.join(', ').toLowerCase()) + '</p>';
+    if (boundaries.length) html += '<p style="margin-top:10px;"><strong>Mes limites</strong> — ' + escapeHtml(boundaries.join(', ').toLowerCase()) + '</p>';
+    if (greenFlags.length) html += '<p style="margin-top:10px;"><strong>Mes green flags</strong> — ' + escapeHtml(greenFlags.join(', ').toLowerCase()) + '</p>';
+    html += '</div>';
+    if (vow) html += '<div class="pattern-card" style="background:var(--white); border:1px solid var(--line);"><div class="pattern-label">Ta promesse</div><p style="font-style:italic;">"' + escapeHtml(vow) + '"</p></div>';
+    html += '<p class="pattern-note">Ce n\'est pas une liste de conditions. C\'est ce que tu sais, maintenant, que tu mérites. L\'étape 8 est débloquée.</p>';
 
     text.innerHTML = html;
     document.getElementById('confirmContinue').onclick = function(){
