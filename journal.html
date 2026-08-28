@@ -127,6 +127,100 @@
   .empty-state p{font-size:13.5px; font-weight:300;}
 
   footer{padding:40px 0; text-align:center; color:var(--ink-soft); font-size:13.5px; border-top:1px solid var(--line);}
+
+  /* NOW — bouton d'urgence émotionnelle */
+  .now-trigger{
+    position:fixed; bottom:24px; right:24px; z-index:200;
+    display:flex; align-items:center; gap:10px;
+    padding:15px 22px; border-radius:100px;
+    background:var(--ink); color:var(--white);
+    font-size:13.5px; letter-spacing:.02em; font-weight:500;
+    box-shadow:0 14px 30px -10px rgba(59,48,44,0.45);
+    transition:transform .2s, box-shadow .2s;
+  }
+  .now-trigger:hover{transform:translateY(-2px); box-shadow:0 18px 36px -10px rgba(59,48,44,0.55);}
+  .now-trigger .dot{
+    width:8px; height:8px; border-radius:50%; background:#E0796B;
+    animation:pulse 1.8s infinite;
+  }
+  @keyframes pulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(224,121,107,0.55);}
+    50%{box-shadow:0 0 0 6px rgba(224,121,107,0);}
+  }
+
+  .now-overlay{
+    position:fixed; inset:0; z-index:300; background:rgba(59,48,44,0.45);
+    backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .now-overlay.open{display:flex;}
+  .now-modal{
+    width:100%; max-width:460px; max-height:90vh; overflow-y:auto;
+    background:var(--white); border-radius:26px; padding:36px 32px;
+    box-shadow:0 40px 80px -20px rgba(59,48,44,0.5);
+  }
+  .now-dots{display:flex; justify-content:center; gap:6px; margin-bottom:24px;}
+  .now-dots span{width:6px; height:6px; border-radius:50%; background:var(--line);}
+  .now-dots span.active{background:var(--clay-dark); width:18px; border-radius:4px; transition:width .2s;}
+
+  .now-step{display:none;}
+  .now-step.active{display:block;}
+  .now-step .eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--clay-dark); text-align:center; margin-bottom:12px;}
+  .now-step h3{font-size:21px; font-weight:500; text-align:center; margin-bottom:10px; line-height:1.25;}
+  .now-step .sub{font-size:13.5px; color:var(--ink-soft); font-weight:300; text-align:center; margin-bottom:26px;}
+
+  .now-slider{width:100%; margin:20px 0 10px;}
+  .now-slider input[type=range]{
+    width:100%; accent-color:var(--clay); height:4px;
+  }
+  .now-slider .now-slider-labels{display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-soft); margin-top:4px;}
+  .now-slider-value{
+    text-align:center; font-family:'Cormorant Garamond',serif; font-size:44px; font-weight:600;
+    color:var(--clay-dark); margin-bottom:4px;
+  }
+
+  .now-chips{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:8px;}
+  .now-chip{
+    padding:9px 16px; border-radius:100px; background:var(--cream-2); border:1.5px solid transparent;
+    font-size:13px; color:var(--ink-soft); transition:background .2s, border-color .2s, color .2s;
+  }
+  .now-chip.selected{background:var(--clay); border-color:var(--clay); color:var(--white);}
+
+  .breathing-wrap{display:flex; flex-direction:column; align-items:center; padding:16px 0 8px;}
+  .breathing-circle{
+    width:110px; height:110px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #FFFFFF, #E9C4B4 60%, #C98A73 100%);
+    animation:breathe 8s ease-in-out infinite;
+    margin-bottom:20px;
+  }
+  @keyframes breathe{
+    0%,100%{transform:scale(0.75);}
+    50%{transform:scale(1);}
+  }
+  .breathing-text{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:17px; color:var(--ink); text-align:center;}
+
+  .now-reminder{
+    background:var(--cream); border-radius:16px; padding:18px 20px; margin-bottom:22px;
+    font-size:13.5px; color:var(--ink-soft); font-weight:300; text-align:center; line-height:1.55;
+  }
+
+  .now-btn{
+    width:100%; padding:15px; border-radius:100px; font-size:14.5px; margin-top:8px;
+    transition:background .2s, transform .2s;
+  }
+  .now-btn-primary{background:var(--clay); color:var(--white);}
+  .now-btn-primary:hover{background:var(--clay-dark); transform:translateY(-1px);}
+  .now-btn-ghost{background:transparent; color:var(--ink-soft); border:1px solid var(--line); margin-top:10px;}
+  .now-btn-ghost:hover{background:var(--cream);}
+  .now-btn:disabled{opacity:.45; cursor:default; transform:none;}
+
+  .now-close{
+    display:block; margin:0 auto 20px; font-size:12px; color:var(--ink-soft); opacity:.65;
+    text-align:center;
+  }
+  .now-close:hover{opacity:1;}
+
+  .now-final-icon{font-size:34px; text-align:center; margin-bottom:14px;}
 </style>
 </head>
 <body>
@@ -198,6 +292,235 @@
 <footer>
   <div>© 2026 MYSLF. Un espace pour te retrouver.</div>
 </footer>
+
+<button type="button" class="now-trigger" id="nowTrigger">
+  <span class="dot"></span> Je vais lui écrire
+</button>
+
+<div class="now-overlay" id="nowOverlay">
+  <div class="now-modal">
+    <span class="now-close" id="nowClose" role="button" tabindex="0">Pas maintenant, fermer</span>
+    <div class="now-dots" id="nowDots">
+      <span class="active"></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="now-step active" data-step="0">
+      <div class="eyebrow">Avant de faire quoi que ce soit</div>
+      <h3>De 0 à 10, à quel point tu ressens le besoin de lui écrire, là, maintenant ?</h3>
+      <div class="now-slider">
+        <div class="now-slider-value" id="intensity1Value">5</div>
+        <input type="range" min="0" max="10" value="5" id="intensity1">
+        <div class="now-slider-labels"><span>Pas du tout</span><span>Complètement</span></div>
+      </div>
+      <button type="button" class="now-btn now-btn-primary" data-next>Continuer</button>
+    </div>
+
+    <div class="now-step" data-step="1">
+      <div class="eyebrow">Une question</div>
+      <h3>Qu'espères-tu obtenir de sa réponse ?</h3>
+      <div class="sub">Choisis ce qui te semble le plus vrai, là, maintenant.</div>
+      <div class="now-chips" id="needChips">
+        <button type="button" class="now-chip" data-need="qu'il te rassure">Qu'il me rassure</button>
+        <button type="button" class="now-chip" data-need="qu'il regrette">Qu'il regrette</button>
+        <button type="button" class="now-chip" data-need="une réponse, n'importe laquelle">Une réponse, peu importe</button>
+        <button type="button" class="now-chip" data-need="ne plus te sentir seule">Ne plus me sentir seule</button>
+        <button type="button" class="now-chip" data-need="tu ne sais pas vraiment">Je ne sais pas</button>
+      </div>
+      <button type="button" class="now-btn now-btn-primary" data-next disabled id="needContinueBtn">Continuer</button>
+    </div>
+
+    <div class="now-step" data-step="2">
+      <div class="eyebrow">Prends un instant</div>
+      <h3>Respire avec moi.</h3>
+      <div class="breathing-wrap">
+        <div class="breathing-circle"></div>
+        <div class="breathing-text">Inspire… et expire, lentement.</div>
+      </div>
+      <div class="sub">Ce besoin ne va pas disparaître en quelques secondes. Mais il peut déjà un peu redescendre.</div>
+      <button type="button" class="now-btn now-btn-primary" data-next disabled id="breatheContinueBtn">Patiente encore un instant…</button>
+    </div>
+
+    <div class="now-step" data-step="3">
+      <div class="eyebrow">Un rappel</div>
+      <h3>Ce que tu ressens est réel. Le message, lui, peut attendre.</h3>
+      <div class="now-reminder" id="reminderText"></div>
+      <button type="button" class="now-btn now-btn-primary" data-next>Continuer</button>
+    </div>
+
+    <div class="now-step" data-step="4">
+      <div class="eyebrow">Et maintenant ?</div>
+      <h3>Où tu en es, là ?</h3>
+      <div class="now-slider">
+        <div class="now-slider-value" id="intensity2Value">5</div>
+        <input type="range" min="0" max="10" value="5" id="intensity2">
+        <div class="now-slider-labels"><span>Pas du tout</span><span>Complètement</span></div>
+      </div>
+      <button type="button" class="now-btn now-btn-primary" data-next>Continuer</button>
+    </div>
+
+    <div class="now-step" data-step="5">
+      <div class="eyebrow">Ton choix</div>
+      <h3>Qu'est-ce que tu choisis ?</h3>
+      <div class="sub" id="deltaText"></div>
+      <button type="button" class="now-btn now-btn-primary" id="choiceStay">Je ne lui écris pas maintenant</button>
+      <button type="button" class="now-btn now-btn-ghost" id="choiceWrite">Je choisis quand même de lui écrire</button>
+    </div>
+
+    <div class="now-step" data-step="6">
+      <div class="now-final-icon">🌿</div>
+      <h3>C'est un choix conscient, et il compte.</h3>
+      <div class="sub">Reviens ici la prochaine fois que ça recommence. Tu peux aussi en parler à ton IA ou l'écrire dans ton journal.</div>
+      <button type="button" class="now-btn now-btn-primary" id="finalCloseA">Fermer</button>
+    </div>
+
+    <div class="now-step" data-step="7">
+      <div class="now-final-icon">🤍</div>
+      <h3>C'est ton choix, et il est respecté.</h3>
+      <div class="sub">Tu as pris le temps d'y réfléchir, ce n'est pas rien. Quoi qu'il se passe, tu peux revenir ici après.</div>
+      <button type="button" class="now-btn now-btn-primary" id="finalCloseB">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var overlay = document.getElementById('nowOverlay');
+  var trigger = document.getElementById('nowTrigger');
+  var closeBtn = document.getElementById('nowClose');
+  var steps = Array.prototype.slice.call(document.querySelectorAll('.now-step'));
+  var dots = Array.prototype.slice.call(document.querySelectorAll('#nowDots span'));
+  var state = { intensity1: 5, intensity2: 5, need: null, needLabel: null };
+
+  function showStep(index){
+    steps.forEach(function(s){ s.classList.toggle('active', Number(s.dataset.step) === index); });
+    if (index <= 4){
+      dots.forEach(function(d, i){ d.classList.toggle('active', i === index); });
+    }
+  }
+
+  function resetFlow(){
+    state = { intensity1: 5, intensity2: 5, need: null, needLabel: null };
+    document.getElementById('intensity1').value = 5;
+    document.getElementById('intensity1Value').textContent = 5;
+    document.getElementById('intensity2').value = 5;
+    document.getElementById('intensity2Value').textContent = 5;
+    Array.prototype.forEach.call(document.querySelectorAll('.now-chip'), function(c){ c.classList.remove('selected'); });
+    document.getElementById('needContinueBtn').disabled = true;
+    var breatheBtn = document.getElementById('breatheContinueBtn');
+    breatheBtn.disabled = true;
+    breatheBtn.textContent = 'Patiente encore un instant…';
+    showStep(0);
+  }
+
+  function openModal(){
+    resetFlow();
+    overlay.classList.add('open');
+    startBreatheTimer();
+  }
+
+  function closeModal(){
+    overlay.classList.remove('open');
+  }
+
+  trigger.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  closeBtn.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') closeModal(); });
+
+  var intensity1 = document.getElementById('intensity1');
+  intensity1.addEventListener('input', function(){
+    state.intensity1 = Number(intensity1.value);
+    document.getElementById('intensity1Value').textContent = state.intensity1;
+  });
+
+  var intensity2 = document.getElementById('intensity2');
+  intensity2.addEventListener('input', function(){
+    state.intensity2 = Number(intensity2.value);
+    document.getElementById('intensity2Value').textContent = state.intensity2;
+  });
+
+  document.getElementById('needChips').addEventListener('click', function(e){
+    var chip = e.target.closest('.now-chip');
+    if (!chip) return;
+    Array.prototype.forEach.call(document.querySelectorAll('.now-chip'), function(c){ c.classList.remove('selected'); });
+    chip.classList.add('selected');
+    state.need = chip.dataset.need;
+    state.needLabel = chip.textContent.trim();
+    document.getElementById('needContinueBtn').disabled = false;
+  });
+
+  function startBreatheTimer(){
+    var seconds = 6;
+    var btn = document.getElementById('breatheContinueBtn');
+    btn.disabled = true;
+    var interval = setInterval(function(){
+      seconds--;
+      if (seconds <= 0){
+        clearInterval(interval);
+        btn.disabled = false;
+        btn.textContent = 'Continuer';
+      } else {
+        btn.textContent = 'Patiente encore ' + seconds + 's…';
+      }
+    }, 1000);
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-next]'), function(btn){
+    btn.addEventListener('click', function(){
+      if (btn.disabled) return;
+      var current = Number(btn.closest('.now-step').dataset.step);
+      var next = current + 1;
+
+      if (current === 2){
+        document.getElementById('reminderText').textContent =
+          'Ce que tu espères — ' + state.needLabel.toLowerCase() + ' — ne dépend pas de lui. Personne ne peut te le donner à ta place, pas même lui.';
+      }
+      if (current === 4){
+        var before = state.intensity1, after = state.intensity2;
+        var delta = document.getElementById('deltaText');
+        if (after < before){
+          delta.textContent = 'Tu es passée de ' + before + ' à ' + after + '. C\'est déjà beaucoup.';
+        } else if (after === before){
+          delta.textContent = 'Le besoin est toujours là, à ' + after + '. C\'est ok, on peut quand même choisir consciemment.';
+        } else {
+          delta.textContent = 'C\'est encore fort, à ' + after + '. Prends le temps qu\'il te faut.';
+        }
+      }
+
+      showStep(next);
+    });
+  });
+
+  function logDecision(decision){
+    try {
+      var raw = localStorage.getItem('myslf_now_log');
+      var log = raw ? JSON.parse(raw) : [];
+      log.push({
+        ts: Date.now(),
+        before: state.intensity1,
+        after: state.intensity2,
+        need: state.need,
+        decision: decision
+      });
+      localStorage.setItem('myslf_now_log', JSON.stringify(log));
+    } catch (e) {}
+  }
+
+  document.getElementById('choiceStay').addEventListener('click', function(){
+    logDecision('stayed');
+    showStep(6);
+  });
+  document.getElementById('choiceWrite').addEventListener('click', function(){
+    logDecision('wrote');
+    showStep(7);
+  });
+  document.getElementById('finalCloseA').addEventListener('click', closeModal);
+  document.getElementById('finalCloseB').addEventListener('click', closeModal);
+
+  overlay.addEventListener('click', function(e){
+    if (e.target === overlay) closeModal();
+  });
+})();
+</script>
 
 <script>
 (function(){
