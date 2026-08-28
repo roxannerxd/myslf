@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MYSLF — Mes patterns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7EFE8;
+    --cream-2:#F1E4DA;
+    --clay:#C98A73;
+    --clay-dark:#B06E56;
+    --ink:#3B302C;
+    --ink-soft:#6B5B54;
+    --line:rgba(59,48,44,0.12);
+    --white:#FFFDFB;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Jost',sans-serif;
+    color:var(--ink);
+    background:var(--cream);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,.serif{font-family:'Cormorant Garamond',serif;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 32px;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--clay-dark);outline-offset:2px;}
+
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(247,239,232,0.9); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 32px; max-width:1180px; margin:0 auto;
+  }
+  .logo{font-family:'Cormorant Garamond',serif; font-size:22px; letter-spacing:0.08em; font-weight:600;}
+  .nav-links{display:flex; align-items:center; gap:24px; font-size:14px; color:var(--ink-soft); flex-wrap:wrap;}
+  .nav-links a{transition:color .2s;}
+  .nav-links a:hover, .nav-links a.active{color:var(--ink);}
+  .nav-links a.active{border-bottom:1.5px solid var(--clay-dark); padding-bottom:2px;}
+
+  main{padding:56px 0 100px;}
+  .eyebrow{font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:var(--clay-dark); margin-bottom:10px;}
+  h1.title{font-size:clamp(28px,4.5vw,38px); font-weight:500; margin-bottom:10px;}
+  .subtitle{font-size:14.5px; color:var(--ink-soft); font-weight:300; max-width:480px; margin-bottom:36px;}
+
+  .empty-card{
+    background:var(--white); border:1px solid var(--line); border-radius:22px;
+    padding:48px 36px; text-align:center;
+  }
+  .empty-card .serif{font-size:22px; font-style:italic; color:var(--clay-dark); margin-bottom:12px; display:block;}
+  .empty-card p{font-size:14px; color:var(--ink-soft); font-weight:300; max-width:400px; margin:0 auto 24px;}
+  .empty-card .links{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .empty-card .btn{
+    padding:12px 24px; border-radius:100px; background:var(--clay); color:var(--white); font-size:13.5px;
+    transition:background .2s;
+  }
+  .empty-card .btn:hover{background:var(--clay-dark);}
+  .empty-card .btn.ghost{background:transparent; color:var(--clay-dark); border:1px solid var(--line);}
+
+  .insight-card{
+    background:linear-gradient(135deg,#EFDCCF,#E3B9A5);
+    border-radius:22px; padding:30px 32px; margin-bottom:32px;
+  }
+  .insight-card .eyebrow{color:var(--clay-dark); opacity:.85;}
+  .insight-card p{font-size:16px; color:var(--ink); font-weight:400; line-height:1.5;}
+  .insight-card p strong{font-weight:600;}
+
+  .card{
+    background:var(--white); border:1px solid var(--line); border-radius:22px;
+    padding:28px 30px; margin-bottom:24px;
+  }
+  .card h2{font-size:16.5px; font-weight:500; margin-bottom:4px;}
+  .card .card-sub{font-size:12.5px; color:var(--ink-soft); font-weight:300; margin-bottom:20px;}
+
+  .bar-row{margin-bottom:16px;}
+  .bar-row:last-child{margin-bottom:0;}
+  .bar-label{display:flex; align-items:center; justify-content:space-between; font-size:13.5px; margin-bottom:6px;}
+  .bar-label .count{color:var(--ink-soft); font-weight:300; font-size:12.5px;}
+  .bar-track{height:8px; border-radius:100px; background:var(--cream-2); overflow:hidden;}
+  .bar-fill{height:100%; border-radius:100px; background:var(--clay); transition:width .4s ease;}
+
+  .stat-pair{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .stat-box{background:var(--cream); border-radius:16px; padding:18px; text-align:center;}
+  .stat-box .num{font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:600; color:var(--clay-dark);}
+  .stat-box .label{font-size:12px; color:var(--ink-soft); margin-top:2px;}
+
+  .tag-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .tag{
+    padding:8px 14px; border-radius:100px; background:var(--cream-2); color:var(--ink-soft);
+    font-size:12.5px;
+  }
+
+  footer{padding:40px 0; text-align:center; color:var(--ink-soft); font-size:13.5px; border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="index.html" class="logo">MYSLF</a>
+    <div class="nav-links">
+      <a href="journal.html">Journal</a>
+      <a href="histoire.html">Mon histoire</a>
+      <a href="patterns.html" class="active">Mes patterns</a>
+      <a href="index.html#ia-demo">Mon IA</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="eyebrow">Ce que j'ai remarqué</div>
+    <h1 class="title">Tes patterns</h1>
+    <p class="subtitle">Construit à partir de ton journal et de tes passages par le bouton "Je vais lui écrire" — rien d'autre.</p>
+
+    <div id="content"></div>
+  </div>
+</main>
+
+<footer>
+  <div>© 2026 MYSLF. Un espace pour te retrouver.</div>
+</footer>
+
+<script>
+(function(){
+  var content = document.getElementById('content');
+
+  function load(key){
+    try {
+      var raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
+  }
+
+  function loadStory(){
+    try {
+      var raw = localStorage.getItem('myslf_story');
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+
+  var entries = load('myslf_journal_entries');
+  var nowLog = load('myslf_now_log');
+  var story = loadStory();
+
+  var hasEnoughData = entries.length >= 2 || nowLog.length >= 2;
+
+  if (!hasEnoughData){
+    content.innerHTML =
+      '<div class="empty-card">' +
+        '<span class="serif">Pas encore assez pour voir un pattern.</span>' +
+        '<p>Continue à écrire dans ton journal et à utiliser le bouton "Je vais lui écrire" quand tu en as besoin. Après quelques passages, je commencerai à repérer ce qui revient chez toi.</p>' +
+        '<div class="links">' +
+          '<a href="journal.html" class="btn">Aller à mon journal</a>' +
+          '<a href="histoire.html" class="btn ghost">Compléter mon histoire</a>' +
+        '</div>' +
+      '</div>';
+    return;
+  }
+
+  function countBy(arr, keyFn){
+    var counts = {};
+    arr.forEach(function(item){
+      var key = keyFn(item);
+      if (!key) return;
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    return Object.keys(counts)
+      .map(function(k){ return { label: k, count: counts[k] }; })
+      .sort(function(a, b){ return b.count - a.count; });
+  }
+
+  function renderBars(list, max){
+    if (!list.length) return '<p style="font-size:13.5px; color:var(--ink-soft); font-weight:300;">Pas encore de donnée ici.</p>';
+    var topMax = max || list[0].count;
+    return list.slice(0, 6).map(function(item){
+      var pct = Math.max(8, Math.round((item.count / topMax) * 100));
+      return '<div class="bar-row">' +
+        '<div class="bar-label"><span>' + escapeHtml(capitalize(item.label)) + '</span><span class="count">' + item.count + '×</span></div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;"></div></div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function escapeHtml(str){
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function capitalize(str){
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  var moodCounts = countBy(entries, function(e){ return e.mood; });
+  var needCounts = countBy(nowLog, function(e){ return e.need; });
+
+  var stayedCount = nowLog.filter(function(e){ return e.decision === 'stayed'; }).length;
+  var wroteCount = nowLog.filter(function(e){ return e.decision === 'wrote'; }).length;
+
+  var avgDelta = null;
+  if (nowLog.length){
+    var totalDelta = nowLog.reduce(function(sum, e){ return sum + (e.before - e.after); }, 0);
+    avgDelta = Math.round((totalDelta / nowLog.length) * 10) / 10;
+  }
+
+  var html = '';
+
+  var topMood = moodCounts[0];
+  var topNeed = needCounts[0];
+  if (topMood && topNeed){
+    html += '<div class="insight-card">' +
+      '<div class="eyebrow">J\'ai remarqué quelque chose chez toi</div>' +
+      '<p>Tu te sens souvent <strong>' + escapeHtml(topMood.label.toLowerCase()) + '</strong> dans ton journal, et quand l\'envie de le/la contacter monte, ce que tu espères le plus souvent, c\'est <strong>' + escapeHtml(topNeed.label) + '</strong>. Ce n\'est probablement pas un hasard.</p>' +
+    '</div>';
+  } else if (topMood) {
+    html += '<div class="insight-card">' +
+      '<div class="eyebrow">J\'ai remarqué quelque chose chez toi</div>' +
+      '<p>L\'humeur qui revient le plus souvent dans ton journal, c\'est <strong>' + escapeHtml(topMood.label.toLowerCase()) + '</strong>. On peut regarder ensemble d\'où ça vient.</p>' +
+    '</div>';
+  }
+
+  html += '<div class="card">' +
+    '<h2>Tes humeurs les plus fréquentes</h2>' +
+    '<div class="card-sub">D\'après tes entrées de journal</div>' +
+    renderBars(moodCounts) +
+  '</div>';
+
+  html += '<div class="card">' +
+    '<h2>Ce que tu espères le plus souvent</h2>' +
+    '<div class="card-sub">D\'après tes passages par "Je vais lui écrire"</div>' +
+    renderBars(needCounts) +
+  '</div>';
+
+  if (nowLog.length){
+    html += '<div class="card">' +
+      '<h2>Tes choix face à l\'impulsion</h2>' +
+      '<div class="card-sub">Sur ' + nowLog.length + ' passage' + (nowLog.length > 1 ? 's' : '') + ' par le bouton NOW</div>' +
+      '<div class="stat-pair">' +
+        '<div class="stat-box"><div class="num">' + stayedCount + '</div><div class="label">fois tu as choisi d\'attendre</div></div>' +
+        '<div class="stat-box"><div class="num">' + wroteCount + '</div><div class="label">fois tu as choisi d\'écrire</div></div>' +
+      '</div>' +
+      (avgDelta !== null ? '<p style="margin-top:18px; font-size:13px; color:var(--ink-soft); font-weight:300; text-align:center;">En moyenne, ton intensité redescend de <strong style="color:var(--clay-dark);">' + avgDelta + ' points</strong> pendant le parcours.</p>' : '') +
+    '</div>';
+  }
+
+  if (story && ((story.trigger && story.trigger.length) || (story.neverAgain && story.neverAgain.length))){
+    html += '<div class="card">' +
+      '<h2>Ce que tu nous as raconté</h2>' +
+      '<div class="card-sub">Depuis ton histoire</div>' +
+      (story.trigger && story.trigger.length ? '<div class="tag-row" style="margin-bottom:14px;">' + story.trigger.map(function(t){ return '<span class="tag">' + escapeHtml(capitalize(t)) + '</span>'; }).join('') + '</div>' : '') +
+      (story.neverAgain && story.neverAgain.length ? '<div class="tag-row">' + story.neverAgain.map(function(t){ return '<span class="tag">' + escapeHtml(capitalize(t)) + '</span>'; }).join('') + '</div>' : '') +
+    '</div>';
+  }
+
+  content.innerHTML = html;
+})();
+</script>
+
+</body>
+</html>
