@@ -154,8 +154,8 @@
     border-radius:32px; padding:26px 20px 20px; min-height:520px;
     display:flex; flex-direction:column;
   }
-  .phone-time{font-size:13px; color:var(--ink-soft); display:flex; justify-content:space-between; margin-bottom:20px;}
-  .phone-title{font-size:14px; color:var(--ink-soft); text-align:center; margin-bottom:40px; letter-spacing:.05em;}
+  .phone-time{font-size:13px; color:var(--ink-soft); display:flex; justify-content:space-between; margin-bottom:16px; flex-shrink:0;}
+  .phone-title{font-size:14px; color:var(--ink-soft); text-align:center; margin-bottom:16px; letter-spacing:.05em; flex-shrink:0;}
   .orb{
     width:150px; height:150px; border-radius:50%; margin:0 auto 40px;
     background:radial-gradient(circle at 35% 30%, #FFFFFF, #E9C4B4 60%, #C98A73 100%);
@@ -170,6 +170,56 @@
     box-shadow:0 8px 20px rgba(201,138,115,0.5);
   }
   .dot-nav{width:20px;height:20px;color:var(--ink-soft); opacity:.5;}
+
+  /* CHAT (fake IA demo) */
+  .chat-messages{
+    flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px;
+    padding-right:2px; margin-bottom:12px; scrollbar-width:thin;
+  }
+  .chat-messages::-webkit-scrollbar{width:4px;}
+  .chat-messages::-webkit-scrollbar-thumb{background:rgba(59,48,44,0.15); border-radius:10px;}
+  .msg{
+    max-width:82%; padding:10px 14px; border-radius:16px; font-size:13.5px; font-weight:300;
+    line-height:1.45; animation:msgIn .25s ease;
+  }
+  @keyframes msgIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+  .msg.ai{
+    align-self:flex-start; background:var(--white); color:var(--ink);
+    border-bottom-left-radius:4px; box-shadow:0 4px 14px rgba(59,48,44,0.06);
+  }
+  .msg.user{
+    align-self:flex-end; background:var(--clay); color:var(--white);
+    border-bottom-right-radius:4px;
+  }
+  .msg.typing{display:flex; align-items:center; gap:4px; padding:12px 16px;}
+  .msg.typing span{
+    width:6px; height:6px; border-radius:50%; background:var(--ink-soft); opacity:.5;
+    animation:typingBounce 1s infinite ease-in-out;
+  }
+  .msg.typing span:nth-child(2){animation-delay:.15s;}
+  .msg.typing span:nth-child(3){animation-delay:.3s;}
+  @keyframes typingBounce{0%,60%,100%{transform:translateY(0); opacity:.4;} 30%{transform:translateY(-3px); opacity:1;}}
+  .chat-input-row{
+    flex-shrink:0; display:flex; align-items:center; gap:8px;
+    background:var(--white); border-radius:100px; padding:6px 6px 6px 16px;
+    box-shadow:0 4px 14px rgba(59,48,44,0.08);
+  }
+  .chat-input{
+    flex:1; border:none; background:transparent; font-family:inherit; font-size:13.5px;
+    color:var(--ink); outline:none;
+  }
+  .chat-input::placeholder{color:var(--ink-soft); opacity:.6;}
+  .chat-send{
+    width:36px; height:36px; border-radius:50%; background:var(--clay); color:var(--white);
+    display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;
+    transition:background .2s, transform .2s;
+  }
+  .chat-send:hover{background:var(--clay-dark); transform:translateY(-1px);}
+  .chat-send:disabled{opacity:.5; cursor:default; transform:none;}
+  .chat-disclaimer{
+    text-align:center; font-size:10.5px; color:var(--ink-soft); opacity:.55;
+    margin-top:8px; flex-shrink:0;
+  }
 
   .col-title{font-size:14px; letter-spacing:.15em; text-transform:uppercase; color:var(--clay-dark); margin-bottom:16px;}
   .col-heading{font-size:clamp(26px,3.4vw,36px); font-weight:500; margin-bottom:26px; line-height:1.15;}
@@ -326,14 +376,14 @@
         <div class="phone-screen">
           <div class="phone-time"><span>9:41</span><span>●●●</span></div>
           <div class="phone-title">MON IA</div>
-          <div class="orb"></div>
-          <div class="phone-msg">Je suis là pour toi.</div>
-          <div class="phone-msg-sub">Dis-moi ce que tu ressens, parle librement.</div>
-          <div class="phone-bottom">
-            <span class="dot-nav">⌂</span>
-            <div class="mic-btn">●</div>
-            <span class="dot-nav">☰</span>
+          <div class="chat-messages" id="chatMessages" aria-live="polite">
+            <div class="msg ai">Je suis là pour toi. Dis-moi ce que tu ressens, parle librement.</div>
           </div>
+          <form class="chat-input-row" id="chatForm">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Écris ce que tu ressens…" autocomplete="off" maxlength="300">
+            <button type="submit" class="chat-send" id="chatSend" aria-label="Envoyer">➤</button>
+          </form>
+          <div class="chat-disclaimer">Démo — réponses simulées, pas une vraie IA (pour l'instant)</div>
         </div>
       </div>
     </div>
@@ -412,5 +462,110 @@
   <div>© 2026 MYSLF. Un espace pour te retrouver.</div>
 </footer>
 
+<script>
+(function(){
+  var messages = document.getElementById('chatMessages');
+  var form = document.getElementById('chatForm');
+  var input = document.getElementById('chatInput');
+  var sendBtn = document.getElementById('chatSend');
+
+  var keywordReplies = [
+    { test: /triste|pleur|larme/i, replies: [
+      "C'est normal de ressentir cette tristesse. Prends le temps qu'il te faut, je reste avec toi.",
+      "Ta tristesse est légitime. Tu veux me raconter ce qui s'est passé ?"
+    ]},
+    { test: /seul|abandon/i, replies: [
+      "Tu n'es pas seule, même quand tu le ressens fort. Je suis là, à chaque étape.",
+      "Cette solitude que tu ressens ne définit pas ta valeur. Parlons-en."
+    ]},
+    { test: /col[eè]re|énerv|rage/i, replies: [
+      "Ta colère a le droit d'exister, elle te dit souvent qu'une limite a été franchie.",
+      "C'est ok d'être en colère. Qu'est-ce qui l'a déclenchée ?"
+    ]},
+    { test: /peur|angoiss|stress/i, replies: [
+      "La peur peut être écrasante. Respire avec moi un instant, on avance doucement.",
+      "Je t'écoute. Qu'est-ce qui te fait le plus peur en ce moment ?"
+    ]},
+    { test: /ex[- ]|lui|il m'a|copain|copine|couple/i, replies: [
+      "Les relations qui nous ont blessées laissent des traces, et te reconstruire prend du temps.",
+      "Ce que tu as vécu avec cette personne compte. Comment tu te sens par rapport à ça aujourd'hui ?"
+    ]},
+    { test: /confiance|honte|nul|nulle|incapable/i, replies: [
+      "Tu mérites d'être traitée avec douceur, y compris par toi-même.",
+      "Ce que tu ressens ne veut pas dire que c'est vrai. On peut regarder ça ensemble."
+    ]},
+    { test: /merci/i, replies: [
+      "Avec plaisir. Je suis là chaque fois que tu en as besoin.",
+      "C'est moi qui te remercie de me faire confiance."
+    ]},
+    { test: /bonjour|salut|coucou|hello/i, replies: [
+      "Bonjour, je suis contente de te retrouver. Comment tu te sens aujourd'hui ?",
+      "Salut. Prends ton temps, je suis là pour t'écouter."
+    ]}
+  ];
+
+  var fallbackReplies = [
+    "Je t'entends. Peux-tu m'en dire un peu plus ?",
+    "Merci de partager ça avec moi. Comment ça résonne en toi, là, maintenant ?",
+    "Prends ton temps. Je suis là, sans jugement.",
+    "C'est important, ce que tu viens de dire. On continue ensemble ?",
+    "Ça a l'air difficile à porter. Tu veux qu'on explore ça plus doucement ?"
+  ];
+  var lastFallback = -1;
+
+  function pick(arr, avoidIndex){
+    var i;
+    do { i = Math.floor(Math.random() * arr.length); } while (arr.length > 1 && i === avoidIndex);
+    return i;
+  }
+
+  function fakeAIReply(text){
+    for (var k = 0; k < keywordReplies.length; k++){
+      if (keywordReplies[k].test.test(text)){
+        var replies = keywordReplies[k].replies;
+        return replies[Math.floor(Math.random() * replies.length)];
+      }
+    }
+    lastFallback = pick(fallbackReplies, lastFallback);
+    return fallbackReplies[lastFallback];
+  }
+
+  function addMessage(text, who){
+    var el = document.createElement('div');
+    el.className = 'msg ' + who;
+    el.textContent = text;
+    messages.appendChild(el);
+    messages.scrollTop = messages.scrollHeight;
+    return el;
+  }
+
+  function showTyping(){
+    var el = document.createElement('div');
+    el.className = 'msg ai typing';
+    el.innerHTML = '<span></span><span></span><span></span>';
+    messages.appendChild(el);
+    messages.scrollTop = messages.scrollHeight;
+    return el;
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var text = input.value.trim();
+    if (!text) return;
+    addMessage(text, 'user');
+    input.value = '';
+    sendBtn.disabled = true;
+
+    var typingEl = showTyping();
+    var delay = 700 + Math.random() * 700;
+    setTimeout(function(){
+      typingEl.remove();
+      addMessage(fakeAIReply(text), 'ai');
+      sendBtn.disabled = false;
+      input.focus();
+    }, delay);
+  });
+})();
+</script>
 </body>
 </html>
