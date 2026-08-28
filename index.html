@@ -475,11 +475,17 @@
     story = rawStory ? JSON.parse(rawStory) : null;
   } catch (e) { story = null; }
 
+  function firstOf(val){
+    if (Array.isArray(val)) return val.length ? val[0] : null;
+    return val || null;
+  }
+
   if (story){
     var firstMsg = messages.querySelector('.msg.ai');
+    var mainDifficulty = firstOf(story.difficulty);
     if (firstMsg){
-      if (story.difficulty){
-        firstMsg.textContent = "Je me souviens que " + story.difficulty + " est particulièrement dur pour toi en ce moment. Comment tu te sens aujourd'hui ?";
+      if (mainDifficulty){
+        firstMsg.textContent = "Je me souviens que " + mainDifficulty + " est particulièrement dur pour toi en ce moment. Comment tu te sens aujourd'hui ?";
       } else {
         firstMsg.textContent = "Je suis là pour toi. Comment tu te sens aujourd'hui ?";
       }
@@ -537,11 +543,14 @@
   }
 
   function fakeAIReply(text){
-    if (story && /seul|abandon/i.test(text) && story.trigger){
-      return "Je remarque que ça revient souvent chez toi : " + story.trigger + ". Ce que tu ressens là, maintenant, ça vient peut-être de ce même endroit.";
+    var mainTrigger = firstOf(story && story.trigger);
+    var mainGoal = firstOf(story && story.goal);
+
+    if (story && /seul|abandon/i.test(text) && mainTrigger){
+      return "Je remarque que ça revient souvent chez toi : " + mainTrigger + ". Ce que tu ressens là, maintenant, ça vient peut-être de ce même endroit.";
     }
-    if (story && /ex[- ]|lui|il m'a|copain|copine|couple/i.test(text) && story.goal){
-      return "Je sais que tu avances vers ça : " + story.goal + ". Chaque fois que tu reparles de lui, tu peux te demander si ça t'en rapproche ou t'en éloigne.";
+    if (story && /ex[- ]|lui|il m'a|copain|copine|couple/i.test(text) && mainGoal){
+      return "Je sais que tu avances vers ça : " + mainGoal + ". Chaque fois que tu reparles de lui, tu peux te demander si ça t'en rapproche ou t'en éloigne.";
     }
 
     for (var k = 0; k < keywordReplies.length; k++){

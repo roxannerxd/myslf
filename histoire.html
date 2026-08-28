@@ -78,6 +78,7 @@
   .field{margin-bottom:22px;}
   .field label{display:block; font-size:13.5px; font-weight:500; margin-bottom:10px;}
   .field .hint{font-size:12px; color:var(--ink-soft); font-weight:300; margin-top:6px;}
+  .hint-inline{font-size:12px; color:var(--ink-soft); font-weight:300; text-transform:none; letter-spacing:0;}
 
   .option-row{display:flex; flex-wrap:wrap; gap:10px;}
   .option-btn{
@@ -141,8 +142,11 @@
       <span class="serif" id="summaryIntro"></span>
       <div class="summary-row"><span class="label">Durée de la relation</span><span class="value" id="sumDuration">—</span></div>
       <div class="summary-row"><span class="label">Ruptures répétées</span><span class="value" id="sumRepeated">—</span></div>
-      <div class="summary-row"><span class="label">Déclencheur principal</span><span class="value" id="sumTrigger">—</span></div>
+      <div class="summary-row"><span class="label">Depuis quand c'est terminé</span><span class="value" id="sumTimeSince">—</span></div>
+      <div class="summary-row"><span class="label">Pourquoi ça s'est terminé</span><span class="value" id="sumBreakupReason">—</span></div>
+      <div class="summary-row"><span class="label">Déclencheurs principaux</span><span class="value" id="sumTrigger">—</span></div>
       <div class="summary-row"><span class="label">Ta plus grande difficulté</span><span class="value" id="sumDifficulty">—</span></div>
+      <div class="summary-row"><span class="label">Ce que tu ne veux plus revivre</span><span class="value" id="sumNeverAgain">—</span></div>
       <div class="summary-row"><span class="label">Ton objectif</span><span class="value" id="sumGoal">—</span></div>
       <a href="#" class="summary-edit" id="editLink">Modifier mon histoire</a>
     </div>
@@ -169,8 +173,33 @@
         </div>
 
         <div class="field">
-          <label>Qu'est-ce qui déclenche le plus souvent tes moments difficiles ?</label>
-          <div class="option-row" data-field="trigger">
+          <label>Depuis quand c'est terminé ?</label>
+          <div class="option-row" data-field="timeSince">
+            <button type="button" class="option-btn" data-value="moins d'une semaine">Moins d'une semaine</button>
+            <button type="button" class="option-btn" data-value="quelques semaines">Quelques semaines</button>
+            <button type="button" class="option-btn" data-value="1 à 3 mois">1 à 3 mois</button>
+            <button type="button" class="option-btn" data-value="3 à 6 mois">3 à 6 mois</button>
+            <button type="button" class="option-btn" data-value="plus de 6 mois">Plus de 6 mois</button>
+            <button type="button" class="option-btn" data-value="on est toujours en contact">On est toujours en contact</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Pourquoi ça s'est terminé, selon toi ? <span class="hint-inline">(plusieurs réponses possibles)</span></label>
+          <div class="option-row" data-field="breakupReason" data-mode="multi">
+            <button type="button" class="option-btn" data-value="il/elle est parti(e)">Il/elle est parti(e)</button>
+            <button type="button" class="option-btn" data-value="je suis partie">Je suis partie</button>
+            <button type="button" class="option-btn" data-value="infidélité">Infidélité</button>
+            <button type="button" class="option-btn" data-value="on s'éloignait">On s'éloignait</button>
+            <button type="button" class="option-btn" data-value="manque de respect">Manque de respect</button>
+            <button type="button" class="option-btn" data-value="incompatibilité">Incompatibilité</button>
+            <button type="button" class="option-btn" data-value="je ne sais pas vraiment">Je ne sais pas vraiment</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Qu'est-ce qui déclenche le plus souvent tes moments difficiles ? <span class="hint-inline">(plusieurs réponses possibles)</span></label>
+          <div class="option-row" data-field="trigger" data-mode="multi">
             <button type="button" class="option-btn" data-value="peur de l'abandon">Peur de l'abandon</button>
             <button type="button" class="option-btn" data-value="peur du rejet">Peur du rejet</button>
             <button type="button" class="option-btn" data-value="la solitude">La solitude</button>
@@ -181,8 +210,8 @@
         </div>
 
         <div class="field">
-          <label>Qu'est-ce qui est le plus dur pour toi, aujourd'hui ?</label>
-          <div class="option-row" data-field="difficulty">
+          <label>Qu'est-ce qui est le plus dur pour toi, aujourd'hui ? <span class="hint-inline">(plusieurs réponses possibles)</span></label>
+          <div class="option-row" data-field="difficulty" data-mode="multi">
             <button type="button" class="option-btn" data-value="rester seule">Rester seule</button>
             <button type="button" class="option-btn" data-value="lâcher prise">Lâcher prise</button>
             <button type="button" class="option-btn" data-value="faire confiance à nouveau">Faire confiance à nouveau</button>
@@ -192,8 +221,20 @@
         </div>
 
         <div class="field">
-          <label>Vers quoi tu avances ?</label>
-          <div class="option-row" data-field="goal">
+          <label>Qu'est-ce que tu ne veux plus revivre à l'avenir ? <span class="hint-inline">(plusieurs réponses possibles)</span></label>
+          <div class="option-row" data-field="neverAgain" data-mode="multi">
+            <button type="button" class="option-btn" data-value="me sentir invisible">Me sentir invisible</button>
+            <button type="button" class="option-btn" data-value="douter de ma valeur">Douter de ma valeur</button>
+            <button type="button" class="option-btn" data-value="être trompée">Être trompée</button>
+            <button type="button" class="option-btn" data-value="perdre mes amis pour lui/elle">Perdre mes amis pour lui/elle</button>
+            <button type="button" class="option-btn" data-value="me taire pour éviter les conflits">Me taire pour éviter les conflits</button>
+            <button type="button" class="option-btn" data-value="rester par peur d'être seule">Rester par peur d'être seule</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Vers quoi tu avances ? <span class="hint-inline">(plusieurs réponses possibles)</span></label>
+          <div class="option-row" data-field="goal" data-mode="multi">
             <button type="button" class="option-btn" data-value="retrouver mon indépendance">Retrouver mon indépendance</button>
             <button type="button" class="option-btn" data-value="me reconstruire">Me reconstruire</button>
             <button type="button" class="option-btn" data-value="apprendre à m'aimer">Apprendre à m'aimer</button>
@@ -226,7 +267,11 @@
   var summaryCard = document.getElementById('summaryCard');
   var repeatedToggle = document.getElementById('repeatedToggle');
   var notes = document.getElementById('storyNotes');
-  var state = { duration: null, repeated: false, trigger: null, difficulty: null, goal: null, notes: '' };
+  var state = {
+    duration: null, repeated: false, timeSince: null,
+    breakupReason: [], trigger: [], difficulty: [], neverAgain: [], goal: [],
+    notes: ''
+  };
 
   function loadStory(){
     try {
@@ -241,12 +286,26 @@
 
   document.querySelectorAll('.option-row').forEach(function(row){
     var field = row.dataset.field;
+    var mode = row.dataset.mode === 'multi' ? 'multi' : 'single';
     row.addEventListener('click', function(e){
       var btn = e.target.closest('.option-btn');
       if (!btn) return;
-      row.querySelectorAll('.option-btn').forEach(function(b){ b.classList.remove('selected'); });
-      btn.classList.add('selected');
-      state[field] = btn.dataset.value;
+
+      if (mode === 'multi'){
+        if (!Array.isArray(state[field])) state[field] = [];
+        var idx = state[field].indexOf(btn.dataset.value);
+        if (idx === -1){
+          state[field].push(btn.dataset.value);
+          btn.classList.add('selected');
+        } else {
+          state[field].splice(idx, 1);
+          btn.classList.remove('selected');
+        }
+      } else {
+        row.querySelectorAll('.option-btn').forEach(function(b){ b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        state[field] = btn.dataset.value;
+      }
     });
   });
 
@@ -259,19 +318,29 @@
     state = {
       duration: story.duration || null,
       repeated: !!story.repeated,
-      trigger: story.trigger || null,
-      difficulty: story.difficulty || null,
-      goal: story.goal || null,
+      timeSince: story.timeSince || null,
+      breakupReason: Array.isArray(story.breakupReason) ? story.breakupReason.slice() : [],
+      trigger: Array.isArray(story.trigger) ? story.trigger.slice() : [],
+      difficulty: Array.isArray(story.difficulty) ? story.difficulty.slice() : [],
+      neverAgain: Array.isArray(story.neverAgain) ? story.neverAgain.slice() : [],
+      goal: Array.isArray(story.goal) ? story.goal.slice() : [],
       notes: story.notes || ''
     };
     document.querySelectorAll('.option-row').forEach(function(row){
       var field = row.dataset.field;
+      var val = state[field];
       row.querySelectorAll('.option-btn').forEach(function(b){
-        b.classList.toggle('selected', b.dataset.value === state[field]);
+        var isSelected = Array.isArray(val) ? val.indexOf(b.dataset.value) !== -1 : b.dataset.value === val;
+        b.classList.toggle('selected', isSelected);
       });
     });
     repeatedToggle.classList.toggle('on', state.repeated);
     notes.value = state.notes;
+  }
+
+  function joinValues(val){
+    if (Array.isArray(val)) return val.length ? val.join(', ') : '—';
+    return val || '—';
   }
 
   function renderSummary(story){
@@ -279,9 +348,12 @@
       '"Je me souviens de ton histoire, et je suis là pour la suite."';
     document.getElementById('sumDuration').textContent = story.duration || '—';
     document.getElementById('sumRepeated').textContent = story.repeated ? 'Oui' : 'Non';
-    document.getElementById('sumTrigger').textContent = story.trigger || '—';
-    document.getElementById('sumDifficulty').textContent = story.difficulty || '—';
-    document.getElementById('sumGoal').textContent = story.goal || '—';
+    document.getElementById('sumTimeSince').textContent = story.timeSince || '—';
+    document.getElementById('sumBreakupReason').textContent = joinValues(story.breakupReason);
+    document.getElementById('sumTrigger').textContent = joinValues(story.trigger);
+    document.getElementById('sumDifficulty').textContent = joinValues(story.difficulty);
+    document.getElementById('sumNeverAgain').textContent = joinValues(story.neverAgain);
+    document.getElementById('sumGoal').textContent = joinValues(story.goal);
   }
 
   function showSummaryView(){
