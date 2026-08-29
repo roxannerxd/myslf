@@ -269,6 +269,24 @@
     return el;
   }
 
+  var conversationHistory = [];
+
+  async function getAIReply(text){
+    try {
+      var response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ message: text, history: conversationHistory, story: story })
+      });
+      if (!response.ok) throw new Error('bad status');
+      var data = await response.json();
+      if (!data.reply) throw new Error('no reply');
+      return data.reply;
+    } catch (e) {
+      return fakeAIReply(text);
+    }
+  }
+
   form.addEventListener('submit', function(e){
     e.preventDefault();
     var text = input.value.trim();
@@ -278,13 +296,14 @@
     sendBtn.disabled = true;
 
     var typingEl = showTyping();
-    var delay = 700 + Math.random() * 700;
-    setTimeout(function(){
+    getAIReply(text).then(function(reply){
       typingEl.remove();
-      addMessage(fakeAIReply(text), 'ai');
+      addMessage(reply, 'ai');
+      conversationHistory.push({ role: 'user', content: text });
+      conversationHistory.push({ role: 'assistant', content: reply });
       sendBtn.disabled = false;
       input.focus();
-    }, delay);
+    });
   });
 })();
 </script>
