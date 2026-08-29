@@ -415,7 +415,7 @@
           <li>Journal &amp; exercices</li>
           <li>Soutien communautaire</li>
         </ul>
-        <a href="paiement.html?plan=mensuel" class="btn btn-primary">Commencer</a>
+        <button type="button" class="btn btn-primary checkout-btn" data-plan="mensuel">Commencer</button>
       </div>
       <div class="price-card featured">
         <span class="badge">Le plus choisi</span>
@@ -428,7 +428,7 @@
           <li>Journal &amp; exercices</li>
           <li>Soutien communautaire</li>
         </ul>
-        <a href="paiement.html?plan=annuel" class="btn btn-primary">Commencer</a>
+        <button type="button" class="btn btn-primary checkout-btn" data-plan="annuel">Commencer</button>
       </div>
     </div>
 
@@ -600,6 +600,40 @@
       sendBtn.disabled = false;
       input.focus();
     }, delay);
+  });
+})();
+</script>
+
+<script>
+(function(){
+  var buttons = document.querySelectorAll('.checkout-btn');
+  Array.prototype.forEach.call(buttons, function(btn){
+    btn.addEventListener('click', function(){
+      var plan = btn.dataset.plan;
+      var originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Redirection…';
+
+      fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ plan: plan })
+      })
+        .then(function(res){ return res.json(); })
+        .then(function(data){
+          if (data.url){
+            window.location.href = data.url;
+          } else {
+            throw new Error(data.error || 'Erreur inconnue');
+          }
+        })
+        .catch(function(err){
+          console.error('Checkout error:', err);
+          btn.disabled = false;
+          btn.textContent = originalText;
+          alert('Le paiement n\'est pas encore disponible sur cette version du site. Réessaie plus tard.');
+        });
+    });
   });
 })();
 </script>
