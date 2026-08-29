@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MYSLF — Un instant…</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7EFE8;
+    --clay:#C98A73;
+    --clay-dark:#B06E56;
+    --ink:#3B302C;
+    --ink-soft:#6B5B54;
+    --white:#FFFDFB;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Jost',sans-serif; color:var(--ink); background:var(--cream);
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{text-align:center; padding:20px;}
+  .orb{
+    width:56px; height:56px; border-radius:50%; margin:0 auto 22px;
+    background:radial-gradient(circle at 35% 30%, #FFFFFF, #E9C4B4 60%, #C98A73 100%);
+    box-shadow:0 0 34px rgba(201,138,115,0.5);
+    animation:pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{transform:scale(1); opacity:1;} 50%{transform:scale(1.08); opacity:.85;}}
+  p{font-size:14px; color:var(--ink-soft); font-weight:300;}
+  .error{color:#B0453E; margin-top:14px;}
+  a.retry{display:inline-block; margin-top:16px; color:var(--clay-dark); text-decoration:underline; text-underline-offset:2px;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="orb"></div>
+  <p id="statusText">Un instant, on prépare ton paiement…</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
+<script>
+(async function(){
+  var params = new URLSearchParams(window.location.search);
+  var plan = params.get('plan') === 'annuel' ? 'annuel' : 'mensuel';
+  var statusText = document.getElementById('statusText');
+
+  var sessionResult = await window.sbClient.auth.getSession();
+  if (!sessionResult.data.session){
+    var next = encodeURIComponent('demarrer.html?plan=' + plan);
+    window.location.href = 'compte.html?mode=signup&next=' + next;
+    return;
+  }
+
+  try {
+    var response = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ plan: plan })
+    });
+    var data = await response.json();
+    if (data.url){
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'Erreur inconnue');
+    }
+  } catch (err){
+    console.error('Checkout error:', err);
+    statusText.textContent = 'Le paiement n\'a pas pu démarrer.';
+    var errorEl = document.createElement('p');
+    errorEl.className = 'error';
+    errorEl.textContent = 'Réessaie dans un instant, ou reviens plus tard.';
+    statusText.after(errorEl);
+    var retryLink = document.createElement('a');
+    retryLink.href = 'index.html#tarifs';
+    retryLink.className = 'retry';
+    retryLink.textContent = '← Retour aux tarifs';
+    errorEl.after(retryLink);
+  }
+})();
+</script>
+
+</body>
+</html>

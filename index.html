@@ -291,6 +291,7 @@
     </div>
     <div style="display:flex; align-items:center; gap:20px;">
       <a href="compte.html?mode=login" class="nav-cta" style="font-size:14px; color:var(--ink-soft);">Déjà abonnée ?</a>
+      <a href="compte.html?mode=signup&next=index.html%23tarifs" class="nav-cta" style="font-size:14px; color:var(--ink-soft);">S'inscrire</a>
       <a href="#tarifs" class="btn btn-primary nav-cta">Commencer</a>
     </div>
   </nav>
@@ -415,7 +416,7 @@
           <li>Journal &amp; exercices</li>
           <li>Soutien communautaire</li>
         </ul>
-        <button type="button" class="btn btn-primary checkout-btn" data-plan="mensuel">Commencer</button>
+        <a href="demarrer.html?plan=mensuel" class="btn btn-primary">Commencer</a>
       </div>
       <div class="price-card featured">
         <span class="badge">Le plus choisi</span>
@@ -428,7 +429,7 @@
           <li>Journal &amp; exercices</li>
           <li>Soutien communautaire</li>
         </ul>
-        <button type="button" class="btn btn-primary checkout-btn" data-plan="annuel">Commencer</button>
+        <a href="demarrer.html?plan=annuel" class="btn btn-primary">Commencer</a>
       </div>
     </div>
 
@@ -604,38 +605,5 @@
 })();
 </script>
 
-<script>
-(function(){
-  var buttons = document.querySelectorAll('.checkout-btn');
-  Array.prototype.forEach.call(buttons, function(btn){
-    btn.addEventListener('click', function(){
-      var plan = btn.dataset.plan;
-      var originalText = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = 'Redirection…';
-
-      fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ plan: plan })
-      })
-        .then(function(res){ return res.json(); })
-        .then(function(data){
-          if (data.url){
-            window.location.href = data.url;
-          } else {
-            throw new Error(data.error || 'Erreur inconnue');
-          }
-        })
-        .catch(function(err){
-          console.error('Checkout error:', err);
-          btn.disabled = false;
-          btn.textContent = originalText;
-          alert('Le paiement n\'est pas encore disponible sur cette version du site. Réessaie plus tard.');
-        });
-    });
-  });
-})();
-</script>
 </body>
 </html>
