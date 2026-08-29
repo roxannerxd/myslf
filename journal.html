@@ -234,7 +234,7 @@
       <a href="patterns.html">Mes patterns</a>
       <a href="parler.html">J'ai besoin de parler</a>
       <a href="parcours.html">Ma reconstruction</a>
-      <a href="index.html">Accueil</a>
+      <a href="#" id="logoutLink">Se déconnecter</a>
     </div>
   </nav>
 </header>
@@ -279,7 +279,7 @@
       </div>
       <textarea class="entry-textarea" id="entryText" placeholder="Qu'est-ce que tu as sur le cœur aujourd'hui ?" maxlength="4000"></textarea>
       <div class="entry-actions">
-        <span class="entry-hint">Ce que tu écris ici reste sur cet appareil, rien qu'à toi.</span>
+        <span class="entry-hint">Ce que tu écris ici est privé, lié à ton compte, et accessible depuis n'importe quel appareil.</span>
         <button type="button" class="save-btn" id="saveBtn" disabled>Enregistrer</button>
       </div>
     </div>
@@ -384,6 +384,15 @@
     </div>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
+<script>
+document.getElementById('logoutLink').addEventListener('click', function(e){
+  e.preventDefault();
+  window.signOutAndRedirect();
+});
+</script>
 
 <script>
 (function(){
@@ -493,19 +502,17 @@
     });
   });
 
-  function logDecision(decision){
+  async function logDecision(decision){
+    if (!window.currentUser) return;
     try {
-      var raw = localStorage.getItem('myslf_now_log');
-      var log = raw ? JSON.parse(raw) : [];
-      log.push({
-        ts: Date.now(),
-        before: state.intensity1,
-        after: state.intensity2,
+      await window.sbClient.from('now_log').insert({
+        user_id: window.currentUser.id,
+        before_intensity: state.intensity1,
+        after_intensity: state.intensity2,
         need: state.need,
         decision: decision
       });
-      localStorage.setItem('myslf_now_log', JSON.stringify(log));
-    } catch (e) {}
+    } catch (e) { console.error('now_log insert failed', e); }
   }
 
   document.getElementById('choiceStay').addEventListener('click', function(){
@@ -526,8 +533,11 @@
 </script>
 
 <script>
-(function(){
-  var STORAGE_KEY = 'myslf_journal_entries';
+(async function(){
+  var user = await window.requireAuth();
+  if (!user) return;
+  window.currentUser = user;
+
   var moodRow = document.getElementById('moodRow');
   var entryText = document.getElementById('entryText');
   var saveBtn = document.getElementById('saveBtn');
@@ -538,15 +548,14 @@
   document.getElementById('today').textContent =
     new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-  function loadEntries(){
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) { return []; }
-  }
-
-  function saveEntries(entries){
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); } catch (e) {}
+  async function loadEntries(){
+    var result = await window.sbClient
+      .from('journal_entries')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+    if (result.error){ console.error('load entries failed', result.error); return []; }
+    return result.data;
   }
 
   function updateSaveBtn(){
@@ -568,15 +577,15 @@
 
   entryText.addEventListener('input', updateSaveBtn);
 
-  function render(){
-    var entries = loadEntries();
+  async function render(){
+    var entries = await loadEntries();
 
     entriesCount.textContent = entries.length + (entries.length > 1 ? ' entrées' : ' entrée');
     document.getElementById('statTotal').textContent = entries.length;
 
     var now = new Date();
     var thisMonth = entries.filter(function(e){
-      var d = new Date(e.ts);
+      var d = new Date(e.created_at);
       return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
     }).length;
     document.getElementById('statMonth').textContent = thisMonth;
@@ -584,7 +593,7 @@
     var streak = 0;
     var daySet = {};
     entries.forEach(function(e){
-      var d = new Date(e.ts);
+      var d = new Date(e.created_at);
       daySet[d.toDateString()] = true;
     });
     var cursor = new Date();
@@ -599,9 +608,8 @@
       return;
     }
 
-    var sorted = entries.slice().sort(function(a, b){ return b.ts - a.ts; });
-    entriesList.innerHTML = sorted.map(function(entry){
-      var d = new Date(entry.ts);
+    entriesList.innerHTML = entries.map(function(entry){
+      var d = new Date(entry.created_at);
       var dateLabel = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
       var moodHtml = entry.mood ? '<span class="entry-mood">' + escapeHtml(entry.mood) + '</span>' : '';
       return '<div class="entry" data-id="' + entry.id + '">' +
@@ -621,27 +629,32 @@
     return div.innerHTML;
   }
 
-  saveBtn.addEventListener('click', function(){
+  saveBtn.addEventListener('click', async function(){
     var text = entryText.value.trim();
     if (!text) return;
-    var entries = loadEntries();
-    entries.push({ id: Date.now(), ts: Date.now(), mood: selectedMood, text: text });
-    saveEntries(entries);
+    saveBtn.disabled = true;
+
+    var result = await window.sbClient.from('journal_entries').insert({
+      user_id: user.id,
+      mood: selectedMood,
+      text: text
+    });
+    if (result.error) console.error('save entry failed', result.error);
 
     entryText.value = '';
     selectedMood = null;
     Array.prototype.forEach.call(moodRow.querySelectorAll('.mood-btn'), function(b){ b.classList.remove('selected'); });
     updateSaveBtn();
-    render();
+    await render();
   });
 
-  entriesList.addEventListener('click', function(e){
+  entriesList.addEventListener('click', async function(e){
     var btn = e.target.closest('.entry-delete');
     if (!btn) return;
     var id = Number(btn.dataset.id);
-    var entries = loadEntries().filter(function(entry){ return entry.id !== id; });
-    saveEntries(entries);
-    render();
+    var result = await window.sbClient.from('journal_entries').delete().eq('id', id).eq('user_id', user.id);
+    if (result.error) console.error('delete entry failed', result.error);
+    await render();
   });
 
   render();

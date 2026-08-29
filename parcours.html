@@ -194,6 +194,7 @@
       <a href="patterns.html">Mes patterns</a>
       <a href="parler.html">J'ai besoin de parler</a>
       <a href="parcours.html" class="active">Ma reconstruction</a>
+      <a href="#" id="logoutLink">Se déconnecter</a>
     </div>
   </nav>
 </header>
@@ -242,19 +243,31 @@
   <div>© 2026 MYSLF. Un espace pour te retrouver.</div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
 <script>
-(function(){
-  var STORAGE_KEY = 'myslf_journey';
+(async function(){
+  var user = await window.requireAuth();
+  if (!user) return;
 
-  function loadJourney(){
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : {};
-    } catch (e) { return {}; }
+  document.getElementById('logoutLink').addEventListener('click', function(e){
+    e.preventDefault();
+    window.signOutAndRedirect();
+  });
+
+  async function loadJourney(){
+    var result = await window.sbClient.from('journey_progress').select('data').eq('user_id', user.id).maybeSingle();
+    if (result.error){ console.error('load journey failed', result.error); return {}; }
+    return (result.data && result.data.data) || {};
   }
 
-  function saveJourney(journey){
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(journey)); } catch (e) {}
+  async function saveJourney(journey){
+    var result = await window.sbClient.from('journey_progress').upsert({
+      user_id: user.id,
+      data: journey,
+      updated_at: new Date().toISOString()
+    });
+    if (result.error) console.error('save journey failed', result.error);
   }
 
   function escapeHtml(str){
@@ -267,7 +280,7 @@
     return /^[aeiouéèêàâh]/i.test(word) ? 'd\'' + word : 'de ' + word;
   }
 
-  var journey = loadJourney();
+  var journey = await loadJourney();
   var currentStepKey = null;
 
   function stepData(key){ return journey[key] || {}; }

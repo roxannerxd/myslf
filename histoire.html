@@ -154,6 +154,7 @@
       <a href="patterns.html">Mes patterns</a>
       <a href="parler.html">J'ai besoin de parler</a>
       <a href="parcours.html">Ma reconstruction</a>
+      <a href="#" id="logoutLink">Se déconnecter</a>
     </div>
   </nav>
 </header>
@@ -275,7 +276,7 @@
         </div>
 
         <button type="submit" class="save-btn">Enregistrer mon histoire</button>
-        <div class="privacy-note">Ça reste sur cet appareil. Rien n'est partagé.</div>
+        <div class="privacy-note">C'est privé, lié à ton compte. Rien n'est partagé avec personne.</div>
       </form>
     </div>
   </div>
@@ -296,9 +297,18 @@
   <div>© 2026 MYSLF. Un espace pour te retrouver.</div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
 <script>
-(function(){
-  var STORAGE_KEY = 'myslf_story';
+(async function(){
+  var user = await window.requireAuth();
+  if (!user) return;
+
+  document.getElementById('logoutLink').addEventListener('click', function(e){
+    e.preventDefault();
+    window.signOutAndRedirect();
+  });
+
   var form = document.getElementById('storyForm');
   var formCard = document.getElementById('formCard');
   var summaryCard = document.getElementById('summaryCard');
@@ -310,15 +320,42 @@
     notes: ''
   };
 
-  function loadStory(){
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch (e) { return null; }
+  function rowToStory(row){
+    if (!row) return null;
+    return {
+      duration: row.duration,
+      repeated: row.repeated,
+      timeSince: row.time_since,
+      breakupReason: row.breakup_reason || [],
+      trigger: row.trigger || [],
+      difficulty: row.difficulty || [],
+      neverAgain: row.never_again || [],
+      goal: row.goal || [],
+      notes: row.notes || ''
+    };
   }
 
-  function saveStory(story){
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(story)); } catch (e) {}
+  async function loadStory(){
+    var result = await window.sbClient.from('story').select('*').eq('user_id', user.id).maybeSingle();
+    if (result.error){ console.error('load story failed', result.error); return null; }
+    return rowToStory(result.data);
+  }
+
+  async function saveStory(s){
+    var result = await window.sbClient.from('story').upsert({
+      user_id: user.id,
+      duration: s.duration,
+      repeated: s.repeated,
+      time_since: s.timeSince,
+      breakup_reason: s.breakupReason,
+      trigger: s.trigger,
+      difficulty: s.difficulty,
+      never_again: s.neverAgain,
+      goal: s.goal,
+      notes: s.notes,
+      updated_at: new Date().toISOString()
+    });
+    if (result.error) console.error('save story failed', result.error);
   }
 
   document.querySelectorAll('.option-row').forEach(function(row){
@@ -393,8 +430,8 @@
     document.getElementById('sumGoal').textContent = joinValues(story.goal);
   }
 
-  function showSummaryView(){
-    var story = loadStory();
+  async function showSummaryView(){
+    var story = await loadStory();
     if (story){
       renderSummary(story);
       summaryCard.classList.add('show');
@@ -402,8 +439,8 @@
     }
   }
 
-  function showFormView(){
-    var story = loadStory();
+  async function showFormView(){
+    var story = await loadStory();
     if (story) fillForm(story);
     summaryCard.classList.remove('show');
     formCard.classList.remove('hidden');
@@ -416,10 +453,10 @@
 
   var reassureOverlay = document.getElementById('reassureOverlay');
 
-  form.addEventListener('submit', function(e){
+  form.addEventListener('submit', async function(e){
     e.preventDefault();
     state.notes = notes.value.trim();
-    saveStory(state);
+    await saveStory(state);
     reassureOverlay.classList.add('open');
   });
 
@@ -428,7 +465,7 @@
     showSummaryView();
   });
 
-  var existing = loadStory();
+  var existing = await loadStory();
   if (existing){
     showSummaryView();
   }

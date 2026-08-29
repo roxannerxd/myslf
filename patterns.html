@@ -112,6 +112,7 @@
       <a href="patterns.html" class="active">Mes patterns</a>
       <a href="parler.html">J'ai besoin de parler</a>
       <a href="parcours.html">Ma reconstruction</a>
+      <a href="#" id="logoutLink">Se déconnecter</a>
     </div>
   </nav>
 </header>
@@ -130,27 +131,44 @@
   <div>© 2026 MYSLF. Un espace pour te retrouver.</div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
 <script>
-(function(){
+(async function(){
+  var user = await window.requireAuth();
+  if (!user) return;
+
+  document.getElementById('logoutLink').addEventListener('click', function(e){
+    e.preventDefault();
+    window.signOutAndRedirect();
+  });
+
   var content = document.getElementById('content');
 
-  function load(key){
-    try {
-      var raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) { return []; }
+  async function loadEntries(){
+    var result = await window.sbClient.from('journal_entries').select('*').eq('user_id', user.id);
+    if (result.error){ console.error('load entries failed', result.error); return []; }
+    return result.data;
   }
 
-  function loadStory(){
-    try {
-      var raw = localStorage.getItem('myslf_story');
-      return raw ? JSON.parse(raw) : null;
-    } catch (e) { return null; }
+  async function loadNowLog(){
+    var result = await window.sbClient.from('now_log').select('*').eq('user_id', user.id);
+    if (result.error){ console.error('load now_log failed', result.error); return []; }
+    return result.data.map(function(row){
+      return { need: row.need, decision: row.decision, before: row.before_intensity, after: row.after_intensity };
+    });
   }
 
-  var entries = load('myslf_journal_entries');
-  var nowLog = load('myslf_now_log');
-  var story = loadStory();
+  async function loadStory(){
+    var result = await window.sbClient.from('story').select('*').eq('user_id', user.id).maybeSingle();
+    if (result.error || !result.data){ if (result.error) console.error('load story failed', result.error); return null; }
+    var row = result.data;
+    return { trigger: row.trigger || [], neverAgain: row.never_again || [] };
+  }
+
+  var entries = await loadEntries();
+  var nowLog = await loadNowLog();
+  var story = await loadStory();
 
   var hasEnoughData = entries.length >= 2 || nowLog.length >= 2;
 

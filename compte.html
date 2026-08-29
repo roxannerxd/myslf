@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MYSLF — Mon compte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7EFE8;
+    --cream-2:#F1E4DA;
+    --clay:#C98A73;
+    --clay-dark:#B06E56;
+    --ink:#3B302C;
+    --ink-soft:#6B5B54;
+    --line:rgba(59,48,44,0.12);
+    --white:#FFFDFB;
+    --error:#B0453E;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Jost',sans-serif;
+    color:var(--ink);
+    background:var(--cream);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex; flex-direction:column;
+  }
+  h1,.serif{font-family:'Cormorant Garamond',serif;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  input{font-family:inherit;}
+  a:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--clay-dark);outline-offset:2px;}
+
+  header{padding:24px 32px;}
+  .logo{font-family:'Cormorant Garamond',serif; font-size:22px; letter-spacing:0.08em; font-weight:600;}
+
+  main{flex:1; display:flex; align-items:center; justify-content:center; padding:20px;}
+  .card{
+    width:100%; max-width:400px;
+    background:var(--white); border:1px solid var(--line); border-radius:24px;
+    padding:40px 36px;
+  }
+  .eyebrow{font-size:12.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--clay-dark); text-align:center; margin-bottom:10px;}
+  h1{font-size:26px; font-weight:500; text-align:center; margin-bottom:8px;}
+  .sub{font-size:13.5px; color:var(--ink-soft); font-weight:300; text-align:center; margin-bottom:28px;}
+
+  .tabs{display:flex; background:var(--cream-2); border-radius:100px; padding:4px; margin-bottom:26px;}
+  .tab{
+    flex:1; text-align:center; padding:9px; border-radius:100px; font-size:13.5px; color:var(--ink-soft);
+    transition:background .2s, color .2s;
+  }
+  .tab.active{background:var(--clay); color:var(--white);}
+
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:12.5px; color:var(--ink-soft); margin-bottom:6px;}
+  .field input{
+    width:100%; padding:12px 16px; border-radius:12px; border:1px solid var(--line);
+    background:var(--cream); font-size:14px; color:var(--ink);
+  }
+  .field input:focus{outline:none; border-color:var(--clay);}
+
+  .submit-btn{
+    width:100%; padding:14px; border-radius:100px; background:var(--clay); color:var(--white);
+    font-size:14.5px; margin-top:6px; transition:background .2s, transform .2s;
+  }
+  .submit-btn:hover{background:var(--clay-dark); transform:translateY(-1px);}
+  .submit-btn:disabled{opacity:.5; cursor:default; transform:none;}
+
+  .msg{font-size:13px; text-align:center; margin-top:16px; display:none;}
+  .msg.show{display:block;}
+  .msg.error{color:var(--error);}
+  .msg.success{color:#4A7A5E;}
+
+  .back-link{display:block; text-align:center; margin-top:22px; font-size:13px; color:var(--ink-soft);}
+  .back-link:hover{color:var(--ink);}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">MYSLF</a>
+</header>
+
+<main>
+  <div class="card">
+    <div class="eyebrow">Ton espace</div>
+    <h1 id="pageTitle">Content de te retrouver</h1>
+    <p class="sub" id="pageSub">Connecte-toi pour retrouver ton journal et ton parcours.</p>
+
+    <div class="tabs">
+      <div class="tab active" id="tabLogin">Se connecter</div>
+      <div class="tab" id="tabSignup">Créer un compte</div>
+    </div>
+
+    <form id="authForm">
+      <div class="field">
+        <label for="email">Adresse e-mail</label>
+        <input type="email" id="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" autocomplete="current-password" required minlength="6">
+      </div>
+      <button type="submit" class="submit-btn" id="submitBtn">Se connecter</button>
+      <div class="msg" id="formMsg"></div>
+    </form>
+
+    <a href="index.html" class="back-link">← Retour à l'accueil</a>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
+<script>
+(function(){
+  var mode = 'login';
+  var tabLogin = document.getElementById('tabLogin');
+  var tabSignup = document.getElementById('tabSignup');
+  var pageTitle = document.getElementById('pageTitle');
+  var pageSub = document.getElementById('pageSub');
+  var submitBtn = document.getElementById('submitBtn');
+  var form = document.getElementById('authForm');
+  var msg = document.getElementById('formMsg');
+  var passwordInput = document.getElementById('password');
+
+  var params = new URLSearchParams(window.location.search);
+  var nextPage = params.get('next') || 'journal.html';
+  if (nextPage.indexOf('http') === 0 || nextPage.indexOf('//') === 0) nextPage = 'journal.html';
+
+  function setMode(m){
+    mode = m;
+    tabLogin.classList.toggle('active', m === 'login');
+    tabSignup.classList.toggle('active', m === 'signup');
+    if (m === 'login'){
+      pageTitle.textContent = 'Content de te retrouver';
+      pageSub.textContent = 'Connecte-toi pour retrouver ton journal et ton parcours.';
+      submitBtn.textContent = 'Se connecter';
+      passwordInput.autocomplete = 'current-password';
+    } else {
+      pageTitle.textContent = 'Bienvenue chez toi';
+      pageSub.textContent = 'Crée ton compte pour commencer ton parcours.';
+      submitBtn.textContent = 'Créer mon compte';
+      passwordInput.autocomplete = 'new-password';
+    }
+    msg.classList.remove('show');
+  }
+
+  tabLogin.addEventListener('click', function(){ setMode('login'); });
+  tabSignup.addEventListener('click', function(){ setMode('signup'); });
+
+  if (params.get('mode') === 'signup') setMode('signup');
+
+  function showMsg(text, type){
+    msg.textContent = text;
+    msg.className = 'msg show ' + type;
+  }
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var email = document.getElementById('email').value.trim();
+    var password = passwordInput.value;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = mode === 'login' ? 'Connexion…' : 'Création…';
+    msg.classList.remove('show');
+
+    try {
+      if (mode === 'login'){
+        var result = await window.sbClient.auth.signInWithPassword({ email: email, password: password });
+        if (result.error) throw result.error;
+        window.location.href = nextPage;
+      } else {
+        var signupResult = await window.sbClient.auth.signUp({ email: email, password: password });
+        if (signupResult.error) throw signupResult.error;
+        if (signupResult.data.session){
+          window.location.href = nextPage;
+        } else {
+          setMode('login');
+          showMsg('Compte créé. Vérifie ta boîte mail pour confirmer ton adresse, puis connecte-toi.', 'success');
+        }
+      }
+    } catch (err){
+      showMsg(err.message || 'Une erreur est survenue. Réessaie.', 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = mode === 'login' ? 'Se connecter' : 'Créer mon compte';
+    }
+  });
+
+  (async function(){
+    var result = await window.sbClient.auth.getSession();
+    if (result.data.session){
+      window.location.href = nextPage;
+    }
+  })();
+})();
+</script>
+
+</body>
+</html>

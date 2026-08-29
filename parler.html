@@ -124,6 +124,7 @@
       <a href="patterns.html">Mes patterns</a>
       <a href="parler.html" class="active">J'ai besoin de parler</a>
       <a href="parcours.html">Ma reconstruction</a>
+      <a href="#" id="logoutLink">Se déconnecter</a>
     </div>
   </nav>
 </header>
@@ -150,8 +151,18 @@
   </div>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
 <script>
-(function(){
+(async function(){
+  var user = await window.requireAuth();
+  if (!user) return;
+
+  document.getElementById('logoutLink').addEventListener('click', function(e){
+    e.preventDefault();
+    window.signOutAndRedirect();
+  });
+
   var messages = document.getElementById('chatMessages');
   var form = document.getElementById('chatForm');
   var input = document.getElementById('chatInput');
@@ -159,8 +170,16 @@
 
   var story = null;
   try {
-    var rawStory = localStorage.getItem('myslf_story');
-    story = rawStory ? JSON.parse(rawStory) : null;
+    var storyResult = await window.sbClient.from('story').select('*').eq('user_id', user.id).maybeSingle();
+    if (storyResult.data){
+      var row = storyResult.data;
+      story = {
+        duration: row.duration, repeated: row.repeated, timeSince: row.time_since,
+        breakupReason: row.breakup_reason || [], trigger: row.trigger || [],
+        difficulty: row.difficulty || [], neverAgain: row.never_again || [],
+        goal: row.goal || [], notes: row.notes
+      };
+    }
   } catch (e) { story = null; }
 
   function firstOf(val){
