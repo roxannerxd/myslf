@@ -536,6 +536,8 @@ document.getElementById('logoutLink').addEventListener('click', function(e){
 (async function(){
   var user = await window.requireAuth();
   if (!user) return;
+  var subscribed = await window.requireSubscription(user);
+  if (!subscribed) return;
   window.currentUser = user;
 
   var moodRow = document.getElementById('moodRow');

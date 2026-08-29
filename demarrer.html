@@ -60,7 +60,7 @@
     var response = await fetch('/api/create-checkout-session', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ plan: plan })
+      body: JSON.stringify({ plan: plan, access_token: sessionResult.data.session.access_token })
     });
     var data = await response.json();
     if (data.url){

@@ -17,4 +17,14 @@
     await window.sbClient.auth.signOut();
     window.location.href = 'index.html';
   };
+
+  window.requireSubscription = async function(user){
+    var result = await window.sbClient.from('subscriptions').select('status').eq('user_id', user.id).maybeSingle();
+    var status = result.data && result.data.status;
+    if (status !== 'active'){
+      window.location.href = 'index.html#tarifs';
+      return false;
+    }
+    return true;
+  };
 })();
