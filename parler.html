@@ -247,6 +247,9 @@
   var subscribed = await window.requireSubscription(user);
   if (!subscribed) return;
 
+  var sessionResult = await window.sbClient.auth.getSession();
+  var accessToken = sessionResult.data.session && sessionResult.data.session.access_token;
+
   Array.prototype.forEach.call(document.querySelectorAll('.logout-link'), function(link){
     link.addEventListener('click', function(e){
       e.preventDefault();
@@ -386,14 +389,17 @@
       var response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ message: text, history: conversationHistory, story: story })
+        body: JSON.stringify({ message: text, history: conversationHistory, story: story, access_token: accessToken })
       });
+      if (response.status === 429) {
+        return { limited: true, reply: "Tu as atteint la limite de 900 messages ce mois-ci avec MYSLF. Ton quota se renouvelle le 1er du mois prochain — en attendant, tu peux toujours écrire dans ton journal." };
+      }
       if (!response.ok) throw new Error('bad status');
       var data = await response.json();
       if (!data.reply) throw new Error('no reply');
-      return data.reply;
+      return { limited: false, reply: data.reply };
     } catch (e) {
-      return fakeAIReply(text);
+      return { limited: false, reply: fakeAIReply(text) };
     }
   }
 
@@ -406,11 +412,13 @@
     sendBtn.disabled = true;
 
     var typingEl = showTyping();
-    getAIReply(text).then(function(reply){
+    getAIReply(text).then(function(result){
       typingEl.remove();
-      addMessage(reply, 'ai');
-      conversationHistory.push({ role: 'user', content: text });
-      conversationHistory.push({ role: 'assistant', content: reply });
+      addMessage(result.reply, 'ai');
+      if (!result.limited){
+        conversationHistory.push({ role: 'user', content: text });
+        conversationHistory.push({ role: 'assistant', content: result.reply });
+      }
       sendBtn.disabled = false;
       input.focus();
     });

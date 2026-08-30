@@ -1,13 +1,81 @@
+var SUPABASE_URL = 'https://sotissdamewkrbacdfxv.supabase.co';
+var SUPABASE_ANON_KEY = 'sb_publishable_TdUNEIP02PQRaDPXlwtXng_I6q-q0jj';
+var MONTHLY_MESSAGE_LIMIT = 900;
+
+async function getUserFromToken(accessToken){
+  if (!accessToken) return null;
+  var res = await fetch(SUPABASE_URL + '/auth/v1/user', {
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + accessToken
+    }
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
+
+async function supabaseAdmin(path, options){
+  options = options || {};
+  var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  var headers = Object.assign({
+    'apikey': serviceKey,
+    'Authorization': 'Bearer ' + serviceKey,
+    'Content-Type': 'application/json'
+  }, options.headers || {});
+  var fetchOptions = Object.assign({}, options, { headers: headers });
+  var res = await fetch(SUPABASE_URL + '/rest/v1/' + path, fetchOptions);
+  return res;
+}
+
+function currentMonthKey(){
+  return new Date().toISOString().slice(0, 7); // 'YYYY-MM'
+}
+
+async function getMessageCount(userId, month){
+  var res = await supabaseAdmin(
+    'chat_usage?user_id=eq.' + encodeURIComponent(userId) + '&month=eq.' + encodeURIComponent(month) + '&select=message_count'
+  );
+  if (!res.ok) return 0;
+  var rows = await res.json();
+  return (rows[0] && rows[0].message_count) || 0;
+}
+
+async function incrementMessageCount(userId, month, currentCount){
+  await supabaseAdmin('chat_usage', {
+    method: 'POST',
+    headers: { 'Prefer': 'resolution=merge-duplicates' },
+    body: JSON.stringify({
+      user_id: userId,
+      month: month,
+      message_count: currentCount + 1,
+      updated_at: new Date().toISOString()
+    })
+  });
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
 
-  const { message, history, story } = req.body || {};
+  const { message, history, story, access_token } = req.body || {};
 
   if (!message || typeof message !== 'string' || !message.trim()) {
     res.status(400).json({ error: 'Message manquant' });
+    return;
+  }
+
+  var user = await getUserFromToken(access_token);
+  if (!user || !user.id) {
+    res.status(401).json({ error: 'Tu dois être connectée pour discuter avec MYSLF.' });
+    return;
+  }
+
+  var month = currentMonthKey();
+  var count = await getMessageCount(user.id, month);
+  if (count >= MONTHLY_MESSAGE_LIMIT) {
+    res.status(429).json({ error: 'limit_reached', limit: MONTHLY_MESSAGE_LIMIT });
     return;
   }
 
@@ -83,6 +151,9 @@ export default async function handler(req, res) {
 
     var data = await response.json();
     var reply = (data.content && data.content[0] && data.content[0].text) || "Je suis là, mais je n'ai pas réussi à répondre cette fois. Réessaie ?";
+
+    incrementMessageCount(user.id, month, count).catch(function(e){ console.error('incrementMessageCount failed', e); });
+
     res.status(200).json({ reply: reply });
   } catch (err) {
     console.error('Chat handler error:', err);
