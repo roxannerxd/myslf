@@ -78,18 +78,10 @@
 
   main{padding:56px 0 100px;}
 
-  .greeting{margin-bottom:40px;}
+  .greeting{margin-bottom:28px;}
   .eyebrow{font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:var(--clay-dark); margin-bottom:10px;}
   .greeting h1{font-size:clamp(28px,4.5vw,38px); font-weight:500; margin-bottom:8px;}
   .greeting .date{font-size:14px; color:var(--ink-soft); font-weight:300; text-transform:capitalize;}
-
-  .stats-row{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:36px;}
-  .stat{
-    background:var(--white); border:1px solid var(--line); border-radius:16px;
-    padding:18px; text-align:center;
-  }
-  .stat .num{font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:600; color:var(--clay-dark);}
-  .stat .label{font-size:11.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em; margin-top:2px;}
 
   .card{
     background:var(--white); border:1px solid var(--line); border-radius:22px;
@@ -97,14 +89,62 @@
   }
   .card h2{font-size:18px; font-weight:500; margin-bottom:18px;}
 
-  .mood-row{display:flex; flex-wrap:wrap; gap:10px;}
+  .mood-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(84px,1fr)); gap:10px;}
   .mood-btn{
-    padding:10px 16px; border-radius:100px; background:var(--cream-2); border:1.5px solid transparent;
-    font-size:13.5px; color:var(--ink-soft); display:flex; align-items:center; gap:8px;
-    transition:background .2s, border-color .2s, color .2s;
+    padding:18px 10px; border-radius:18px; background:var(--cream-2); border:1.5px solid transparent;
+    font-size:13px; color:var(--ink-soft); display:flex; flex-direction:column; align-items:center; gap:8px;
+    transition:background .2s, border-color .2s, color .2s, transform .2s;
   }
-  .mood-btn:hover{background:#EBD8CC;}
+  .mood-btn .mood-icon{font-size:24px; line-height:1;}
+  .mood-btn:hover{background:#EBD8CC; transform:translateY(-1px);}
   .mood-btn.selected{background:var(--clay); border-color:var(--clay); color:var(--white);}
+
+  /* DASHBOARD — parcours du jour + chat */
+  .dashboard-grid{display:grid; grid-template-columns:1fr; gap:20px; margin-bottom:28px;}
+  @media(min-width:760px){.dashboard-grid{grid-template-columns:1.6fr 1fr;}}
+
+  .journey-card{
+    background:linear-gradient(135deg,#EFDCCF,#E3B9A5);
+    border-radius:22px; padding:30px 28px; display:flex; flex-direction:column;
+  }
+  .journey-card .eyebrow{color:var(--ink); opacity:.7;}
+  .journey-card .journey-icon{font-size:30px; margin-bottom:10px;}
+  .journey-card h3{font-size:24px; font-weight:500; margin-bottom:8px;}
+  .journey-card .journey-sub{font-size:14px; color:var(--ink); opacity:.8; margin-bottom:18px; max-width:420px;}
+  .journey-card .journey-day{
+    font-size:12.5px; color:var(--ink); background:rgba(255,255,255,0.5); display:inline-block;
+    padding:6px 14px; border-radius:100px; margin-bottom:20px; align-self:flex-start;
+  }
+  .journey-card .btn{
+    padding:13px 26px; border-radius:100px; background:var(--ink); color:var(--white);
+    font-size:14px; align-self:flex-start; transition:transform .2s;
+  }
+  .journey-card .btn:hover{transform:translateY(-1px);}
+  .journey-card.done{background:linear-gradient(135deg,#F1E4DA,#E9C9BC);}
+
+  .side-stack{display:flex; flex-direction:column; gap:20px;}
+  .chat-card{
+    background:var(--white); border:1px solid var(--line); border-radius:22px;
+    padding:24px; flex:1;
+  }
+  .chat-card h3{font-size:16px; font-weight:500; margin-bottom:6px;}
+  .chat-card p{font-size:13.5px; color:var(--ink-soft); margin-bottom:16px;}
+  .chat-card .btn{
+    display:inline-block; padding:12px 24px; border-radius:100px; background:var(--clay); color:var(--white);
+    font-size:13.5px; transition:background .2s;
+  }
+  .chat-card .btn:hover{background:var(--clay-dark);}
+
+  .quote-card{
+    background:var(--cream-2); border-radius:22px; padding:22px 24px;
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:16px; color:var(--ink);
+    line-height:1.5;
+  }
+
+  .stats-row{display:flex; align-items:center; justify-content:center; gap:22px; margin-bottom:24px; flex-wrap:wrap;}
+  .stat{display:flex; align-items:baseline; gap:6px;}
+  .stat .num{font-family:'Cormorant Garamond',serif; font-size:19px; font-weight:600; color:var(--clay-dark);}
+  .stat .label{font-size:11.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em;}
 
   .entry-textarea{
     width:100%; min-height:120px; border:1px solid var(--line); border-radius:14px;
@@ -119,18 +159,6 @@
   .save-btn:hover{background:var(--clay-dark); transform:translateY(-1px);}
   .save-btn:disabled{opacity:.5; cursor:default; transform:none;}
   .entry-hint{font-size:12.5px; color:var(--ink-soft); opacity:.75;}
-
-  .ai-nudge{
-    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
-    background:linear-gradient(135deg,#EFDCCF,#E3B9A5);
-    border-radius:20px; padding:22px 26px; margin-bottom:36px;
-  }
-  .ai-nudge p{font-size:14px; color:var(--ink); font-weight:400; max-width:380px;}
-  .ai-nudge .btn{
-    padding:12px 24px; border-radius:100px; background:var(--white); color:var(--clay-dark);
-    font-size:13.5px; flex-shrink:0; transition:background .2s;
-  }
-  .ai-nudge .btn:hover{background:var(--cream);}
 
   .entries-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;}
   .entries-head h2{font-size:20px; font-weight:500;}
@@ -281,45 +309,49 @@
   <div class="wrap">
     <div class="greeting">
       <div class="eyebrow">Ton espace</div>
-      <h1>Bonjour, te revoilà.</h1>
+      <h1>Bonjour, te revoilà 🌸</h1>
       <div class="date" id="today"></div>
-    </div>
-
-    <div class="stats-row">
-      <div class="stat">
-        <div class="num" id="statTotal">0</div>
-        <div class="label">Entrées</div>
-      </div>
-      <div class="stat">
-        <div class="num" id="statStreak">0</div>
-        <div class="label">Jours de suite</div>
-      </div>
-      <div class="stat">
-        <div class="num" id="statMonth">0</div>
-        <div class="label">Ce mois-ci</div>
-      </div>
-    </div>
-
-    <div class="ai-nudge">
-      <p>Besoin d'en parler plutôt que de l'écrire ? MYSLF est là, à toute heure.</p>
-      <a href="parler.html" class="btn">Lui parler</a>
     </div>
 
     <div class="card">
       <h2>Comment tu te sens aujourd'hui ?</h2>
       <div class="mood-row" id="moodRow">
-        <button type="button" class="mood-btn" data-mood="Sereine">🌿 Sereine</button>
-        <button type="button" class="mood-btn" data-mood="Fatiguée">🌙 Fatiguée</button>
-        <button type="button" class="mood-btn" data-mood="Triste">🌧️ Triste</button>
-        <button type="button" class="mood-btn" data-mood="En colère">🔥 En colère</button>
-        <button type="button" class="mood-btn" data-mood="Anxieuse">🌊 Anxieuse</button>
-        <button type="button" class="mood-btn" data-mood="Pleine d'espoir">🌱 Pleine d'espoir</button>
+        <button type="button" class="mood-btn" data-mood="Triste"><span class="mood-icon">🌧️</span><span class="mood-label">Triste</span></button>
+        <button type="button" class="mood-btn" data-mood="Anxieuse"><span class="mood-icon">🌊</span><span class="mood-label">Anxieuse</span></button>
+        <button type="button" class="mood-btn" data-mood="Perdue"><span class="mood-icon">🌀</span><span class="mood-label">Perdue</span></button>
+        <button type="button" class="mood-btn" data-mood="En manque"><span class="mood-icon">🤍</span><span class="mood-label">En manque</span></button>
+        <button type="button" class="mood-btn" data-mood="Sereine"><span class="mood-icon">🌿</span><span class="mood-label">Sereine</span></button>
       </div>
       <textarea class="entry-textarea" id="entryText" placeholder="Qu'est-ce que tu as sur le cœur aujourd'hui ?" maxlength="4000"></textarea>
       <div class="entry-actions">
         <span class="entry-hint">Ce que tu écris ici est privé, lié à ton compte, et accessible depuis n'importe quel appareil.</span>
         <button type="button" class="save-btn" id="saveBtn" disabled>Enregistrer</button>
       </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="journey-card" id="journeyCard">
+        <div class="eyebrow">Ton parcours</div>
+        <div class="journey-icon">🤍</div>
+        <h3 id="journeyTitle">Ton parcours du jour</h3>
+        <p class="journey-sub" id="journeySub">Chargement…</p>
+        <span class="journey-day" id="journeyDay"></span>
+        <a href="parcours.html" class="btn" id="journeyBtn">Continuer</a>
+      </div>
+      <div class="side-stack">
+        <div class="chat-card">
+          <h3>Parle à MYSLF</h3>
+          <p>Ton espace rien qu'à toi, sans jugement, à toute heure.</p>
+          <a href="parler.html" class="btn">Lui parler</a>
+        </div>
+        <div class="quote-card">"Chaque petit pas te rapproche de la femme que tu choisis de devenir."</div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat"><span class="num" id="statTotal">0</span><span class="label">Entrées</span></div>
+      <div class="stat"><span class="num" id="statStreak">0</span><span class="label">Jours de suite</span></div>
+      <div class="stat"><span class="num" id="statMonth">0</span><span class="label">Ce mois-ci</span></div>
     </div>
 
     <div class="entries-head">
@@ -608,6 +640,61 @@ Array.prototype.forEach.call(document.querySelectorAll('.logout-link'), function
   var saveBtn = document.getElementById('saveBtn');
   var entriesList = document.getElementById('entriesList');
   var entriesCount = document.getElementById('entriesCount');
+
+  var STEPS_SUMMARY = [
+    { key:'step1', icon:'🤍', name:'Stop & Breathe', sub:'Je me stabilise',
+      days:['Ma vérité','Ce que je ressens','Mon espace',"10 minutes dehors",'Ce qui me déclenche',"Aujourd'hui, je ne me juge pas",'Mon premier bilan'] },
+    { key:'step2', icon:'🪞', name:'Understand Me', sub:"Je comprends pourquoi je m'attache",
+      days:["Ce qu'il représentait","Ce que j'avais peur de perdre","Quand je me sentais le plus aimée","Amour ou réassurance ?","Ce qui se répète","Ce dont j'ai besoin, moi",'My Pattern'] },
+    { key:'step3', icon:'🚪', name:'Detach', sub:'Je reprends de la distance',
+      days:['Couper le bruit','Ne pas vérifier',"Le message que je n'envoie pas",'Les 10 minutes','Ce qui me contrôle encore','Reprendre le contrôle','Ma distance'] },
+    { key:'step4', icon:'🪞', name:'Remember Me', sub:'Qui suis-je sans cette relation ?',
+      days:["Ce que j'aimais avant","Ce que j'ai arrêté de faire",'Mes qualités','Ce que mes proches aiment chez moi','Mes valeurs','Dans un an','My Identity'] },
+    { key:'step5', icon:'🌸', name:'Build Me', sub:'Je recommence à construire ma vie',
+      days:['Corps','Environnement','Social','Apparence','Projet','Plaisir','Repos et bilan'] },
+    { key:'step6', icon:'👑', name:'Self-Worth', sub:'Je recommence à croire en moi',
+      days:['Ma fierté du jour','Ma fierté du jour','Ma fierté du jour','Ma fierté du jour','Ma fierté du jour','Ma fierté du jour','Ma fierté du jour'] },
+    { key:'step7', icon:'🦋', name:'My Standards', sub:'Je décide de ce que j\'accepte',
+      days:['My Non-Negotiables','My Needs','My Boundaries','My Green Flags','Ce qui aurait changé la donne','Ce que je ne ferai plus','My Standards'] },
+    { key:'step8', icon:'✨', name:'Choose Me', sub:'Je me choisis',
+      days:["Qui j'étais au début",'Ce qui a changé',"Ce que j'ai découvert",'De quoi je suis fière','Ce que je veux maintenant','La femme que je deviens','Deux lettres'] }
+  ];
+
+  async function renderJourneyCard(){
+    var card = document.getElementById('journeyCard');
+    var result = await window.sbClient.from('journey_progress').select('data').eq('user_id', user.id).maybeSingle();
+    var journey = (result.data && result.data.data) || {};
+
+    var position = null;
+    for (var i = 0; i < STEPS_SUMMARY.length; i++){
+      var step = STEPS_SUMMARY[i];
+      var stepData = journey[step.key] || {};
+      for (var d = 1; d <= 7; d++){
+        if (!stepData['day' + d]){ position = { stepIndex: i, step: step, dayNum: d }; break; }
+      }
+      if (position) break;
+    }
+
+    if (!position){
+      document.getElementById('journeyTitle').textContent = 'Ton parcours est terminé';
+      document.getElementById('journeySub').textContent = 'Les 8 semaines sont derrière toi. Tu peux revenir sur chaque étape quand tu veux.';
+      document.getElementById('journeyDay').style.display = 'none';
+      document.getElementById('journeyBtn').textContent = 'Revoir mon parcours';
+      document.getElementById('journeyBtn').setAttribute('href', 'parcours.html');
+      card.classList.add('done');
+      return;
+    }
+
+    var isFresh = Object.keys(journey).length === 0;
+    document.querySelector('#journeyCard .journey-icon').textContent = position.step.icon;
+    document.getElementById('journeyTitle').textContent = position.step.name;
+    document.getElementById('journeySub').textContent = position.step.sub;
+    document.getElementById('journeyDay').textContent = 'Jour ' + position.dayNum + ' — ' + position.step.days[position.dayNum - 1];
+    var btn = document.getElementById('journeyBtn');
+    btn.textContent = isFresh ? 'Commencer' : 'Continuer';
+    btn.setAttribute('href', 'parcours.html?step=' + position.step.key + '&day=' + position.dayNum);
+  }
+  renderJourneyCard();
   var selectedMood = null;
 
   document.getElementById('today').textContent =

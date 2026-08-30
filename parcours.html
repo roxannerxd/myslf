@@ -1863,6 +1863,16 @@
   });
 
   renderSteps();
+
+  var params = new URLSearchParams(window.location.search);
+  var jumpStepKey = params.get('step');
+  if (jumpStepKey && stepByKey(jumpStepKey) && isStepUnlocked(stepIndex(jumpStepKey))){
+    openWeek(jumpStepKey);
+    var jumpDay = Number(params.get('day'));
+    if (jumpDay && stepByKey(jumpStepKey).days[jumpDay - 1] && isDayUnlocked(jumpStepKey, jumpDay)){
+      openDay(jumpDay);
+    }
+  }
 })();
 </script>
 
