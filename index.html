@@ -64,6 +64,35 @@
   .nav-links{display:none;}
   @media(min-width:900px){.nav-links{display:flex;}}
 
+  .nav-toggle{
+    display:flex; align-items:center; justify-content:center;
+    width:40px; height:40px; background:none; flex-shrink:0;
+  }
+  .nav-toggle span{
+    display:block; width:20px; height:2px; background:var(--ink); position:relative;
+    transition:background .2s;
+  }
+  .nav-toggle span::before, .nav-toggle span::after{
+    content:""; position:absolute; left:0; width:20px; height:2px; background:var(--ink);
+    transition:transform .2s;
+  }
+  .nav-toggle span::before{top:-6px;}
+  .nav-toggle span::after{top:6px;}
+  .nav-toggle.open span{background:transparent;}
+  .nav-toggle.open span::before{transform:translateY(6px) rotate(45deg);}
+  .nav-toggle.open span::after{transform:translateY(-6px) rotate(-45deg);}
+  @media(min-width:900px){.nav-toggle{display:none;}}
+
+  .mobile-menu{
+    display:none; flex-direction:column;
+    padding:4px 32px 24px; border-top:1px solid var(--line);
+  }
+  .mobile-menu.open{display:flex;}
+  .mobile-menu a{padding:13px 0; font-size:15.5px; color:var(--ink-soft); border-bottom:1px solid var(--line);}
+  .mobile-menu a:hover{color:var(--ink);}
+  .mobile-menu .btn{display:block; text-align:center; margin-top:16px; border-bottom:none;}
+  @media(min-width:900px){.mobile-menu{display:none !important;}}
+
   /* HERO */
   .hero{
     position:relative; overflow:hidden;
@@ -293,8 +322,19 @@
       <a href="compte.html?mode=login" class="nav-cta" style="font-size:14px; color:var(--ink-soft);">Déjà abonnée ?</a>
       <a href="compte.html?mode=signup&next=index.html%23tarifs" class="nav-cta" style="font-size:14px; color:var(--ink-soft);">S'inscrire</a>
       <a href="#tarifs" class="btn btn-primary nav-cta">Commencer</a>
+      <button type="button" class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu" aria-expanded="false"><span></span></button>
     </div>
   </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#">Accueil</a>
+    <a href="#apropos">À propos</a>
+    <a href="#fonctionnalites">Fonctionnalités</a>
+    <a href="#tarifs">Tarifs</a>
+    <a href="#blog">Blog</a>
+    <a href="compte.html?mode=login">Déjà abonnée ?</a>
+    <a href="compte.html?mode=signup&next=index.html%23tarifs">S'inscrire</a>
+    <a href="#tarifs" class="btn btn-primary">Commencer</a>
+  </div>
 </header>
 
 <section class="hero">
@@ -601,6 +641,30 @@
       sendBtn.disabled = false;
       input.focus();
     }, delay);
+  });
+})();
+</script>
+
+<script>
+(function(){
+  var toggle = document.getElementById('navToggle');
+  var menu = document.getElementById('mobileMenu');
+  if (!toggle || !menu) return;
+
+  function closeMenu(){
+    toggle.classList.remove('open');
+    menu.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  }
+
+  toggle.addEventListener('click', function(){
+    var isOpen = menu.classList.toggle('open');
+    toggle.classList.toggle('open', isOpen);
+    toggle.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  Array.prototype.forEach.call(menu.querySelectorAll('a'), function(link){
+    link.addEventListener('click', closeMenu);
   });
 })();
 </script>
