@@ -44,14 +44,15 @@ function verifyStripeSignature(rawBody, sigHeader, secret){
 }
 
 async function supabaseAdmin(path, options){
+  options = options || {};
   var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  var res = await fetch(SUPABASE_URL + '/rest/v1/' + path, Object.assign({
-    headers: Object.assign({
-      'apikey': serviceKey,
-      'Authorization': 'Bearer ' + serviceKey,
-      'Content-Type': 'application/json'
-    }, (options && options.headers) || {})
-  }, options || {}));
+  var headers = Object.assign({
+    'apikey': serviceKey,
+    'Authorization': 'Bearer ' + serviceKey,
+    'Content-Type': 'application/json'
+  }, options.headers || {});
+  var fetchOptions = Object.assign({}, options, { headers: headers });
+  var res = await fetch(SUPABASE_URL + '/rest/v1/' + path, fetchOptions);
   return res;
 }
 
@@ -62,7 +63,9 @@ async function upsertByUserId(row){
     body: JSON.stringify(row)
   });
   if (!res.ok){
-    console.error('upsert subscription failed', await res.text());
+    var text = await res.text();
+    console.error('upsert subscription failed', text);
+    throw new Error('upsert subscription failed: ' + text);
   }
 }
 
@@ -72,7 +75,9 @@ async function updateByCustomerId(customerId, patch){
     body: JSON.stringify(patch)
   });
   if (!res.ok){
-    console.error('update subscription failed', await res.text());
+    var text = await res.text();
+    console.error('update subscription failed', text);
+    throw new Error('update subscription failed: ' + text);
   }
 }
 
