@@ -76,6 +76,32 @@
   .mobile-menu a:hover, .mobile-menu a.active{color:var(--ink);}
   @media(min-width:900px){.mobile-menu{display:none !important;}}
 
+  /* SIDEBAR — desktop only */
+  .page-shell{display:flex; flex:1; min-height:0;}
+  .sidebar{display:none;}
+  @media(min-width:900px){
+    header{display:none;}
+    .sidebar{
+      display:flex; flex-direction:column; justify-content:space-between;
+      width:240px; flex-shrink:0; padding:36px 22px; height:100%;
+      background:var(--white); border-right:1px solid var(--line);
+    }
+  }
+  .sidebar .logo{margin-bottom:36px; padding-left:12px;}
+  .sidebar-nav{display:flex; flex-direction:column; gap:4px;}
+  .sidebar-nav a{
+    padding:11px 14px; border-radius:12px; font-size:14.5px; color:var(--ink-soft);
+    transition:background .2s, color .2s;
+  }
+  .sidebar-nav a:hover{background:var(--cream-2); color:var(--ink);}
+  .sidebar-nav a.active{background:var(--cream-2); color:var(--ink); font-weight:500;}
+  .sidebar-logout{
+    padding:11px 14px; font-size:13.5px; color:var(--ink-soft);
+    border-top:1px solid var(--line); padding-top:18px; margin-top:18px; transition:color .2s;
+  }
+  .sidebar-logout:hover{color:var(--ink);}
+  .content-col{flex:1; min-width:0; display:flex; flex-direction:column; min-height:0;}
+
   main{flex:1; display:flex; flex-direction:column; padding:36px 0 28px; min-height:0;}
   .head-row{flex-shrink:0; margin-bottom:20px;}
   .eyebrow{font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:var(--clay-dark); margin-bottom:8px;}
@@ -144,6 +170,23 @@
 </head>
 <body>
 
+<div class="page-shell">
+  <aside class="sidebar">
+    <div>
+      <a href="index.html" class="logo">MYSLF</a>
+      <nav class="sidebar-nav">
+        <a href="journal.html">Journal</a>
+        <a href="histoire.html">Mon histoire</a>
+        <a href="patterns.html">Mes patterns</a>
+        <a href="parler.html" class="active">J'ai besoin de parler</a>
+        <a href="parcours.html">Ma reconstruction</a>
+      </nav>
+    </div>
+    <a href="#" class="logout-link sidebar-logout">Se déconnecter</a>
+  </aside>
+
+  <div class="content-col">
+
 <header>
   <nav>
     <a href="index.html" class="logo">MYSLF</a>
@@ -188,6 +231,9 @@
     <div class="demo-note">MYSLF ne remplace pas un professionnel de santé. En cas de détresse importante, contacte le 3114 (numéro national de prévention du suicide, gratuit, 24/7).</div>
   </div>
 </main>
+
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="supabase-client.js"></script>
