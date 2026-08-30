@@ -91,13 +91,16 @@
   .sidebar-nav{display:flex; flex-direction:column; gap:4px;}
   .sidebar-nav a{
     padding:11px 14px; border-radius:12px; font-size:14.5px; color:var(--ink-soft);
-    transition:background .2s, color .2s;
+    transition:background .2s, color .2s; display:flex; align-items:center; gap:11px;
   }
-  .sidebar-nav a:hover{background:var(--cream-2); color:var(--ink);}
-  .sidebar-nav a.active{background:var(--cream-2); color:var(--ink); font-weight:500;}
+  .sidebar-nav a svg{flex-shrink:0; opacity:.7;}
+  .sidebar-nav a:hover, .sidebar-nav a.active{background:var(--cream-2); color:var(--ink);}
+  .sidebar-nav a.active{font-weight:500;}
+  .sidebar-nav a:hover svg, .sidebar-nav a.active svg{opacity:1;}
   .sidebar-logout{
     padding:11px 14px; font-size:13.5px; color:var(--ink-soft);
     border-top:1px solid var(--line); padding-top:18px; margin-top:18px; transition:color .2s;
+    display:flex; align-items:center; gap:11px;
   }
   .sidebar-logout:hover{color:var(--ink);}
   .content-col{flex:1; min-width:0;}
@@ -205,14 +208,14 @@
     <div>
       <a href="index.html" class="logo">MYSLF</a>
       <nav class="sidebar-nav">
-        <a href="journal.html">Journal</a>
-        <a href="histoire.html" class="active">Mon histoire</a>
-        <a href="patterns.html">Mes patterns</a>
-        <a href="parler.html">J'ai besoin de parler</a>
-        <a href="parcours.html">Ma reconstruction</a>
+        <a href="journal.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Journal</a>
+        <a href="histoire.html" class="active"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Mon histoire</a>
+        <a href="patterns.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Mes patterns</a>
+        <a href="parler.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>J'ai besoin de parler</a>
+        <a href="parcours.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>Ma reconstruction</a>
       </nav>
     </div>
-    <a href="#" class="logout-link sidebar-logout">Se déconnecter</a>
+    <a href="#" class="logout-link sidebar-logout"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Se déconnecter</a>
   </aside>
 
   <div class="content-col">
