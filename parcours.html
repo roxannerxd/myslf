@@ -1577,58 +1577,68 @@
     }
   ];
 
+  var STEP_ICONS = {
+    heart:'<svg width="24" height="24" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" style="fill:var(--clay);stroke:var(--clay-dark);stroke-width:1.2;stroke-linejoin:round;"/></svg>',
+    mirror:'<svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="9" r="7" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.4;"/><line x1="12" y1="16" x2="12" y2="21.5" style="stroke:var(--clay-dark);stroke-width:1.4;stroke-linecap:round;"/><line x1="9" y1="21.5" x2="15" y2="21.5" style="stroke:var(--clay-dark);stroke-width:1.4;stroke-linecap:round;"/></svg>',
+    door:'<svg width="24" height="24" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="1.5" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.4;"/><circle cx="15" cy="12" r="1" style="fill:var(--clay-dark);"/></svg>',
+    flower:'<svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="3" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.2;"/><circle cx="12" cy="18.5" r="3" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.2;"/><circle cx="5.5" cy="12" r="3" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.2;"/><circle cx="18.5" cy="12" r="3" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.2;"/><circle cx="12" cy="12" r="2.5" style="fill:var(--clay);stroke:var(--clay-dark);stroke-width:1.2;"/></svg>',
+    crown:'<svg width="24" height="24" viewBox="0 0 24 24"><path d="M4 18h16" style="stroke:var(--clay-dark);stroke-width:1.5;stroke-linecap:round;"/><path d="M4.5 18 3 8l5 4 4-7 4 7 5-4-1.5 10z" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.4;stroke-linejoin:round;"/></svg>',
+    butterfly:'<svg width="24" height="24" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" style="stroke:var(--clay-dark);stroke-width:1.4;stroke-linecap:round;"/><path d="M12 8c-1-3-4-5-7-4-2 .7-2.5 3-1 5 1 1.3 3 2 5 1.5" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.3;stroke-linecap:round;"/><path d="M12 16c-1 3-4 5-7 4-2-.7-2.5-3-1-5 1-1.3 3-2 5-1.5" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.3;stroke-linecap:round;"/><path d="M12 8c1-3 4-5 7-4 2 .7 2.5 3 1 5-1 1.3-3 2-5 1.5" style="fill:var(--clay);stroke:var(--clay-dark);stroke-width:1.3;stroke-linecap:round;"/><path d="M12 16c1 3 4 5 7 4 2-.7 2.5-3 1-5-1-1.3-3-2-5-1.5" style="fill:var(--clay);stroke:var(--clay-dark);stroke-width:1.3;stroke-linecap:round;"/></svg>',
+    sparkle:'<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 2c.6 4.4 2.6 6.4 7 7-4.4.6-6.4 2.6-7 7-.6-4.4-2.6-6.4-7-7 4.4-.6 6.4-2.6 7-7z" style="fill:var(--clay); stroke:var(--clay-dark); stroke-width:1; stroke-linejoin:round;"/></svg>'
+  };
+
   var STEPS = [
     {
-      key: 'step1', icon: '🤍', name: 'Stop & Breathe', sub: 'Je me stabilise',
+      key: 'step1', icon: STEP_ICONS.heart, name: 'Stop & Breathe', sub: 'Je me stabilise',
       weekTitle: 'Stop & Breathe', weekSub: 'Semaine 1 — "Je me stabilise"',
       weekIntro: 'Quand on vient de se séparer, on ne commence pas par travailler sur sa confiance. On commence par arrêter de fonctionner en mode urgence émotionnelle. Cette semaine, chaque jour t\'aide à reprendre un tout petit peu de terrain.',
       days: STEP1_DAYS,
       recapText: 'Sept jours, sept petits pas. Ce n\'est pas rien — c\'est le début. L\'étape 2 est débloquée.'
     },
     {
-      key: 'step2', icon: '🪞', name: 'Understand Me', sub: 'Je comprends pourquoi je m\'attache',
+      key: 'step2', icon: STEP_ICONS.mirror, name: 'Understand Me', sub: 'Je comprends pourquoi je m\'attache',
       weekTitle: 'Understand Me', weekSub: 'Semaine 2 — "Je comprends pourquoi je m\'attache"',
       weekIntro: 'Cette semaine, on ne cherche pas à te diagnostiquer. On regarde ensemble, un jour à la fois, comment tu t\'attaches, ce que tu attends d\'une relation, et ce qui se répète. À la fin, tu auras une première image de tes habitudes émotionnelles.',
       days: STEP2_DAYS,
       revealType: 'pattern'
     },
     {
-      key: 'step3', icon: '🚪', name: 'Detach', sub: 'Je reprends de la distance',
+      key: 'step3', icon: STEP_ICONS.door, name: 'Detach', sub: 'Je reprends de la distance',
       weekTitle: 'Detach', weekSub: 'Semaine 3 — "Je reprends de la distance"',
       weekIntro: 'Le but n\'est pas de te dire d\'oublier cette personne. C\'est d\'apprendre, petit à petit, à ne plus la laisser contrôler ton état émotionnel.',
       days: STEP3_DAYS,
       recapText: 'Tu n\'as rien oublié, et ce n\'était pas le but. Tu as juste repris un peu de pouvoir sur ce qui te contrôlait. L\'étape 4 est débloquée.'
     },
     {
-      key: 'step4', icon: '🪞', name: 'Remember Me', sub: 'Qui suis-je sans cette relation ?',
+      key: 'step4', icon: STEP_ICONS.mirror, name: 'Remember Me', sub: 'Qui suis-je sans cette relation ?',
       weekTitle: 'Remember Me', weekSub: 'Semaine 4 — "Qui suis-je sans cette relation ?"',
       weekIntro: 'Cette semaine, on ne parle presque plus de cette relation. On revient à toi : ce que tu aimais, ce que tu as arrêté, tes qualités, tes valeurs, et où tu veux aller. À la fin, tu auras une première version de ton identité, en dehors de cette histoire.',
       days: STEP4_DAYS,
       revealType: 'identity'
     },
     {
-      key: 'step5', icon: '🌸', name: 'Build Me', sub: 'Je recommence à construire ma vie',
+      key: 'step5', icon: STEP_ICONS.flower, name: 'Build Me', sub: 'Je recommence à construire ma vie',
       weekTitle: 'Build Me', weekSub: 'Semaine 5 — "Je recommence à construire ma vie"',
       weekIntro: 'Cette semaine, on sort progressivement du passé. Chaque jour touche une partie différente de ta vie — le corps, l\'espace, le lien aux autres, le plaisir. L\'objectif : reconstruire une vie qui contient plein de sources de satisfaction, au lieu que toute l\'attention reste concentrée sur une seule personne.',
       days: STEP5_DAYS,
       recapText: 'Six jours à construire, un jour à te reposer. C\'est déjà une vie qui contient autre chose que le manque de quelqu\'un. L\'étape 6 est débloquée.'
     },
     {
-      key: 'step6', icon: '👑', name: 'Self-Worth', sub: 'Je recommence à croire en moi',
+      key: 'step6', icon: STEP_ICONS.crown, name: 'Self-Worth', sub: 'Je recommence à croire en moi',
       weekTitle: 'Self-Worth', weekSub: 'Semaine 6 — "Je recommence à croire en moi"',
       weekIntro: 'Pas de "je suis magnifique, je suis incroyable" — quand la confiance manque, ça sonne faux. On construit la confiance avec des preuves. Chaque soir, une seule question : de quoi as-tu été fière aujourd\'hui, même minuscule ?',
       days: STEP6_DAYS,
       revealType: 'confidence'
     },
     {
-      key: 'step7', icon: '🦋', name: 'My Standards', sub: 'Je décide de ce que j\'accepte',
+      key: 'step7', icon: STEP_ICONS.butterfly, name: 'My Standards', sub: 'Je décide de ce que j\'accepte',
       weekTitle: 'My Standards', weekSub: 'Semaine 7 — "Je décide de ce que j\'accepte"',
       weekIntro: 'On ne veut pas seulement que tu sortes d\'une relation. On veut que tu saches ce que tu veux pour la prochaine. Cette semaine, tu construis tes non-négociables, tes besoins, tes limites et tes green flags.',
       days: STEP7_DAYS,
       revealType: 'standards'
     },
     {
-      key: 'step8', icon: '✨', name: 'Choose Me', sub: 'Je me choisis',
+      key: 'step8', icon: STEP_ICONS.sparkle, name: 'Choose Me', sub: 'Je me choisis',
       weekTitle: 'Choose Me', weekSub: 'Semaine 8 — "Je me choisis"',
       weekIntro: 'Dernière semaine. On regarde le chemin parcouru — pas pour juger, juste pour constater. Et on termine par deux lettres : à celle que tu étais, et à celle que tu es en train de devenir.',
       days: STEP8_DAYS,

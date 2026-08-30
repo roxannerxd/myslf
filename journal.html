@@ -124,7 +124,8 @@
     font-size:13px; color:var(--ink-soft); display:flex; flex-direction:column; align-items:center; gap:6px;
     transition:background .2s, border-color .2s, color .2s, transform .2s;
   }
-  .mood-btn .mood-icon{font-size:22px; line-height:1;}
+  .mood-btn .mood-icon{display:flex; line-height:1;}
+  .mood-btn .mood-icon svg{display:block;}
   .mood-btn:hover{background:var(--cream-2); transform:translateY(-1px);}
   .mood-btn.selected{background:var(--clay); border-color:var(--clay); color:var(--white);}
 
@@ -137,7 +138,8 @@
     border-radius:22px; padding:24px; display:flex; flex-direction:column;
   }
   .journey-card .eyebrow{color:var(--ink); opacity:.7; margin-bottom:8px;}
-  .journey-card .journey-icon{font-size:26px; margin-bottom:8px;}
+  .journey-card .journey-icon{margin-bottom:8px;}
+  .journey-card .journey-icon svg{display:block;}
   .journey-card h3{font-size:22px; font-weight:500; margin-bottom:6px;}
   .journey-card .journey-sub{font-size:14px; color:var(--ink); opacity:.8; margin-bottom:14px; max-width:420px;}
   .journey-card .journey-day{
@@ -362,11 +364,11 @@
     <div class="card">
       <h2>Comment tu te sens aujourd'hui ?</h2>
       <div class="mood-row" id="moodRow">
-        <button type="button" class="mood-btn" data-mood="Triste"><span class="mood-icon">🌧️</span><span class="mood-label">Triste</span></button>
-        <button type="button" class="mood-btn" data-mood="Anxieuse"><span class="mood-icon">🌊</span><span class="mood-label">Anxieuse</span></button>
-        <button type="button" class="mood-btn" data-mood="Perdue"><span class="mood-icon">🌀</span><span class="mood-label">Perdue</span></button>
-        <button type="button" class="mood-btn" data-mood="En manque"><span class="mood-icon">🤍</span><span class="mood-label">En manque</span></button>
-        <button type="button" class="mood-btn" data-mood="Sereine"><span class="mood-icon">🌿</span><span class="mood-label">Sereine</span></button>
+        <button type="button" class="mood-btn" data-mood="Triste"><span class="mood-icon"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M6 15a4 4 0 0 1 .5-7.94A5.5 5.5 0 0 1 17 8.5 4 4 0 0 1 16.5 16H6.5" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;"/><line x1="8" y1="18" x2="8" y2="20.5" style="stroke:var(--clay-dark);stroke-width:1.4;stroke-linecap:round;"/><line x1="12" y1="18" x2="12" y2="20.5" style="stroke:var(--clay-dark);stroke-width:1.4;stroke-linecap:round;"/><line x1="16" y1="18" x2="16" y2="20.5" style="stroke:var(--clay-dark);stroke-width:1.4;stroke-linecap:round;"/></svg></span><span class="mood-label">Triste</span></button>
+        <button type="button" class="mood-btn" data-mood="Anxieuse"><span class="mood-icon"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M2 8c2-2 4-2 6 0s4 2 6 0 4-2 6 0" style="fill:none;stroke:var(--clay-dark);stroke-width:1.6;stroke-linecap:round;"/><path d="M2 13c2-2 4-2 6 0s4 2 6 0 4-2 6 0" style="fill:none;stroke:var(--clay);stroke-width:1.6;stroke-linecap:round;"/><path d="M2 18c2-2 4-2 6 0s4 2 6 0 4-2 6 0" style="fill:none;stroke:var(--clay-dark);stroke-width:1.6;stroke-linecap:round;opacity:.4;"/></svg></span><span class="mood-label">Anxieuse</span></button>
+        <button type="button" class="mood-btn" data-mood="Perdue"><span class="mood-icon"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 12c0-1.1.9-2 2-2s2 .9 2 2-1.3 2.5-3 2.5-3.5-1.6-3.5-3.5S11.1 7 13.5 7 18 9.2 18 12s-2.7 6-6 6-7-3.1-7-7 3.6-8 8-8" style="fill:none;stroke:var(--clay-dark);stroke-width:1.6;stroke-linecap:round;"/></svg></span><span class="mood-label">Perdue</span></button>
+        <button type="button" class="mood-btn" data-mood="En manque"><span class="mood-icon"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" style="fill:var(--clay);stroke:var(--clay-dark);stroke-width:1.2;stroke-linejoin:round;"/></svg></span><span class="mood-label">En manque</span></button>
+        <button type="button" class="mood-btn" data-mood="Sereine"><span class="mood-icon"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M6 20c-2-6 1-13 12-15-1 9-6 13-12 15z" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.4;stroke-linejoin:round;"/><path d="M7 19c3-4 6-7 9-11" style="fill:none;stroke:var(--clay-dark);stroke-width:1.2;stroke-linecap:round;"/></svg></span><span class="mood-label">Sereine</span></button>
       </div>
       <textarea class="entry-textarea" id="entryText" placeholder="Qu'est-ce que tu as sur le cœur aujourd'hui ?" maxlength="4000"></textarea>
       <div class="entry-actions">
@@ -690,22 +692,32 @@ Array.prototype.forEach.call(document.querySelectorAll('.logout-link'), function
   var entriesList = document.getElementById('entriesList');
   var entriesCount = document.getElementById('entriesCount');
 
+  var STEP_ICONS = {
+    heart:'<svg width="24" height="24" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" style="fill:var(--clay);stroke:var(--clay-dark);stroke-width:1.2;stroke-linejoin:round;"/></svg>',
+    mirror:'<svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="9" r="7" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.4;"/><line x1="12" y1="16" x2="12" y2="21.5" style="stroke:var(--clay-dark);stroke-width:1.4;stroke-linecap:round;"/><line x1="9" y1="21.5" x2="15" y2="21.5" style="stroke:var(--clay-dark);stroke-width:1.4;stroke-linecap:round;"/></svg>',
+    door:'<svg width="24" height="24" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="1.5" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.4;"/><circle cx="15" cy="12" r="1" style="fill:var(--clay-dark);"/></svg>',
+    flower:'<svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="3" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.2;"/><circle cx="12" cy="18.5" r="3" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.2;"/><circle cx="5.5" cy="12" r="3" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.2;"/><circle cx="18.5" cy="12" r="3" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.2;"/><circle cx="12" cy="12" r="2.5" style="fill:var(--clay);stroke:var(--clay-dark);stroke-width:1.2;"/></svg>',
+    crown:'<svg width="24" height="24" viewBox="0 0 24 24"><path d="M4 18h16" style="stroke:var(--clay-dark);stroke-width:1.5;stroke-linecap:round;"/><path d="M4.5 18 3 8l5 4 4-7 4 7 5-4-1.5 10z" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.4;stroke-linejoin:round;"/></svg>',
+    butterfly:'<svg width="24" height="24" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" style="stroke:var(--clay-dark);stroke-width:1.4;stroke-linecap:round;"/><path d="M12 8c-1-3-4-5-7-4-2 .7-2.5 3-1 5 1 1.3 3 2 5 1.5" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.3;stroke-linecap:round;"/><path d="M12 16c-1 3-4 5-7 4-2-.7-2.5-3-1-5 1-1.3 3-2 5-1.5" style="fill:var(--cream-2);stroke:var(--clay-dark);stroke-width:1.3;stroke-linecap:round;"/><path d="M12 8c1-3 4-5 7-4 2 .7 2.5 3 1 5-1 1.3-3 2-5 1.5" style="fill:var(--clay);stroke:var(--clay-dark);stroke-width:1.3;stroke-linecap:round;"/><path d="M12 16c1 3 4 5 7 4 2-.7 2.5-3 1-5-1-1.3-3-2-5-1.5" style="fill:var(--clay);stroke:var(--clay-dark);stroke-width:1.3;stroke-linecap:round;"/></svg>',
+    sparkle:'<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 2c.6 4.4 2.6 6.4 7 7-4.4.6-6.4 2.6-7 7-.6-4.4-2.6-6.4-7-7 4.4-.6 6.4-2.6 7-7z" style="fill:var(--clay); stroke:var(--clay-dark); stroke-width:1; stroke-linejoin:round;"/></svg>'
+  };
+
   var STEPS_SUMMARY = [
-    { key:'step1', icon:'🤍', name:'Stop & Breathe', sub:'Je me stabilise',
+    { key:'step1', icon:STEP_ICONS.heart, name:'Stop & Breathe', sub:'Je me stabilise',
       days:['Ma vérité','Ce que je ressens','Mon espace',"10 minutes dehors",'Ce qui me déclenche',"Aujourd'hui, je ne me juge pas",'Mon premier bilan'] },
-    { key:'step2', icon:'🪞', name:'Understand Me', sub:"Je comprends pourquoi je m'attache",
+    { key:'step2', icon:STEP_ICONS.mirror, name:'Understand Me', sub:"Je comprends pourquoi je m'attache",
       days:["Ce qu'il représentait","Ce que j'avais peur de perdre","Quand je me sentais le plus aimée","Amour ou réassurance ?","Ce qui se répète","Ce dont j'ai besoin, moi",'My Pattern'] },
-    { key:'step3', icon:'🚪', name:'Detach', sub:'Je reprends de la distance',
+    { key:'step3', icon:STEP_ICONS.door, name:'Detach', sub:'Je reprends de la distance',
       days:['Couper le bruit','Ne pas vérifier',"Le message que je n'envoie pas",'Les 10 minutes','Ce qui me contrôle encore','Reprendre le contrôle','Ma distance'] },
-    { key:'step4', icon:'🪞', name:'Remember Me', sub:'Qui suis-je sans cette relation ?',
+    { key:'step4', icon:STEP_ICONS.mirror, name:'Remember Me', sub:'Qui suis-je sans cette relation ?',
       days:["Ce que j'aimais avant","Ce que j'ai arrêté de faire",'Mes qualités','Ce que mes proches aiment chez moi','Mes valeurs','Dans un an','My Identity'] },
-    { key:'step5', icon:'🌸', name:'Build Me', sub:'Je recommence à construire ma vie',
+    { key:'step5', icon:STEP_ICONS.flower, name:'Build Me', sub:'Je recommence à construire ma vie',
       days:['Corps','Environnement','Social','Apparence','Projet','Plaisir','Repos et bilan'] },
-    { key:'step6', icon:'👑', name:'Self-Worth', sub:'Je recommence à croire en moi',
+    { key:'step6', icon:STEP_ICONS.crown, name:'Self-Worth', sub:'Je recommence à croire en moi',
       days:['Ma fierté du jour','Ma fierté du jour','Ma fierté du jour','Ma fierté du jour','Ma fierté du jour','Ma fierté du jour','Ma fierté du jour'] },
-    { key:'step7', icon:'🦋', name:'My Standards', sub:'Je décide de ce que j\'accepte',
+    { key:'step7', icon:STEP_ICONS.butterfly, name:'My Standards', sub:'Je décide de ce que j\'accepte',
       days:['My Non-Negotiables','My Needs','My Boundaries','My Green Flags','Ce qui aurait changé la donne','Ce que je ne ferai plus','My Standards'] },
-    { key:'step8', icon:'✨', name:'Choose Me', sub:'Je me choisis',
+    { key:'step8', icon:STEP_ICONS.sparkle, name:'Choose Me', sub:'Je me choisis',
       days:["Qui j'étais au début",'Ce qui a changé',"Ce que j'ai découvert",'De quoi je suis fière','Ce que je veux maintenant','La femme que je deviens','Deux lettres'] }
   ];
 
@@ -735,7 +747,7 @@ Array.prototype.forEach.call(document.querySelectorAll('.logout-link'), function
     }
 
     var isFresh = Object.keys(journey).length === 0;
-    document.querySelector('#journeyCard .journey-icon').textContent = position.step.icon;
+    document.querySelector('#journeyCard .journey-icon').innerHTML = position.step.icon;
     document.getElementById('journeyTitle').textContent = position.step.name;
     document.getElementById('journeySub').textContent = position.step.sub;
     document.getElementById('journeyDay').textContent = 'Jour ' + position.dayNum + ' — ' + position.step.days[position.dayNum - 1];
