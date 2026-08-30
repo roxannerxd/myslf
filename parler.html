@@ -42,10 +42,39 @@
     padding:18px 32px; max-width:1180px; margin:0 auto;
   }
   .logo{font-family:'Cormorant Garamond',serif; font-size:22px; letter-spacing:0.08em; font-weight:600;}
-  .nav-links{display:flex; align-items:center; gap:24px; font-size:14px; color:var(--ink-soft); flex-wrap:wrap;}
+  .nav-links{display:none; align-items:center; gap:24px; font-size:14px; color:var(--ink-soft); flex-wrap:wrap;}
+  @media(min-width:900px){.nav-links{display:flex;}}
   .nav-links a{transition:color .2s;}
   .nav-links a:hover, .nav-links a.active{color:var(--ink);}
   .nav-links a.active{border-bottom:1.5px solid var(--clay-dark); padding-bottom:2px;}
+
+  .nav-toggle{
+    display:flex; align-items:center; justify-content:center;
+    width:40px; height:40px; background:none; flex-shrink:0;
+  }
+  .nav-toggle span{
+    display:block; width:20px; height:2px; background:var(--ink); position:relative;
+    transition:background .2s;
+  }
+  .nav-toggle span::before, .nav-toggle span::after{
+    content:""; position:absolute; left:0; width:20px; height:2px; background:var(--ink);
+    transition:transform .2s;
+  }
+  .nav-toggle span::before{top:-6px;}
+  .nav-toggle span::after{top:6px;}
+  .nav-toggle.open span{background:transparent;}
+  .nav-toggle.open span::before{transform:translateY(6px) rotate(45deg);}
+  .nav-toggle.open span::after{transform:translateY(-6px) rotate(-45deg);}
+  @media(min-width:900px){.nav-toggle{display:none;}}
+
+  .mobile-menu{
+    display:none; flex-direction:column;
+    padding:4px 32px 24px; border-top:1px solid var(--line);
+  }
+  .mobile-menu.open{display:flex;}
+  .mobile-menu a{padding:13px 0; font-size:15.5px; color:var(--ink-soft); border-bottom:1px solid var(--line);}
+  .mobile-menu a:hover, .mobile-menu a.active{color:var(--ink);}
+  @media(min-width:900px){.mobile-menu{display:none !important;}}
 
   main{flex:1; display:flex; flex-direction:column; padding:36px 0 28px; min-height:0;}
   .head-row{flex-shrink:0; margin-bottom:20px;}
@@ -124,9 +153,18 @@
       <a href="patterns.html">Mes patterns</a>
       <a href="parler.html" class="active">J'ai besoin de parler</a>
       <a href="parcours.html">Ma reconstruction</a>
-      <a href="#" id="logoutLink">Se déconnecter</a>
+      <a href="#" class="logout-link">Se déconnecter</a>
     </div>
+    <button type="button" class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu" aria-expanded="false"><span></span></button>
   </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="journal.html">Journal</a>
+    <a href="histoire.html">Mon histoire</a>
+    <a href="patterns.html">Mes patterns</a>
+    <a href="parler.html" class="active">J'ai besoin de parler</a>
+    <a href="parcours.html">Ma reconstruction</a>
+    <a href="#" class="logout-link">Se déconnecter</a>
+  </div>
 </header>
 
 <main>
@@ -160,9 +198,11 @@
   var subscribed = await window.requireSubscription(user);
   if (!subscribed) return;
 
-  document.getElementById('logoutLink').addEventListener('click', function(e){
-    e.preventDefault();
-    window.signOutAndRedirect();
+  Array.prototype.forEach.call(document.querySelectorAll('.logout-link'), function(link){
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      window.signOutAndRedirect();
+    });
   });
 
   var messages = document.getElementById('chatMessages');
@@ -325,6 +365,30 @@
       sendBtn.disabled = false;
       input.focus();
     });
+  });
+})();
+</script>
+
+<script>
+(function(){
+  var toggle = document.getElementById('navToggle');
+  var menu = document.getElementById('mobileMenu');
+  if (!toggle || !menu) return;
+
+  function closeMenu(){
+    toggle.classList.remove('open');
+    menu.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  }
+
+  toggle.addEventListener('click', function(){
+    var isOpen = menu.classList.toggle('open');
+    toggle.classList.toggle('open', isOpen);
+    toggle.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  Array.prototype.forEach.call(menu.querySelectorAll('a'), function(link){
+    link.addEventListener('click', closeMenu);
   });
 })();
 </script>
