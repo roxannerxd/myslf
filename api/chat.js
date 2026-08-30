@@ -127,13 +127,17 @@ export default async function handler(req, res) {
   messages.push({ role: 'user', content: message });
 
   try {
+    var anthropicHeaders = {
+      'content-type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01'
+    };
+    if (process.env.ANTHROPIC_WORKSPACE_ID) {
+      anthropicHeaders['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
+    }
     var response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
+      headers: anthropicHeaders,
       body: JSON.stringify({
         model: 'claude-sonnet-5',
         max_tokens: 400,
