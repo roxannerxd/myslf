@@ -250,7 +250,7 @@
       <nav class="sidebar-nav">
         <a href="journal.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Journal</a>
         <a href="histoire.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Mon histoire</a>
-        <a href="patterns.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Mes patterns</a>
+        <a href="patterns.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Mes schémas</a>
         <a href="parler.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>J'ai besoin de parler</a>
         <a href="parcours.html" class="active"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>Ma reconstruction</a>
       </nav>
@@ -266,7 +266,7 @@
     <div class="nav-links">
       <a href="journal.html">Journal</a>
       <a href="histoire.html">Mon histoire</a>
-      <a href="patterns.html">Mes patterns</a>
+      <a href="patterns.html">Mes schémas</a>
       <a href="parler.html">J'ai besoin de parler</a>
       <a href="parcours.html" class="active">Ma reconstruction</a>
       <a href="#" class="logout-link">Se déconnecter</a>
@@ -276,7 +276,7 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="journal.html">Journal</a>
     <a href="histoire.html">Mon histoire</a>
-    <a href="patterns.html">Mes patterns</a>
+    <a href="patterns.html">Mes schémas</a>
     <a href="parler.html">J'ai besoin de parler</a>
     <a href="parcours.html" class="active">Ma reconstruction</a>
     <a href="#" class="logout-link">Se déconnecter</a>
@@ -776,13 +776,13 @@
       pattern: function(d){ return d && d.need ? 'un besoin ' + deElide(d.need.toLowerCase()) + ' pas assez écouté' : null; }
     },
     {
-      num: 7, title: 'My Pattern', sub: 'Jour 7 sur 7', isFinal: true,
+      num: 7, title: 'Mon schéma', sub: 'Jour 7 sur 7', isFinal: true,
       render: function(c, key){
         c.innerHTML =
-          '<div class="prompt">Une dernière question avant ton pattern.</div>' +
+          '<div class="prompt">Une dernière question avant ton schéma.</div>' +
           '<div class="hint">En un mot, comment tu te sens après cette semaine de compréhension ?</div>' +
           '<input type="text" class="short-input" id="s2d7_feeling" placeholder="Un mot, ou une phrase courte…" maxlength="200" style="margin-bottom:18px;">' +
-          '<button type="button" class="save-btn" id="s2d7_save" disabled>Voir mon pattern</button>';
+          '<button type="button" class="save-btn" id="s2d7_save" disabled>Voir mon schéma</button>';
         var input = document.getElementById('s2d7_feeling');
         var btn = document.getElementById('s2d7_save');
         input.addEventListener('input', function(){ btn.disabled = input.value.trim().length === 0; });
@@ -1591,35 +1591,35 @@
     {
       key: 'step1', icon: STEP_ICONS.heart, name: 'Stop & Breathe', sub: 'Je me stabilise',
       weekTitle: 'Stop & Breathe', weekSub: 'Semaine 1 — "Je me stabilise"',
-      weekIntro: 'Quand on vient de se séparer, on ne commence pas par travailler sur sa confiance. On commence par arrêter de fonctionner en mode urgence émotionnelle. Cette semaine, chaque jour t\'aide à reprendre un tout petit peu de terrain.',
+      weekIntro: 'Que ce soit après une séparation ou une autre épreuve, on ne commence pas par travailler sur sa confiance. On commence par arrêter de fonctionner en mode urgence émotionnelle. Cette semaine, chaque jour t\'aide à reprendre un tout petit peu de terrain.',
       days: STEP1_DAYS,
       recapText: 'Sept jours, sept petits pas. Ce n\'est pas rien — c\'est le début. L\'étape 2 est débloquée.'
     },
     {
       key: 'step2', icon: STEP_ICONS.mirror, name: 'Understand Me', sub: 'Je comprends pourquoi je m\'attache',
       weekTitle: 'Understand Me', weekSub: 'Semaine 2 — "Je comprends pourquoi je m\'attache"',
-      weekIntro: 'Cette semaine, on ne cherche pas à te diagnostiquer. On regarde ensemble, un jour à la fois, comment tu t\'attaches, ce que tu attends d\'une relation, et ce qui se répète. À la fin, tu auras une première image de tes habitudes émotionnelles.',
+      weekIntro: 'Cette semaine, on ne cherche pas à te diagnostiquer. On regarde ensemble, un jour à la fois, comment tu fonctionnes dans tes relations, ce que tu attends des autres, et ce qui se répète. À la fin, tu auras une première image de tes habitudes émotionnelles.',
       days: STEP2_DAYS,
       revealType: 'pattern'
     },
     {
       key: 'step3', icon: STEP_ICONS.door, name: 'Detach', sub: 'Je reprends de la distance',
       weekTitle: 'Detach', weekSub: 'Semaine 3 — "Je reprends de la distance"',
-      weekIntro: 'Le but n\'est pas de te dire d\'oublier cette personne. C\'est d\'apprendre, petit à petit, à ne plus la laisser contrôler ton état émotionnel.',
+      weekIntro: 'Le but n\'est pas de te dire d\'oublier ou de passer à autre chose du jour au lendemain. C\'est d\'apprendre, petit à petit, à ne plus laisser cette situation contrôler ton état émotionnel.',
       days: STEP3_DAYS,
       recapText: 'Tu n\'as rien oublié, et ce n\'était pas le but. Tu as juste repris un peu de pouvoir sur ce qui te contrôlait. L\'étape 4 est débloquée.'
     },
     {
-      key: 'step4', icon: STEP_ICONS.mirror, name: 'Remember Me', sub: 'Qui suis-je sans cette relation ?',
-      weekTitle: 'Remember Me', weekSub: 'Semaine 4 — "Qui suis-je sans cette relation ?"',
-      weekIntro: 'Cette semaine, on ne parle presque plus de cette relation. On revient à toi : ce que tu aimais, ce que tu as arrêté, tes qualités, tes valeurs, et où tu veux aller. À la fin, tu auras une première version de ton identité, en dehors de cette histoire.',
+      key: 'step4', icon: STEP_ICONS.mirror, name: 'Remember Me', sub: 'Qui suis-je, vraiment ?',
+      weekTitle: 'Remember Me', weekSub: 'Semaine 4 — "Qui suis-je, vraiment ?"',
+      weekIntro: 'Cette semaine, on ne parle presque plus de ce qui t\'a amenée ici. On revient à toi : ce que tu aimais, ce que tu as arrêté, tes qualités, tes valeurs, et où tu veux aller. À la fin, tu auras une première version de ton identité, au-delà de cette période.',
       days: STEP4_DAYS,
       revealType: 'identity'
     },
     {
       key: 'step5', icon: STEP_ICONS.flower, name: 'Build Me', sub: 'Je recommence à construire ma vie',
       weekTitle: 'Build Me', weekSub: 'Semaine 5 — "Je recommence à construire ma vie"',
-      weekIntro: 'Cette semaine, on sort progressivement du passé. Chaque jour touche une partie différente de ta vie — le corps, l\'espace, le lien aux autres, le plaisir. L\'objectif : reconstruire une vie qui contient plein de sources de satisfaction, au lieu que toute l\'attention reste concentrée sur une seule personne.',
+      weekIntro: 'Cette semaine, on sort progressivement du passé. Chaque jour touche une partie différente de ta vie — le corps, l\'espace, le lien aux autres, le plaisir. L\'objectif : reconstruire une vie qui contient plein de sources de satisfaction, au lieu que toute l\'attention reste concentrée sur une seule chose.',
       days: STEP5_DAYS,
       recapText: 'Six jours à construire, un jour à te reposer. C\'est déjà une vie qui contient autre chose que le manque de quelqu\'un. L\'étape 6 est débloquée.'
     },
@@ -1633,7 +1633,7 @@
     {
       key: 'step7', icon: STEP_ICONS.butterfly, name: 'My Standards', sub: 'Je décide de ce que j\'accepte',
       weekTitle: 'My Standards', weekSub: 'Semaine 7 — "Je décide de ce que j\'accepte"',
-      weekIntro: 'On ne veut pas seulement que tu sortes d\'une relation. On veut que tu saches ce que tu veux pour la prochaine. Cette semaine, tu construis tes non-négociables, tes besoins, tes limites et tes green flags.',
+      weekIntro: 'On ne veut pas seulement que tu sortes de cette période. On veut que tu saches ce que tu acceptes, et ce que tu n\'acceptes plus, pour la suite. Cette semaine, tu construis tes non-négociables, tes besoins, tes limites et tes green flags.',
       days: STEP7_DAYS,
       revealType: 'standards'
     },
@@ -1787,7 +1787,7 @@
     }
 
     text.innerHTML =
-      '<div class="pattern-card"><div class="pattern-label">My pattern</div><p>' + escapeHtml(sentence) + '</p></div>' +
+      '<div class="pattern-card"><div class="pattern-label">Mon schéma</div><p>' + escapeHtml(sentence) + '</p></div>' +
       '<p class="pattern-note">Tu pourras toujours revenir relire ça depuis cette étape. L\'étape 3 est débloquée.</p>';
     document.getElementById('confirmContinue').onclick = function(){
       renderSteps();
@@ -1890,7 +1890,7 @@
     html += '<p class="pattern-note">Ce parcours n\'était pas un examen à réussir. C\'est un chemin que tu continues, à ton rythme.</p>';
     html += '<div class="pattern-card" style="background:var(--white); border:1px solid var(--line); text-align:left;">' +
       '<div class="pattern-label">Bienvenue dans My Life</div>' +
-      '<p style="margin-bottom:16px;">MYSLF, ton journal, tes patterns et tes progrès restent là, disponibles quand tu en as besoin. Et si une période difficile revient, tu n\'as qu\'à venir dire : "Je suis en difficulté aujourd\'hui." On adaptera l\'accompagnement à ce que tu vis, ce jour-là.</p>' +
+      '<p style="margin-bottom:16px;">MYSLF, ton journal, tes schémas et tes progrès restent là, disponibles quand tu en as besoin. Et si une période difficile revient, tu n\'as qu\'à venir dire : "Je suis en difficulté aujourd\'hui." On adaptera l\'accompagnement à ce que tu vis, ce jour-là.</p>' +
       '<div style="display:flex; gap:10px; flex-wrap:wrap;">' +
         '<a href="journal.html" class="save-btn" style="display:inline-block; text-decoration:none;">Mon journal</a>' +
         '<a href="parler.html" class="save-btn" style="display:inline-block; text-decoration:none; background:var(--white); color:var(--clay-dark); border:1px solid var(--line);">J\'ai besoin de parler</a>' +
