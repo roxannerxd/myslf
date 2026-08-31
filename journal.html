@@ -357,7 +357,7 @@
   <div class="wrap">
     <div class="greeting">
       <div class="eyebrow">Ton espace</div>
-      <h1>Bonjour, te revoilà 🌸</h1>
+      <h1 id="greetingTitle">Bonjour, te revoilà 🌸</h1>
       <div class="date" id="today"></div>
     </div>
 
@@ -685,6 +685,11 @@ Array.prototype.forEach.call(document.querySelectorAll('.logout-link'), function
   var subscribed = await window.requireSubscription(user);
   if (!subscribed) return;
   window.currentUser = user;
+
+  var firstName = user.user_metadata && user.user_metadata.first_name;
+  if (firstName){
+    document.getElementById('greetingTitle').textContent = 'Bonjour, ' + firstName + ' 🌸';
+  }
 
   var moodRow = document.getElementById('moodRow');
   var entryText = document.getElementById('entryText');
