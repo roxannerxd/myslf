@@ -100,11 +100,20 @@ export default async function handler(req, res) {
 
   if (story && typeof story === 'object') {
     var lines = [];
+    var isRupture = story.reason !== 'autre';
     function joinField(v){ return Array.isArray(v) ? v.join(', ') : v; }
-    if (story.duration) lines.push('Durée de la relation : ' + story.duration);
-    if (story.repeated) lines.push('Ruptures répétées : oui');
-    if (story.timeSince) lines.push('Depuis quand c\'est terminé : ' + story.timeSince);
-    if (story.breakupReason && story.breakupReason.length) lines.push('Pourquoi ça s\'est terminé : ' + joinField(story.breakupReason));
+    if (isRupture) {
+      if (story.duration) lines.push('Durée de la relation : ' + story.duration);
+      if (story.repeated) lines.push('Ruptures répétées : oui');
+      if (story.timeSince) lines.push('Depuis quand c\'est terminé : ' + story.timeSince);
+      if (story.breakupReason && story.breakupReason.length) lines.push('Pourquoi ça s\'est terminé : ' + joinField(story.breakupReason));
+    } else {
+      lines.push('Ce qu\'elle traverse n\'est pas une rupture amoureuse — ne présuppose jamais qu\'il s\'agit d\'un ex.');
+      if (story.duration) lines.push('Depuis combien de temps cette situation fait partie de sa vie : ' + story.duration);
+      if (story.repeated) lines.push('C\'est une difficulté qui revient régulièrement : oui');
+      if (story.timeSince) lines.push('Où elle en est aujourd\'hui avec cette situation : ' + story.timeSince);
+      if (story.breakupReason && story.breakupReason.length) lines.push('Ce qui a déclenché cette période : ' + joinField(story.breakupReason));
+    }
     if (story.trigger && story.trigger.length) lines.push('Déclencheurs principaux : ' + joinField(story.trigger));
     if (story.difficulty && story.difficulty.length) lines.push('Sa plus grande difficulté : ' + joinField(story.difficulty));
     if (story.neverAgain && story.neverAgain.length) lines.push('Ce qu\'elle ne veut plus revivre : ' + joinField(story.neverAgain));

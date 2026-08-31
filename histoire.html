@@ -133,6 +133,14 @@
   }
   .card.hidden{display:none;}
 
+  .reason-choice{
+    display:block; width:100%; text-align:left; padding:20px 22px; border-radius:16px;
+    background:var(--cream-2); border:1.5px solid transparent; font-size:14.5px; color:var(--ink); font-weight:500;
+    transition:background .2s, border-color .2s;
+  }
+  .reason-choice:hover{background:#EBD8CC;}
+  .reason-choice .reason-sub{display:block; font-size:12.5px; color:var(--ink-soft); font-weight:300; margin-top:5px;}
+
   .field{margin-bottom:22px;}
   .field label{display:block; font-size:13.5px; font-weight:500; margin-bottom:10px;}
   .field .hint{font-size:12px; color:var(--ink-soft); font-weight:300; margin-top:6px;}
@@ -251,18 +259,34 @@
 
     <div class="summary-card" id="summaryCard">
       <span class="serif" id="summaryIntro"></span>
-      <div class="summary-row"><span class="label">Durée de la relation</span><span class="value" id="sumDuration">—</span></div>
-      <div class="summary-row"><span class="label">Ruptures répétées</span><span class="value" id="sumRepeated">—</span></div>
-      <div class="summary-row"><span class="label">Depuis quand c'est terminé</span><span class="value" id="sumTimeSince">—</span></div>
-      <div class="summary-row"><span class="label">Pourquoi ça s'est terminé</span><span class="value" id="sumBreakupReason">—</span></div>
-      <div class="summary-row"><span class="label">Déclencheurs principaux</span><span class="value" id="sumTrigger">—</span></div>
-      <div class="summary-row"><span class="label">Ta plus grande difficulté</span><span class="value" id="sumDifficulty">—</span></div>
-      <div class="summary-row"><span class="label">Ce que tu ne veux plus revivre</span><span class="value" id="sumNeverAgain">—</span></div>
-      <div class="summary-row"><span class="label">Ton objectif</span><span class="value" id="sumGoal">—</span></div>
+      <div class="summary-row"><span class="label" id="labDuration">Durée de la relation</span><span class="value" id="sumDuration">—</span></div>
+      <div class="summary-row"><span class="label" id="labRepeated">Ruptures répétées</span><span class="value" id="sumRepeated">—</span></div>
+      <div class="summary-row"><span class="label" id="labTimeSince">Depuis quand c'est terminé</span><span class="value" id="sumTimeSince">—</span></div>
+      <div class="summary-row"><span class="label" id="labBreakupReason">Pourquoi ça s'est terminé</span><span class="value" id="sumBreakupReason">—</span></div>
+      <div class="summary-row"><span class="label" id="labTrigger">Déclencheurs principaux</span><span class="value" id="sumTrigger">—</span></div>
+      <div class="summary-row"><span class="label" id="labDifficulty">Ta plus grande difficulté</span><span class="value" id="sumDifficulty">—</span></div>
+      <div class="summary-row"><span class="label" id="labNeverAgain">Ce que tu ne veux plus revivre</span><span class="value" id="sumNeverAgain">—</span></div>
+      <div class="summary-row"><span class="label" id="labGoal">Ton objectif</span><span class="value" id="sumGoal">—</span></div>
       <a href="#" class="summary-edit" id="editLink">Modifier mon histoire</a>
     </div>
 
-    <div class="card" id="formCard">
+    <div class="card" id="reasonCard">
+      <div class="field" style="margin-bottom:0;">
+        <label style="font-size:16px; margin-bottom:18px; display:block;">Qu'est-ce qui t'amène ici ?</label>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <button type="button" class="reason-choice" data-reason="rupture">
+            Une rupture ou une relation difficile
+            <span class="reason-sub">Séparation, relation toxique, dépendance affective…</span>
+          </button>
+          <button type="button" class="reason-choice" data-reason="autre">
+            Autre chose
+            <span class="reason-sub">Une perte de confiance, une période difficile, l'envie de changer…</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card hidden" id="formCard">
       <form id="storyForm">
         <div class="field">
           <label>Depuis combien de temps étiez-vous ensemble ?</label>
@@ -363,6 +387,104 @@
         <div class="privacy-note">C'est privé, lié à ton compte. Rien n'est partagé avec personne.</div>
       </form>
     </div>
+
+    <div class="card hidden" id="formCardGeneral">
+      <form id="storyFormGeneral">
+        <div class="field">
+          <label>Depuis combien de temps cette situation fait-elle partie de ta vie ?</label>
+          <div class="option-row" data-field="duration">
+            <button type="button" class="option-btn" data-value="Moins de 6 mois">Moins de 6 mois</button>
+            <button type="button" class="option-btn" data-value="6 mois à 1 an">6 mois à 1 an</button>
+            <button type="button" class="option-btn" data-value="1 à 3 ans">1 à 3 ans</button>
+            <button type="button" class="option-btn" data-value="3 à 5 ans">3 à 5 ans</button>
+            <button type="button" class="option-btn" data-value="Plus de 5 ans">Plus de 5 ans</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>C'est une difficulté qui revient régulièrement dans ta vie</label>
+          <div class="toggle-row">
+            <div class="toggle" id="repeatedToggleGeneral"></div>
+            <span class="toggle-label">Oui, c'est un cycle que je connais bien</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Où en es-tu avec cette situation aujourd'hui ?</label>
+          <div class="option-row" data-field="timeSince">
+            <button type="button" class="option-btn" data-value="ça vient de commencer">Ça vient de commencer</button>
+            <button type="button" class="option-btn" data-value="je suis en plein dedans">Je suis en plein dedans</button>
+            <button type="button" class="option-btn" data-value="ça s'améliore doucement">Ça s'améliore doucement</button>
+            <button type="button" class="option-btn" data-value="j'ai l'impression de stagner">J'ai l'impression de stagner</button>
+            <button type="button" class="option-btn" data-value="je n'en vois pas encore le bout">Je n'en vois pas encore le bout</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Qu'est-ce qui a déclenché cette période, selon toi ? <span class="hint-inline">(plusieurs réponses possibles)</span></label>
+          <div class="option-row" data-field="breakupReason" data-mode="multi">
+            <button type="button" class="option-btn" data-value="un évènement précis">Un évènement précis</button>
+            <button type="button" class="option-btn" data-value="une accumulation de choses">Une accumulation de choses</button>
+            <button type="button" class="option-btn" data-value="un grand changement de vie">Un grand changement de vie</button>
+            <button type="button" class="option-btn" data-value="une remise en question personnelle">Une remise en question personnelle</button>
+            <button type="button" class="option-btn" data-value="je ne sais pas vraiment">Je ne sais pas vraiment</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Qu'est-ce qui déclenche le plus souvent tes moments difficiles ? <span class="hint-inline">(plusieurs réponses possibles)</span></label>
+          <div class="option-row" data-field="trigger" data-mode="multi">
+            <button type="button" class="option-btn" data-value="la peur de l'échec">La peur de l'échec</button>
+            <button type="button" class="option-btn" data-value="la solitude">La solitude</button>
+            <button type="button" class="option-btn" data-value="la comparaison aux autres">La comparaison aux autres</button>
+            <button type="button" class="option-btn" data-value="les réseaux sociaux">Les réseaux sociaux</button>
+            <button type="button" class="option-btn" data-value="le regard des autres">Le regard des autres</button>
+            <button type="button" class="option-btn" data-value="le stress">Le stress</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Qu'est-ce qui est le plus dur pour toi, aujourd'hui ? <span class="hint-inline">(plusieurs réponses possibles)</span></label>
+          <div class="option-row" data-field="difficulty" data-mode="multi">
+            <button type="button" class="option-btn" data-value="rester motivée">Rester motivée</button>
+            <button type="button" class="option-btn" data-value="lâcher prise">Lâcher prise</button>
+            <button type="button" class="option-btn" data-value="me faire confiance à nouveau">Me faire confiance à nouveau</button>
+            <button type="button" class="option-btn" data-value="me sentir suffisante">Me sentir suffisante</button>
+            <button type="button" class="option-btn" data-value="avancer sans savoir où je vais">Avancer sans savoir où je vais</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Qu'est-ce que tu ne veux plus revivre à l'avenir ? <span class="hint-inline">(plusieurs réponses possibles)</span></label>
+          <div class="option-row" data-field="neverAgain" data-mode="multi">
+            <button type="button" class="option-btn" data-value="douter de ma valeur">Douter de ma valeur</button>
+            <button type="button" class="option-btn" data-value="me sentir invisible">Me sentir invisible</button>
+            <button type="button" class="option-btn" data-value="me taire pour éviter les conflits">Me taire pour éviter les conflits</button>
+            <button type="button" class="option-btn" data-value="m'oublier moi-même">M'oublier moi-même</button>
+            <button type="button" class="option-btn" data-value="rester bloquée par peur du changement">Rester bloquée par peur du changement</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Vers quoi tu avances ? <span class="hint-inline">(plusieurs réponses possibles)</span></label>
+          <div class="option-row" data-field="goal" data-mode="multi">
+            <button type="button" class="option-btn" data-value="retrouver confiance en moi">Retrouver confiance en moi</button>
+            <button type="button" class="option-btn" data-value="mieux me connaître">Mieux me connaître</button>
+            <button type="button" class="option-btn" data-value="construire une vie qui me ressemble">Construire une vie qui me ressemble</button>
+            <button type="button" class="option-btn" data-value="apprendre à m'aimer">Apprendre à m'aimer</button>
+            <button type="button" class="option-btn" data-value="passer à l'action">Passer à l'action</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Si tu veux en dire plus (facultatif)</label>
+          <textarea class="entry-textarea" id="storyNotesGeneral" placeholder="Ce que tu veux que MYSLF sache, avec tes mots à toi…" maxlength="2000"></textarea>
+        </div>
+
+        <button type="submit" class="save-btn">Enregistrer mon histoire</button>
+        <div class="privacy-note">C'est privé, lié à ton compte. Rien n'est partagé avec personne.</div>
+      </form>
+    </div>
   </div>
 </main>
 
@@ -402,19 +524,41 @@
   });
 
   var form = document.getElementById('storyForm');
+  var formGeneral = document.getElementById('storyFormGeneral');
+  var reasonCard = document.getElementById('reasonCard');
   var formCard = document.getElementById('formCard');
+  var formCardGeneral = document.getElementById('formCardGeneral');
   var summaryCard = document.getElementById('summaryCard');
   var repeatedToggle = document.getElementById('repeatedToggle');
+  var repeatedToggleGeneral = document.getElementById('repeatedToggleGeneral');
   var notes = document.getElementById('storyNotes');
+  var notesGeneral = document.getElementById('storyNotesGeneral');
   var state = {
+    reason: null,
     duration: null, repeated: false, timeSince: null,
     breakupReason: [], trigger: [], difficulty: [], neverAgain: [], goal: [],
     notes: ''
   };
 
+  var LABELS = {
+    rupture: {
+      duration: 'Durée de la relation', repeated: 'Ruptures répétées',
+      timeSince: "Depuis quand c'est terminé", breakupReason: "Pourquoi ça s'est terminé",
+      trigger: 'Déclencheurs principaux', difficulty: 'Ta plus grande difficulté',
+      neverAgain: 'Ce que tu ne veux plus revivre', goal: 'Ton objectif'
+    },
+    autre: {
+      duration: 'Depuis combien de temps', repeated: 'Difficulté récurrente',
+      timeSince: "Où tu en es aujourd'hui", breakupReason: "Ce qui a déclenché cette période",
+      trigger: 'Déclencheurs principaux', difficulty: 'Ta plus grande difficulté',
+      neverAgain: 'Ce que tu ne veux plus revivre', goal: 'Ton objectif'
+    }
+  };
+
   function rowToStory(row){
     if (!row) return null;
     return {
+      reason: row.reason || 'rupture',
       duration: row.duration,
       repeated: row.repeated,
       timeSince: row.time_since,
@@ -436,6 +580,7 @@
   async function saveStory(s){
     var result = await window.sbClient.from('story').upsert({
       user_id: user.id,
+      reason: s.reason,
       duration: s.duration,
       repeated: s.repeated,
       time_since: s.timeSince,
@@ -449,6 +594,27 @@
     });
     if (result.error) console.error('save story failed', result.error);
   }
+
+  function showReasonView(){
+    reasonCard.classList.remove('hidden');
+    formCard.classList.add('hidden');
+    formCardGeneral.classList.add('hidden');
+    summaryCard.classList.remove('show');
+  }
+
+  function showChosenForm(reason){
+    reasonCard.classList.add('hidden');
+    formCard.classList.toggle('hidden', reason !== 'rupture');
+    formCardGeneral.classList.toggle('hidden', reason !== 'autre');
+    summaryCard.classList.remove('show');
+  }
+
+  document.querySelectorAll('.reason-choice').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      state.reason = btn.dataset.reason;
+      showChosenForm(state.reason);
+    });
+  });
 
   document.querySelectorAll('.option-row').forEach(function(row){
     var field = row.dataset.field;
@@ -475,13 +641,17 @@
     });
   });
 
-  repeatedToggle.addEventListener('click', function(){
+  function toggleRepeated(){
     state.repeated = !state.repeated;
     repeatedToggle.classList.toggle('on', state.repeated);
-  });
+    repeatedToggleGeneral.classList.toggle('on', state.repeated);
+  }
+  repeatedToggle.addEventListener('click', toggleRepeated);
+  repeatedToggleGeneral.addEventListener('click', toggleRepeated);
 
   function fillForm(story){
     state = {
+      reason: story.reason || 'rupture',
       duration: story.duration || null,
       repeated: !!story.repeated,
       timeSince: story.timeSince || null,
@@ -501,7 +671,9 @@
       });
     });
     repeatedToggle.classList.toggle('on', state.repeated);
+    repeatedToggleGeneral.classList.toggle('on', state.repeated);
     notes.value = state.notes;
+    notesGeneral.value = state.notes;
   }
 
   function joinValues(val){
@@ -510,8 +682,17 @@
   }
 
   function renderSummary(story){
+    var labels = LABELS[story.reason === 'autre' ? 'autre' : 'rupture'];
     document.getElementById('summaryIntro').textContent =
       '"Je me souviens de ton histoire, et je suis là pour la suite."';
+    document.getElementById('labDuration').textContent = labels.duration;
+    document.getElementById('labRepeated').textContent = labels.repeated;
+    document.getElementById('labTimeSince').textContent = labels.timeSince;
+    document.getElementById('labBreakupReason').textContent = labels.breakupReason;
+    document.getElementById('labTrigger').textContent = labels.trigger;
+    document.getElementById('labDifficulty').textContent = labels.difficulty;
+    document.getElementById('labNeverAgain').textContent = labels.neverAgain;
+    document.getElementById('labGoal').textContent = labels.goal;
     document.getElementById('sumDuration').textContent = story.duration || '—';
     document.getElementById('sumRepeated').textContent = story.repeated ? 'Oui' : 'Non';
     document.getElementById('sumTimeSince').textContent = story.timeSince || '—';
@@ -527,15 +708,21 @@
     if (story){
       renderSummary(story);
       summaryCard.classList.add('show');
+      reasonCard.classList.add('hidden');
       formCard.classList.add('hidden');
+      formCardGeneral.classList.add('hidden');
     }
   }
 
   async function showFormView(){
     var story = await loadStory();
-    if (story) fillForm(story);
     summaryCard.classList.remove('show');
-    formCard.classList.remove('hidden');
+    if (story){
+      fillForm(story);
+      showChosenForm(story.reason || 'rupture');
+    } else {
+      showReasonView();
+    }
   }
 
   document.getElementById('editLink').addEventListener('click', function(e){
@@ -545,12 +732,14 @@
 
   var reassureOverlay = document.getElementById('reassureOverlay');
 
-  form.addEventListener('submit', async function(e){
+  async function submitStory(e){
     e.preventDefault();
-    state.notes = notes.value.trim();
+    state.notes = (state.reason === 'autre' ? notesGeneral : notes).value.trim();
     await saveStory(state);
     reassureOverlay.classList.add('open');
-  });
+  }
+  form.addEventListener('submit', submitStory);
+  formGeneral.addEventListener('submit', submitStory);
 
   document.getElementById('reassureContinue').addEventListener('click', function(){
     reassureOverlay.classList.remove('open');
@@ -560,6 +749,8 @@
   var existing = await loadStory();
   if (existing){
     showSummaryView();
+  } else {
+    showReasonView();
   }
 })();
 </script>
