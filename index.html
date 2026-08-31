@@ -130,11 +130,13 @@
 
   .hero-visual{
     position:relative; aspect-ratio:4/5; border-radius:28px; overflow:hidden;
-    background:
-      radial-gradient(120% 90% at 20% 15%, #F3D9CC 0%, transparent 55%),
-      radial-gradient(100% 80% at 85% 80%, #D9A98F 0%, transparent 60%),
-      linear-gradient(160deg, #EFDCCF 0%, #E3B9A5 55%, #C98A73 100%);
+    background:var(--cream-2);
     box-shadow:0 30px 60px -20px rgba(176,110,86,0.35);
+  }
+  .hero-photo{width:100%; height:100%; object-fit:cover; display:block;}
+  .hero-visual::before{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(0deg, rgba(59,48,44,0.45) 0%, transparent 30%);
   }
   .hero-visual::after{
     content:"Tu n'es pas seule,\A et tu n'as pas à le rester.";
@@ -143,11 +145,6 @@
     font-family:'Cormorant Garamond',serif; font-style:italic; font-size:17px;
     color:var(--white); opacity:.92; text-shadow:0 2px 12px rgba(0,0,0,0.15);
   }
-  .hero-visual .ring{
-    position:absolute; border-radius:50%; border:1px solid rgba(255,255,255,0.5);
-  }
-  .hero-visual .ring.r1{width:60%; height:60%; top:14%; left:12%;}
-  .hero-visual .ring.r2{width:38%; height:38%; bottom:18%; left:30%;}
 
   /* FEATURES */
   .section{padding:72px 0;}
@@ -356,9 +353,8 @@
         <div class="rating">Rejoins des milliers de femmes · <b>4,9/5</b></div>
       </div>
     </div>
-    <div class="hero-visual" role="img" aria-label="Illustration d'apaisement, dégradé rosé et terracotta">
-      <span class="ring r1"></span>
-      <span class="ring r2"></span>
+    <div class="hero-visual">
+      <img src="hero.jpg" alt="Femme apaisée, installée confortablement chez elle" class="hero-photo">
     </div>
   </div>
 </section>
