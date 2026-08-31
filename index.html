@@ -260,6 +260,10 @@
   }
   .quote-strip{margin-top:26px; font-family:'Cormorant Garamond',serif; font-style:italic; color:var(--clay-dark); font-size:18px;}
 
+  .about-grid{display:grid; grid-template-columns:1fr; gap:48px;}
+  @media(min-width:800px){.about-grid{grid-template-columns:1.15fr 0.85fr;}}
+  .about-text{font-size:15.5px; color:var(--ink-soft); font-weight:300; margin-top:18px; max-width:520px;}
+
   /* PRICING */
   .pricing-grid{display:grid; grid-template-columns:1fr; gap:24px;}
   @media(min-width:700px){.pricing-grid{grid-template-columns:1fr 1fr;}}
@@ -359,6 +363,28 @@
   </div>
 </section>
 
+<section class="section" id="apropos">
+  <div class="wrap about-grid">
+    <div>
+      <div class="section-head" style="margin-bottom:0;">
+        <div class="kicker">Notre histoire</div>
+        <h2>Pourquoi MYSLF existe</h2>
+      </div>
+      <p class="about-text">Se remettre d'une relation difficile — une rupture, une relation toxique, une dépendance affective — est un chemin que beaucoup de femmes traversent seules. La thérapie n'est pas toujours accessible, l'entourage ne comprend pas toujours, et on finit souvent par minimiser ce qu'on ressent plutôt que de se donner le temps de le vivre.</p>
+      <p class="about-text">MYSLF est né de ce constat : chacune mérite un espace rien qu'à elle, disponible à toute heure, pour comprendre ses schémas, se reconstruire à son rythme et redevenir la priorité de sa propre vie.</p>
+    </div>
+    <div>
+      <div class="col-title">Ce qui nous guide</div>
+      <ul class="check-list">
+        <li>Confidentialité totale — ce que tu écris t'appartient</li>
+        <li>Sans jugement, jamais</li>
+        <li>Te rendre autonome, pas dépendante</li>
+      </ul>
+      <p class="quote-strip">"On ne t'aide pas à oublier. On t'aide à te retrouver."</p>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="fonctionnalites">
   <div class="wrap">
     <div class="section-head">
@@ -415,7 +441,7 @@
       <div class="phone">
         <div class="phone-screen">
           <div class="phone-time"><span>9:41</span><span>●●●</span></div>
-          <div class="phone-title">MA COMPAGNE</div>
+          <div class="phone-title">MYSLF</div>
           <div class="chat-messages" id="chatMessages" aria-live="polite">
             <div class="msg ai">Je suis là pour toi. Dis-moi ce que tu ressens, parle librement.</div>
           </div>
